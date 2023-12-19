@@ -22,7 +22,7 @@ const genarateMap = (rows, cols) => {
 	}
 	gameEl.appendChild(map)
 }
-genarateMap(41, 41)
+genarateMap(40, 40)
 
 const getMapRelativeGaps = () => {
 	const map = document.querySelector('.map')
