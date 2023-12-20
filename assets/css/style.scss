@@ -23,8 +23,12 @@ body {
 	min-width: 100px;
 	min-height: 100px;
 	border-collapse: collapse;
-}
+	transition: 200ms;
 
+	&:hover {
+		background-color: #1e1e1e;
+	}
+}
 
 .map {
 	position: absolute;

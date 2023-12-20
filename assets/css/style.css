@@ -26,6 +26,11 @@ body {
   min-width: 100px;
   min-height: 100px;
   border-collapse: collapse;
+  -webkit-transition: 200ms;
+  transition: 200ms;
+}
+.cell:hover {
+  background-color: #1e1e1e;
 }
 
 .map {
