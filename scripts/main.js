@@ -114,36 +114,12 @@ const generateMap = (rows, cols) => {
 generateMap(40, 40)
 
 
-const getMapRelativeGaps = () => { //modificato per modificare le variabili della casella playerShip
+const getMapRelativeGaps = () => {
 	const map = document.querySelector('.map')
 	const offsets = map.getBoundingClientRect()
 
 	const windowHeight = window.innerHeight
 	const windowWidth = window.innerWidth
-
-	// Calcolare il centro dello schermo
-	const centerX = windowHeight / 2;
-	const centerY = windowWidth / 2;
-
-	console.log(map.querySelector('.cell').offsetWidth)
-
-	const col = Math.floor((centerX - offsets.left) / 100);
-	const row = Math.floor((centerY - offsets.top) / 100);
-
-	//svuoto la vecchia playerShipCell
-	const oldPlayerShipcell = document.querySelector(`[data-row="${playerY - 3}"][data-col="${playerX + 3}"]`)
-	if (oldPlayerShipcell) {
-		oldPlayerShipcell.innerHTML = ``
-	}
-	//setto le variabili comuni di tutto il codice
-	playerX = col
-	playerY = row
-
-	//operazioni sulla nuova playerShipCell
-	console.log("Nuovo centro: casella X " + playerX + " Y " + playerY)
-	const newPlayerShipcell = document.querySelector(`[data-row="${playerY - 3}"][data-col="${playerX + 3}"]`)
-	newPlayerShipcell.textContent = `X`
-
 	return {
 		top: offsets.top,
 		left: offsets.left,
