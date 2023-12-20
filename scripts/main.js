@@ -2,27 +2,85 @@ const gameEl = document.getElementById('game')
 const ships = {}
 const amount = 100
 
-const genarateMap = (rows, cols) => {
-	const map = document.createElement('div')
-	map.classList.add('map')
+//variabili comuni a tutti i metodi per tracciare il mouse
+let mouseX
+let mouseY
+document.addEventListener('mousemove', function (event) {
+	mouseX = event.clientX; // Coordinate X del mouse rispetto alla viewport
+	mouseY = event.clientY; // Coordinate Y del mouse rispetto alla viewport
+
+	console.log("X: " + mouseX + ", Y: " + mouseY);
+});
+
+
+const templateDiFaiQualcosaConXeYdellaCella = function (i, j) {
+	console.log(`Cell: X ${i}, Y ${j}`);
+}
+
+const popUpBaloon = function (i, j, cell) {
+	// Creazione del balloon
+	const balloon = document.createElement('div')
+	balloon.id = 'mouse-balloon'
+	balloon.style.position = 'fixed'
+	balloon.style.left = `${mouseX}px`
+	balloon.style.top = `${mouseY}px`
+	balloon.style.padding = `50px`
+	balloon.style.backgroundColor = "black"
+	balloon.style.color = "White"
+	balloon.style.borderColor = "red"
+	balloon.style.border = "3px"
+
+	balloon.innerHTML = "div pigiato( Riga: " + i + " Colonna: " + j + " )"
+
+	balloon.addEventListener('mouseenter', function () {
+		this.style.visibility = 'visible'
+	});
+
+	balloon.addEventListener('mouseleave', function () {
+		this.style.visibility = 'hidden'
+	})
+
+	document.body.appendChild(balloon);
+
+	// Impostazione del timeout per rimuovere il balloon dopo 30 secondi
+	setTimeout(function () {
+		if (balloon) {
+			balloon.remove()
+		}
+	}, 30000)
+}
+
+
+const generateMap = (rows, cols) => {
+	const map = document.createElement('div');
+	map.classList.add('map');
 	for (let i = 0; i < rows; i++) {
-		//adding row to gameEl
-		const row = document.createElement('div')
-		row.classList.add('row')
+		const row = document.createElement('div');
+		row.classList.add('row');
 
 		for (let j = 0; j < cols; j++) {
-			//adding cell to row
-			const cell = document.createElement('div')
-			cell.classList.add('cell')
-			cell.setAttribute('data-row', i)
-			cell.setAttribute('data-col', j)
-			row.appendChild(cell)
+			const cell = document.createElement('div');
+			cell.classList.add('cell');
+			cell.setAttribute('data-row', i);
+			cell.setAttribute('data-col', j);
+
+			// Aggiungi un listener di eventi con una funzione chiusura
+			cell.addEventListener('click', (function (i, j) {
+				return function () {
+					//templateDiFaiQualcosaConXeYdellaCella(i, j)
+					popUpBaloon(i, j, cell)
+				};
+			})(i, j));
+
+			row.appendChild(cell);
 		}
-		map.appendChild(row)
+		map.appendChild(row);
 	}
-	gameEl.appendChild(map)
-}
-genarateMap(40, 40)
+	gameEl.appendChild(map);
+};
+
+generateMap(40, 40);
+
 
 const getMapRelativeGaps = () => {
 	const map = document.querySelector('.map')
@@ -104,3 +162,4 @@ document.addEventListener('keydown', e => {
 		muoveMap('right')
 	}
 })
+
