@@ -5,16 +5,49 @@ const amount = 100
 //variabili comuni a tutti i metodi per tracciare il mouse
 let mouseX
 let mouseY
-document.addEventListener('mousemove', function (event) {
-	mouseX = event.clientX; // Coordinate X del mouse rispetto alla viewport
-	mouseY = event.clientY; // Coordinate Y del mouse rispetto alla viewport
 
-	console.log("X: " + mouseX + ", Y: " + mouseY);
-});
+//variabili per la playership 
+let playerX
+let playerY
+
+document.addEventListener('mousemove', function (event) {
+	mouseX = event.clientX
+	mouseY = event.clientY
+})
+
+// Metodo per ottenere le caselle visibili a schermo. Solo gli 
+//elementi grafici di questa cella vengono animati, gli altri vengono messi in hidden. Funzione da usare in futuro
+const getVisibleCells = () => {
+	const visibleCells = []
+	const map = document.querySelector('.map')
+	const cells = map.querySelectorAll('.cell')
+
+	// Calcola i confini della finestra
+	const viewportTop = window.scrollY
+	const viewportLeft = window.scrollX
+	const viewportBottom = viewportTop + window.innerHeight
+	const viewportRight = viewportLeft + window.innerWidth
+
+	cells.forEach(cell => {
+		const cellRect = cell.getBoundingClientRect()
+		const cellTop = cellRect.top + window.scrollY
+		const cellLeft = cellRect.left + window.scrollX
+		const cellBottom = cellTop + cellRect.height
+		const cellRight = cellLeft + cellRect.width
+
+		// Verifica se la cella è visibile all'interno della finestra
+		if (cellTop < viewportBottom && cellBottom > viewportTop &&
+			cellLeft < viewportRight && cellRight > viewportLeft) {
+			visibleCells.push(cell)
+		}
+	});
+	return visibleCells
+};
 
 
 const templateDiFaiQualcosaConXeYdellaCella = function (i, j) {
-	console.log(`Cell: X ${i}, Y ${j}`);
+	console.log(`Cell: X ${i}, Y ${j}`)
+	// La i è la X, la j è la Y
 }
 
 const popUpBaloon = function (i, j, cell) {
@@ -41,7 +74,6 @@ const popUpBaloon = function (i, j, cell) {
 	})
 
 	document.body.appendChild(balloon);
-
 	// Impostazione del timeout per rimuovere il balloon dopo 30 secondi
 	setTimeout(function () {
 		if (balloon) {
@@ -70,24 +102,48 @@ const generateMap = (rows, cols) => {
 					//templateDiFaiQualcosaConXeYdellaCella(i, j)
 					popUpBaloon(i, j, cell)
 				};
-			})(i, j));
+			})(i, j))
 
-			row.appendChild(cell);
+			row.appendChild(cell)
 		}
-		map.appendChild(row);
+		map.appendChild(row)
 	}
-	gameEl.appendChild(map);
+	gameEl.appendChild(map)
 };
 
-generateMap(40, 40);
+generateMap(40, 40)
 
 
-const getMapRelativeGaps = () => {
+const getMapRelativeGaps = () => { //modificato per modificare le variabili della casella playerShip
 	const map = document.querySelector('.map')
 	const offsets = map.getBoundingClientRect()
 
 	const windowHeight = window.innerHeight
 	const windowWidth = window.innerWidth
+
+	// Calcolare il centro dello schermo
+	const centerX = windowHeight / 2;
+	const centerY = windowWidth / 2;
+
+	console.log(map.querySelector('.cell').offsetWidth)
+
+	const col = Math.floor((centerX - offsets.left) / 100);
+	const row = Math.floor((centerY - offsets.top) / 100);
+
+	//svuoto la vecchia playerShipCell
+	const oldPlayerShipcell = document.querySelector(`[data-row="${playerY - 3}"][data-col="${playerX + 3}"]`)
+	if (oldPlayerShipcell) {
+		oldPlayerShipcell.innerHTML = ``
+	}
+	//setto le variabili comuni di tutto il codice
+	playerX = col
+	playerY = row
+
+	//operazioni sulla nuova playerShipCell
+	console.log("Nuovo centro: casella X " + playerX + " Y " + playerY)
+	const newPlayerShipcell = document.querySelector(`[data-row="${playerY - 3}"][data-col="${playerX + 3}"]`)
+	newPlayerShipcell.textContent = `X`
+
 	return {
 		top: offsets.top,
 		left: offsets.left,
