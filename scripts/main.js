@@ -9,13 +9,19 @@ let mouseY
 //variabili per la playership 
 let playerX
 let playerY
-
-
+let playerGraphic = document.createElement("img")
+playerGraphic.src = "../assets/sprites/Ship.png"
+const playerShip = document.createElement("div")
+playerShip.id = "player"
+playerShip.style.position = "absolute"
+playerShip.style.transition = "top 0.5s, left 0.5s;"
+playerShip.appendChild(playerGraphic)
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 document.addEventListener('mousemove', function (event) {
 	mouseX = event.clientX
 	mouseY = event.clientY
 })
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Metodo per ottenere le caselle visibili a schermo. Solo gli 
 //elementi grafici di questa cella vengono animati, gli altri vengono messi in hidden. Funzione da usare in futuro
 const getVisibleCells = () => {
@@ -45,7 +51,7 @@ const getVisibleCells = () => {
 	return visibleCells
 };
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const templateDiFaiQualcosaConXeYdellaCella = function (i, j) {
 	console.log(`Cell: X ${i}, Y ${j}`)
 	// La i è la X, la j è la Y
@@ -112,9 +118,8 @@ const generateMap = (rows, cols) => {
 	gameEl.appendChild(map)
 };
 
-generateMap(40, 40)
 
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const getMapRelativeGaps = () => {
 	const map = document.querySelector('.map')
 	const offsets = map.getBoundingClientRect()
@@ -197,10 +202,27 @@ document.addEventListener('keydown', e => {
 })
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const setPlayerPosition = function (riga, colonna, prevRiga, prevColonna) {
-	if (!prevRiga || !prevColonna) {
-		document.querySelector((`[data-row="${riga}"][data-col="${colonna}"]`)).textContent = "X"
-	}
+const setPlayerPosition = function (targetX, targetY, playerX, playerY) {
+	if (!playerX || !playerY) {
+		document.querySelector((`[data-row="${targetX}"][data-col="${targetY}"]`)).appendChild(playerShip)
 
+		document.getElementById("player").top = 100
+		document.getElementById("player").left = 100
+
+		playerX = targetX
+		playerY = targetY
+	} else {
+		document.getElementById("player").remove()
+		document.querySelector((`[data-row="${targetX}"][data-col="${targetY}"]`)).appendChild(playerShip)
+
+		playerX = targetX
+		playerY = targetY
+	}
 }
-setPlayerPosition(25, 29)
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+generateMap(40, 40)
+
+setPlayerPosition(24, 24)
+setPlayerPosition(24, 26)
