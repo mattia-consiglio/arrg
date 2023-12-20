@@ -10,6 +10,7 @@ let mouseY
 let playerX
 let playerY
 
+
 document.addEventListener('mousemove', function (event) {
 	mouseX = event.clientX
 	mouseY = event.clientY
@@ -195,3 +196,11 @@ document.addEventListener('keydown', e => {
 	}
 })
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const setPlayerPosition = function (riga, colonna, prevRiga, prevColonna) {
+	if (!prevRiga || !prevColonna) {
+		document.querySelector((`[data-row="${riga}"][data-col="${colonna}"]`)).textContent = "X"
+	}
+
+}
+setPlayerPosition(25, 29)
