@@ -1,0 +1,16 @@
+@keyframes float {
+
+    0%,
+    100% {
+        transform: rotate(-5deg);
+    }
+
+    50% {
+        transform: rotate(5deg);
+    }
+}
+
+
+#barca {
+    animation: float 3s ease-in-out infinite;
+}

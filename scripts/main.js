@@ -11,11 +11,16 @@ let playerX
 let playerY
 let playerGraphic = document.createElement("img")
 playerGraphic.src = "../assets/sprites/Ship.png"
+playerGraphic.style.transform = "translate(-26%, -50%)";
 const playerShip = document.createElement("div")
+playerShip.style.height = "100px"
+playerShip.style.width = "100px"
 playerShip.id = "player"
 playerShip.style.position = "absolute"
 playerShip.style.transition = "top 0.5s, left 0.5s;"
+playerShip.style.border = "1px solid red"
 playerShip.appendChild(playerGraphic)
+let playerShipSpeed = 2
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 document.addEventListener('mousemove', function (event) {
 	mouseX = event.clientX
