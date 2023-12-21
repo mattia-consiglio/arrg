@@ -57,28 +57,60 @@ const templateDiFaiQualcosaConXeYdellaCella = function (i, j) {
 	// La i è la X, la j è la Y
 }
 
+
 const popUpBaloon = function (i, j, cell) {
+
+	const removeBalloon = function () {
+		balloon.remove()
+	}
+
+	const spostaPlayer = function (x, y) {
+		balloon.remove()
+		setPlayerPosition(i, j)
+	}
+	if (document.getElementById("mouse-balloon")) {
+		balloon.remove()
+	}
 	// Creazione del balloon
 	const balloon = document.createElement('div')
 	balloon.id = 'mouse-balloon'
 	balloon.style.position = 'fixed'
-	balloon.style.left = `${mouseX}px`
-	balloon.style.top = `${mouseY}px`
-	balloon.style.padding = `50px`
+	balloon.style.left = `${mouseX - 60}px`
+	balloon.style.top = `${mouseY - 60}px`
+	balloon.style.padding = `20px`
 	balloon.style.backgroundColor = "black"
 	balloon.style.color = "White"
 	balloon.style.borderColor = "red"
 	balloon.style.border = "3px"
+	balloon.style.display = "flex"
+	balloon.style.flexDirection = "column"
+	balloon.style.maxWidth = "280px"
+	const xIcon = document.createElement("div")
+	xIcon.innerHTML = `<i class="far fa-times-circle" style="color: #cc0000;"></i>`
+	xIcon.onclick = removeBalloon
+	const headerBalloon = document.createElement("div")
+	headerBalloon.style.display = "flex"
+	headerBalloon.style.justifyContent = "space-between"
+	const pHeader = document.createElement("p")
+	pHeader.textContent = `[ info cellaX(${i})Y(${j}) ] --`
+	headerBalloon.appendChild(pHeader)
+	headerBalloon.appendChild(xIcon)
 
-	balloon.innerHTML = "div pigiato( Riga: " + i + " Colonna: " + j + " )"
+	const pMidBalloon = document.createElement("p")
+	pMidBalloon.style.margin = "8px"
+	pMidBalloon.innerText = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque tempora soluta dolorem a molestias voluptas eos, doloribus sequi facere sint debitis quis laudantium necessitatibus voluptate porro quos assumenda! Assumenda, vitae."
 
-	balloon.addEventListener('mouseenter', function () {
-		this.style.visibility = 'visible'
-	});
+	const divFooter = document.createElement("div")
+	const buttonMuoviti = document.createElement("p")
+	buttonMuoviti.innerText = "[VAI QUI]"
+	buttonMuoviti.onclick = function () {
+		spostaPlayer(i, j);
+	}
+	divFooter.appendChild(buttonMuoviti)
 
-	balloon.addEventListener('mouseleave', function () {
-		this.style.visibility = 'hidden'
-	})
+	balloon.appendChild(headerBalloon)
+	balloon.appendChild(pMidBalloon)
+	balloon.appendChild(divFooter)
 
 	document.body.appendChild(balloon);
 	// Impostazione del timeout per rimuovere il balloon dopo 30 secondi
@@ -219,6 +251,7 @@ const setPlayerPosition = function (targetX, targetY, playerX, playerY) {
 		playerY = targetY
 	}
 }
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
