@@ -57,6 +57,27 @@ const templateDiFaiQualcosaConXeYdellaCella = function (i, j) {
 	// La i è la X, la j è la Y
 }
 
+const popUpSchermo = function (messaggio) {
+	const divMessaggio = document.createElement("div")
+	const pMessaggio = document.createElement("p")
+	pMessaggio.textContent = messaggio
+	const buttonClose = document.createElement("p")
+	buttonClose.innerText = "[CHIUDI]"
+	buttonClose.onclick = function () {
+		divMessaggio.remove()
+	}
+	divMessaggio.appendChild(pMessaggio)
+	divMessaggio.appendChild(buttonClose)
+
+	divMessaggio.style.display = "fixed"
+	divMessaggio.style.top = "50%"
+	divMessaggio.style.left = "50%"
+	divMessaggio.transform = `translate(-50%, -50%)`
+
+	console.log(messaggio)
+	document.getElementsByTagName("body")[0].appendChild(divMessaggio)
+}
+
 
 const popUpBaloon = function (i, j, cell) {
 
@@ -66,6 +87,7 @@ const popUpBaloon = function (i, j, cell) {
 
 	const spostaPlayer = function (x, y) {
 		balloon.remove()
+		//if tuttocorretto
 		setPlayerPosition(i, j)
 	}
 	if (document.getElementById("mouse-balloon")) {
