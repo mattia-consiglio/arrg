@@ -6,16 +6,22 @@ const amount = 100
 let mouseX
 let mouseY
 
-//variabili per la playership 
+//variabili per la playership
 let playerX
 let playerY
-
+let playerGraphic = document.createElement('img')
+playerGraphic.src = '../assets/sprites/Ship.png'
+const playerShip = document.createElement('div')
+playerShip.id = 'player'
+playerShip.appendChild(playerGraphic)
+let playerShipSpeed = 2
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 document.addEventListener('mousemove', function (event) {
 	mouseX = event.clientX
 	mouseY = event.clientY
 })
-
-// Metodo per ottenere le caselle visibili a schermo. Solo gli 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Metodo per ottenere le caselle visibili a schermo. Solo gli
 //elementi grafici di questa cella vengono animati, gli altri vengono messi in hidden. Funzione da usare in futuro
 const getVisibleCells = () => {
 	const visibleCells = []
@@ -36,44 +42,101 @@ const getVisibleCells = () => {
 		const cellRight = cellLeft + cellRect.width
 
 		// Verifica se la cella è visibile all'interno della finestra
-		if (cellTop < viewportBottom && cellBottom > viewportTop &&
-			cellLeft < viewportRight && cellRight > viewportLeft) {
+		if (
+			cellTop < viewportBottom &&
+			cellBottom > viewportTop &&
+			cellLeft < viewportRight &&
+			cellRight > viewportLeft
+		) {
 			visibleCells.push(cell)
 		}
-	});
+	})
 	return visibleCells
-};
+}
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const templateDiFaiQualcosaConXeYdellaCella = function (i, j) {
 	console.log(`Cell: X ${i}, Y ${j}`)
 	// La i è la X, la j è la Y
 }
 
+const popUpSchermo = function (messaggio) {
+	const divMessaggio = document.createElement('div')
+	const pMessaggio = document.createElement('p')
+	pMessaggio.textContent = messaggio
+	const buttonClose = document.createElement('p')
+	buttonClose.innerText = '[CHIUDI]'
+	buttonClose.onclick = function () {
+		divMessaggio.remove()
+	}
+	divMessaggio.appendChild(pMessaggio)
+	divMessaggio.appendChild(buttonClose)
+
+	divMessaggio.style.display = 'fixed'
+	divMessaggio.style.top = '50%'
+	divMessaggio.style.left = '50%'
+	divMessaggio.transform = `translate(-50%, -50%)`
+
+	console.log(messaggio)
+	document.getElementsByTagName('body')[0].appendChild(divMessaggio)
+}
+
 const popUpBaloon = function (i, j, cell) {
+	const removeBalloon = function () {
+		balloon.remove()
+	}
+
+	const spostaPlayer = function (x, y) {
+		balloon.remove()
+		//if tuttocorretto
+		setPlayerPosition(i, j)
+	}
+	if (document.getElementById('mouse-balloon')) {
+		balloon.remove()
+	}
 	// Creazione del balloon
 	const balloon = document.createElement('div')
 	balloon.id = 'mouse-balloon'
 	balloon.style.position = 'fixed'
-	balloon.style.left = `${mouseX}px`
-	balloon.style.top = `${mouseY}px`
-	balloon.style.padding = `50px`
-	balloon.style.backgroundColor = "black"
-	balloon.style.color = "White"
-	balloon.style.borderColor = "red"
-	balloon.style.border = "3px"
+	balloon.style.left = `${mouseX - 60}px`
+	balloon.style.top = `${mouseY - 60}px`
+	balloon.style.padding = `20px`
+	balloon.style.backgroundColor = 'black'
+	balloon.style.color = 'White'
+	balloon.style.borderColor = 'red'
+	balloon.style.border = '3px'
+	balloon.style.display = 'flex'
+	balloon.style.flexDirection = 'column'
+	balloon.style.maxWidth = '280px'
+	const xIcon = document.createElement('div')
+	xIcon.innerHTML = `<i class="far fa-times-circle" style="color: #cc0000;"></i>`
+	xIcon.onclick = removeBalloon
+	const headerBalloon = document.createElement('div')
+	headerBalloon.style.display = 'flex'
+	headerBalloon.style.justifyContent = 'space-between'
+	const pHeader = document.createElement('p')
+	pHeader.textContent = `[ info cellaX(${i})Y(${j}) ] --`
+	headerBalloon.appendChild(pHeader)
+	headerBalloon.appendChild(xIcon)
 
-	balloon.innerHTML = "div pigiato( Riga: " + i + " Colonna: " + j + " )"
+	const pMidBalloon = document.createElement('p')
+	pMidBalloon.style.margin = '8px'
+	pMidBalloon.innerText =
+		'Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque tempora soluta dolorem a molestias voluptas eos, doloribus sequi facere sint debitis quis laudantium necessitatibus voluptate porro quos assumenda! Assumenda, vitae.'
 
-	balloon.addEventListener('mouseenter', function () {
-		this.style.visibility = 'visible'
-	});
+	const divFooter = document.createElement('div')
+	const buttonMuoviti = document.createElement('p')
+	buttonMuoviti.innerText = '[VAI QUI]'
+	buttonMuoviti.onclick = function () {
+		spostaPlayer(i, j)
+	}
+	divFooter.appendChild(buttonMuoviti)
 
-	balloon.addEventListener('mouseleave', function () {
-		this.style.visibility = 'hidden'
-	})
+	balloon.appendChild(headerBalloon)
+	balloon.appendChild(pMidBalloon)
+	balloon.appendChild(divFooter)
 
-	document.body.appendChild(balloon);
+	document.body.appendChild(balloon)
 	// Impostazione del timeout per rimuovere il balloon dopo 30 secondi
 	setTimeout(function () {
 		if (balloon) {
@@ -82,37 +145,36 @@ const popUpBaloon = function (i, j, cell) {
 	}, 30000)
 }
 
-
 const generateMap = (rows, cols) => {
-	const map = document.createElement('div');
-	map.classList.add('map');
+	const map = document.createElement('div')
+	map.classList.add('map')
 	for (let i = 0; i < rows; i++) {
-		const row = document.createElement('div');
-		row.classList.add('row');
+		const row = document.createElement('div')
+		row.classList.add('row')
 
 		for (let j = 0; j < cols; j++) {
-			const cell = document.createElement('div');
-			cell.classList.add('cell');
-			cell.setAttribute('data-row', i);
-			cell.setAttribute('data-col', j);
+			const cell = document.createElement('div')
+			cell.classList.add('cell')
+			cell.setAttribute('data-row', i)
+			cell.setAttribute('data-col', j)
 
 			// Aggiungi un listener di eventi con una funzione chiusura
-			cell.addEventListener('click', (function (i, j) {
-				return function () {
-					//templateDiFaiQualcosaConXeYdellaCella(i, j)
-					popUpBaloon(i, j, cell)
-				};
-			})(i, j))
+			cell.addEventListener(
+				'click',
+				(function (i, j) {
+					return function () {
+						//templateDiFaiQualcosaConXeYdellaCella(i, j)
+						popUpBaloon(i, j, cell)
+					}
+				})(i, j)
+			)
 
 			row.appendChild(cell)
 		}
 		map.appendChild(row)
 	}
 	gameEl.appendChild(map)
-};
-
-generateMap(40, 40)
-
+}
 
 const getMapRelativeGaps = () => {
 	const map = document.querySelector('.map')
@@ -195,3 +257,27 @@ document.addEventListener('keydown', e => {
 	}
 })
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const setPlayerPosition = function (targetX, targetY, playerX, playerY) {
+	if (!playerX || !playerY) {
+		document.querySelector(`[data-row="${targetX}"][data-col="${targetY}"]`).appendChild(playerShip)
+
+		document.getElementById('player').top = 100
+		document.getElementById('player').left = 100
+
+		playerX = targetX
+		playerY = targetY
+	} else {
+		document.getElementById('player').remove()
+		document.querySelector(`[data-row="${targetX}"][data-col="${targetY}"]`).appendChild(playerShip)
+
+		playerX = targetX
+		playerY = targetY
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+generateMap(40, 40)
+
+setPlayerPosition(24, 24)
+setPlayerPosition(24, 26)

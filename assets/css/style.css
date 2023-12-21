@@ -28,6 +28,7 @@ body {
   border-collapse: collapse;
   -webkit-transition: 200ms;
   transition: 200ms;
+  position: relative;
 }
 .cell:hover {
   background-color: #1e1e1e;
@@ -69,4 +70,17 @@ body {
   width: 50px;
   height: auto;
   fill: #fff;
+}
+
+#player {
+  height: 100px;
+  width: 100px;
+  position: absolute;
+  -webkit-transition: all 500ms;
+  transition: all 500ms;
+  z-index: 100;
+}
+#player img {
+  -webkit-transform: translate(-26%, -50%);
+          transform: translate(-26%, -50%);
 }/*# sourceMappingURL=style.css.map */
