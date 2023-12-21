@@ -24,9 +24,11 @@ body {
   min-height: 100px;
   border-collapse: collapse;
   transition: 200ms;
+  position: relative;
 }
+
 .cell:hover {
-  background-color: #60e1f5;
+  background-color: #00899f;
 }
 
 .map {
@@ -39,28 +41,50 @@ body {
   bottom: 0;
   right: 0;
 }
+
 #controls div {
   cursor: pointer;
   position: fixed;
 }
+
 #controls div#left {
   bottom: 50px;
   right: 100px;
 }
+
 #controls div#right {
   bottom: 50px;
   right: 0;
 }
+
 #controls div#up {
   bottom: 100px;
   right: 50px;
 }
+
 #controls div#down {
   bottom: 0;
   right: 50px;
 }
+
 #controls div svg {
   width: 50px;
   height: auto;
   fill: #fff;
-}/*# sourceMappingURL=style.css.map */
+}
+
+#player {
+  height: 100px;
+  width: 100px;
+  position: absolute;
+  -webkit-transition: all 500ms;
+  transition: all 500ms;
+  z-index: 100;
+}
+
+#player img {
+  -webkit-transform: translate(-26%, -50%);
+  transform: translate(-26%, -50%);
+}
+
+/*# sourceMappingURL=style.css.map */

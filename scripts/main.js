@@ -6,7 +6,7 @@ const amount = 100
 let mouseX
 let mouseY
 
-//variabili per la playership 
+//variabili per la playership
 let playerX
 let playerY
 let playerGraphic = document.createElement("img")
@@ -48,11 +48,15 @@ const getVisibleCells = () => {
 		const cellRight = cellLeft + cellRect.width
 
 		// Verifica se la cella è visibile all'interno della finestra
-		if (cellTop < viewportBottom && cellBottom > viewportTop &&
-			cellLeft < viewportRight && cellRight > viewportLeft) {
+		if (
+			cellTop < viewportBottom &&
+			cellBottom > viewportTop &&
+			cellLeft < viewportRight &&
+			cellRight > viewportLeft
+		) {
 			visibleCells.push(cell)
 		}
-	});
+	})
 	return visibleCells
 };
 
@@ -139,7 +143,7 @@ const popUpBaloon = function (i, j, cell) {
 	balloon.appendChild(pMidBalloon)
 	balloon.appendChild(divFooter)
 
-	document.body.appendChild(balloon);
+	document.body.appendChild(balloon)
 	// Impostazione del timeout per rimuovere il balloon dopo 30 secondi
 	setTimeout(function () {
 		if (balloon) {
@@ -148,27 +152,29 @@ const popUpBaloon = function (i, j, cell) {
 	}, 30000)
 }
 
-
 const generateMap = (rows, cols) => {
-	const map = document.createElement('div');
-	map.classList.add('map');
+	const map = document.createElement('div')
+	map.classList.add('map')
 	for (let i = 0; i < rows; i++) {
-		const row = document.createElement('div');
-		row.classList.add('row');
+		const row = document.createElement('div')
+		row.classList.add('row')
 
 		for (let j = 0; j < cols; j++) {
-			const cell = document.createElement('div');
-			cell.classList.add('cell');
-			cell.setAttribute('data-row', i);
-			cell.setAttribute('data-col', j);
+			const cell = document.createElement('div')
+			cell.classList.add('cell')
+			cell.setAttribute('data-row', i)
+			cell.setAttribute('data-col', j)
 
 			// Aggiungi un listener di eventi con una funzione chiusura
-			cell.addEventListener('click', (function (i, j) {
-				return function () {
-					//templateDiFaiQualcosaConXeYdellaCella(i, j)
-					popUpBaloon(i, j, cell)
-				};
-			})(i, j))
+			cell.addEventListener(
+				'click',
+				(function (i, j) {
+					return function () {
+						//templateDiFaiQualcosaConXeYdellaCella(i, j)
+						popUpBaloon(i, j, cell)
+					}
+				})(i, j)
+			)
 
 			row.appendChild(cell)
 		}
