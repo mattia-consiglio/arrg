@@ -7,9 +7,9 @@ let mouseX
 let mouseY
 
 //variabili per la playership
-let playerX = 24
-let playerY = 26
-let playerDirection = "giu"
+let playerX = 24 //senza dati iniziali il metodo setPlayerPosition si rompe. Non corrispondono all'effettiva posizione iniziale, aggiornare nel caso si aggiorni la posizione iniziale
+let playerY = 26 //senza dati iniziali il metodo setPlayerPosition si rompe. Non corrispondono all'effettiva posizione iniziale, aggiornare nel caso si aggiorni la posizione iniziale
+let playerDirection = "giu" //senza questi dati il metodo setPlayerPosition si rompe. Non corrispondono all'effettiva posizione iniziale, aggiornare nel caso si aggiorni la posizione iniziale
 let playerGraphic = document.createElement("img")
 const playerShip = document.createElement("div")
 playerShip.style.height = "96px"
@@ -125,10 +125,33 @@ const popUpBaloon = function (i, j, cell) {
 	}
 
 	const calcolaDistanza = function (targetX, targetY) {
-
-
 		return Math.round(Math.sqrt(Math.pow(targetX - playerX, 2) + Math.pow(targetY - playerY, 2)))
 	}
+
+	const animaSpostaShipPlayer = function (x, y) {
+		let durataAnimazione = 0.5 * calcolaDistanza(x, y)
+		let animazioneShipPlayer = `
+		@keyframes animazioneSpostaShipPlayer {
+			0%, 100% { 
+				transform: translateX(0,0); 
+			}
+			99,99% {
+				transform: translateX(${playerX - x},${playerY - y}); 
+				}
+		}`
+		playerShip.style.animation = `animazioneSpostaShipPlayer ${durataAnimazione} ease-in-out forwards`;
+
+		let stileUsaeGetta = document.createElement('style');
+		stileUsaeGetta.innerHTML = animazioneShipPlayer;
+		document.head.appendChild(stileUsaeGetta);
+
+		// Rimozione dell'animazione e dello stile una volta terminata
+		playerShip.addEventListener('animationend', function () {
+			playerShip.style.animation = '';
+			stileUsaeGetta.parentNode.removeChild(stileUsaeGetta);
+		});
+	}
+
 
 	const movimentoPossibile = function (i, j) {
 		if (playerShipSpeed >= calcolaDistanza(i, j)) {
@@ -141,7 +164,10 @@ const popUpBaloon = function (i, j, cell) {
 	const spostaPlayer = function (x, y) {
 		balloon.remove()
 		if (movimentoPossibile(x, y)) {
-			setPlayerPosition(x, y)
+			animaSpostaShipPlayer(x, y)
+			setTimeout(function () {
+				//setPlayerPosition(x, y)
+			}, 0.5 * calcolaDistanza(x, y))
 		}
 	}
 
