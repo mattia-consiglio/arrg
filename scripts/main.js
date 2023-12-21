@@ -15,6 +15,28 @@ const playerShip = document.createElement('div')
 playerShip.id = 'player'
 playerShip.appendChild(playerGraphic)
 let playerShipSpeed = 2
+
+// const shipsArray = [
+// 	{
+// 		type: 'player',
+// 		x: 100,
+// 		y: 100,
+// 		level: 1 - 10,
+// 		attackedBy: [],
+// 		attacking: ''
+// 	},
+// 	{
+// 		type: 'bot',
+// 		id: 1,
+// 		x: 100,
+// 		y: 100,
+// 		level: 1 - 10,
+// 		attackedBy: [],
+// 		attacking: ''
+// 	}
+// ]
+const shipsArray = []
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 document.addEventListener('mousemove', function (event) {
 	mouseX = event.clientX
