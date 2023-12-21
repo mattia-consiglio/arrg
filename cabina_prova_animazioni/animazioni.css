@@ -46,3 +46,15 @@
     animation: float2 3s ease-in-out infinite;
 
 }
+
+#barca2 {
+    transform-origin: 50% 75%;
+    animation: float1 3s ease-in-out infinite;
+
+}
+
+#barca3 {
+    transform-origin: 50% 75%;
+    animation: float2 3s ease-in-out infinite;
+
+}
