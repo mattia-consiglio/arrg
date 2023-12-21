@@ -26,7 +26,6 @@ body {
   transition: 200ms;
   position: relative;
 }
-
 .cell:hover {
   background-color: #00899f;
 }
@@ -41,32 +40,26 @@ body {
   bottom: 0;
   right: 0;
 }
-
 #controls div {
   cursor: pointer;
   position: fixed;
 }
-
 #controls div#left {
   bottom: 50px;
   right: 100px;
 }
-
 #controls div#right {
   bottom: 50px;
   right: 0;
 }
-
 #controls div#up {
   bottom: 100px;
   right: 50px;
 }
-
 #controls div#down {
   bottom: 0;
   right: 50px;
 }
-
 #controls div svg {
   width: 50px;
   height: auto;
@@ -77,14 +70,28 @@ body {
   height: 100px;
   width: 100px;
   position: absolute;
-  -webkit-transition: all 500ms;
-  transition: all 500ms;
   z-index: 100;
+  pointer-events: none;
 }
 
-#player img {
-  -webkit-transform: translate(-26%, -50%);
-  transform: translate(-26%, -50%);
+.barca {
+  animation: float2 10s ease infinite;
 }
 
-/*# sourceMappingURL=style.css.map */
+@keyframes float2 {
+  0% {
+    transform: rotate(0deg) skew(0deg, 0deg);
+  }
+  25% {
+    transform: rotate(-3deg) skew(-3deg, -1deg);
+  }
+  50% {
+    transform: rotate(0deg) skew(0deg, 0deg);
+  }
+  75% {
+    transform: rotate(3deg) skew(3deg, 1deg);
+  }
+  100% {
+    transform: rotate(0deg) skew(0deg, 0deg);
+  }
+}/*# sourceMappingURL=style.css.map */

@@ -38,6 +38,19 @@
     }
 }
 
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.2;
+        /* Modifica questo valore per controllare l'intensità del lampeggio */
+    }
+}
+
 #barca {
     animation: float1 3s ease-in-out infinite;
 }
@@ -56,5 +69,10 @@
 #barca3 {
     transform-origin: 50% 75%;
     animation: float2 3s ease-in-out infinite;
+
+}
+
+#barca4 {
+    animation: blink 0.3s ease-in-out infinite;
 
 }

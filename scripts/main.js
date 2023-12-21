@@ -7,25 +7,56 @@ let mouseX
 let mouseY
 
 //variabili per la playership
-let playerX
-let playerY
+let playerX = 24
+let playerY = 26
+let playerDirection = "giu"
 let playerGraphic = document.createElement("img")
-playerGraphic.src = "../assets/sprites/Ship.png"
-playerGraphic.style.transform = "translate(-26%, -50%)";
 const playerShip = document.createElement("div")
-playerShip.style.height = "100px"
-playerShip.style.width = "100px"
+playerShip.style.height = "96px"
+playerShip.style.width = "96px"
 playerShip.id = "player"
+playerShip.classList.add("barca")
 playerShip.style.position = "absolute"
 playerShip.style.transition = "top 0.5s, left 0.5s;"
-playerShip.style.border = "1px solid red"
+playerShip.style.border = "1px solid green"
 playerShip.appendChild(playerGraphic)
-let playerShipSpeed = 2
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
+let playerShipSpeed = 3
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 document.addEventListener('mousemove', function (event) {
 	mouseX = event.clientX
 	mouseY = event.clientY
 })
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const aggiornaPlayerDirectionGraphic = function () {
+	playerShip.innerHTML = ``
+	switch (playerDirection) {
+		case "destra":
+			playerGraphic.src = "../assets/sprites/Right_playership.png"
+			playerGraphic.style.transform = "translate(-28%, -50%)";
+
+			break;
+		case "sinistra":
+			playerGraphic.src = "../assets/sprites/Left_playership.png"
+			playerGraphic.style.transform = "translate(-31%, -50%)";
+			break;
+		case "su":
+			playerGraphic.src = "../assets/sprites/Up_playership.png"
+			playerGraphic.style.transform = "translate(-30%, -61%)";
+			break;
+		case "giu":
+			playerGraphic.src = "../assets/sprites/Down_playership.png"
+			playerGraphic.style.transform = "translate(-30%, -61%)";
+			break;
+		default:
+			console.log("Errore ridirezionamento")
+			break;
+	}
+	playerShip.appendChild(playerGraphic)
+}
+
+aggiornaPlayerDirectionGraphic()
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Metodo per ottenere le caselle visibili a schermo. Solo gli 
 //elementi grafici di questa cella vengono animati, gli altri vengono messi in hidden. Funzione da usare in futuro
@@ -83,7 +114,6 @@ const popUpSchermo = function (messaggio) {
 	divMessaggio.style.left = "50%"
 	divMessaggio.transform = `translate(-50%, -50%)`
 
-	console.log(messaggio)
 	document.getElementsByTagName("body")[0].appendChild(divMessaggio)
 }
 
@@ -94,14 +124,31 @@ const popUpBaloon = function (i, j, cell) {
 		balloon.remove()
 	}
 
+	const calcolaDistanza = function (targetX, targetY) {
+
+
+		return Math.round(Math.sqrt(Math.pow(targetX - playerX, 2) + Math.pow(targetY - playerY, 2)))
+	}
+
+	const movimentoPossibile = function (i, j) {
+		if (playerShipSpeed >= calcolaDistanza(i, j)) {
+			return true
+		} else {
+			return false
+		}
+	}
+
 	const spostaPlayer = function (x, y) {
 		balloon.remove()
-		//if tuttocorretto
-		setPlayerPosition(i, j)
+		if (movimentoPossibile(x, y)) {
+			setPlayerPosition(x, y)
+		}
 	}
+
 	if (document.getElementById("mouse-balloon")) {
 		balloon.remove()
 	}
+
 	// Creazione del balloon
 	const balloon = document.createElement('div')
 	balloon.id = 'mouse-balloon'
@@ -129,7 +176,7 @@ const popUpBaloon = function (i, j, cell) {
 
 	const pMidBalloon = document.createElement("p")
 	pMidBalloon.style.margin = "8px"
-	pMidBalloon.innerText = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque tempora soluta dolorem a molestias voluptas eos, doloribus sequi facere sint debitis quis laudantium necessitatibus voluptate porro quos assumenda! Assumenda, vitae."
+	pMidBalloon.innerText = `Distanza casella: [${calcolaDistanza(i, j)}]\nTipo: [Acqua] \n Movimento possibile [${movimentoPossibile(i, j)}]\n`
 
 	const divFooter = document.createElement("div")
 	const buttonMuoviti = document.createElement("p")
@@ -290,5 +337,4 @@ const setPlayerPosition = function (targetX, targetY, playerX, playerY) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 generateMap(40, 40)
 
-setPlayerPosition(24, 24)
 setPlayerPosition(24, 26)
