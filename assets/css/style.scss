@@ -107,3 +107,27 @@ body {
 		transform: rotate(0deg) skew(0deg, 0deg);
 	}
 }
+.shore {
+	width: 200px;
+	height: 200px;
+	position: absolute;
+	z-index: 100;
+
+	&.west {
+		transform: rotate(90deg);
+	}
+	&.east {
+		transform: translateX(-100px) rotate(-90deg);
+	}
+	&.north {
+		transform: rotate(180deg);
+	}
+	&.south {
+		transform: translateY(-100px);
+	}
+
+	img {
+		width: 100%;
+		height: 100%;
+	}
+}
