@@ -119,7 +119,11 @@ const popUpSchermo = function (messaggio) {
 	document.getElementsByTagName("body")[0].appendChild(divMessaggio)
 }
 
-const popUpBaloon = function (i, j, cell) {
+const popUpBaloon = function (cell) {
+	const cella = document.createElement("div")
+	cella.innerHTML = cell
+	let i = cella.getAttribute(`data-row`)
+	let j = cella.getAttribute(`data-col`)
 	const removeBalloon = function () {
 		balloon.remove()
 	}
@@ -171,7 +175,8 @@ const popUpBaloon = function (i, j, cell) {
 		}
 	}
 	if (document.getElementById('mouse-balloon')) {
-		balloon.remove()
+		console.log("Non trovato")
+		//balloon.remove()
 	}
 
 	// Creazione del balloon
@@ -214,7 +219,7 @@ const popUpBaloon = function (i, j, cell) {
 	balloon.appendChild(headerBalloon)
 	balloon.appendChild(pMidBalloon)
 	balloon.appendChild(divFooter)
-
+	console.log(balloon)
 	document.body.appendChild(balloon)
 	// Impostazione del timeout per rimuovere il balloon dopo 30 secondi
 	setTimeout(function () {
@@ -266,10 +271,8 @@ const generateMap = (rows, cols) => {
 				'click',
 				(function (event, i, j) {
 					return function () {
-						mouseX = event.clientX
-						mouseY = event.clientY
 						//templateDiFaiQualcosaConXeYdellaCella(i, j)
-						popUpBaloon(i, j, cell)
+						popUpBaloon(cell)
 					}
 				})(i, j)
 			)
