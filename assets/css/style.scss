@@ -77,36 +77,15 @@ body {
 	height: 100px;
 	width: 100px;
 	position: absolute;
+	// border: 1px solid red;
+	transition: all 500ms;
 	z-index: 100;
-	pointer-events: none;
-}
 
-.barca {
-	//animation: float2 10s ease infinite;
-}
-
-@keyframes float2 {
-
-	0% {
-		transform: rotate(0deg) skew(0deg, 0deg);
-	}
-
-	25% {
-		transform: rotate(-3deg) skew(-3deg, -1deg);
-	}
-
-	50% {
-		transform: rotate(0deg) skew(0deg, 0deg);
-	}
-
-	75% {
-		transform: rotate(3deg) skew(3deg, 1deg);
-	}
-
-	100% {
-		transform: rotate(0deg) skew(0deg, 0deg);
+	img {
+		transform: translate(-26%, -50%);
 	}
 }
+
 .shore {
 	width: 200px;
 	height: 200px;
@@ -116,12 +95,15 @@ body {
 	&.west {
 		transform: rotate(90deg);
 	}
+
 	&.east {
 		transform: translateX(-100px) rotate(-90deg);
 	}
+
 	&.north {
 		transform: rotate(180deg);
 	}
+
 	&.south {
 		transform: translateY(-100px);
 	}
