@@ -22,7 +22,7 @@ playerShip.style.position = "absolute"
 playerShip.style.transition = "top 0.5s, left 0.5s;"
 playerShip.style.border = "1px solid green"
 playerShip.appendChild(playerGraphic)
-let playerShipSpeed = 3
+let playerShipSpeed = 40
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 document.addEventListener('mousemove', function (event) {
 	mouseX = event.clientX
@@ -124,12 +124,14 @@ const popUpBaloon = function (cell) {
 	cella.innerHTML = cell
 	let i = cella.getAttribute(`data-row`)
 	let j = cella.getAttribute(`data-col`)
+
 	const removeBalloon = function () {
 		balloon.remove()
 	}
 
-	const calcolaDistanza = function (targetX, targetY) {
-		return Math.round(Math.sqrt(Math.pow(targetX - playerX, 2) + Math.pow(targetY - playerY, 2)))
+	const calcolaDistanza = function (x, y) {
+		console.log(Math.sqrt(Math.pow(x - playerX, 2) + Math.pow(y - playerY, 2)))
+		return Math.round(Math.sqrt(Math.pow(x - playerX, 2) + Math.pow(y - playerY, 2)))
 	}
 
 	const animaSpostaShipPlayer = function (x, y) {
@@ -157,26 +159,26 @@ const popUpBaloon = function (cell) {
 	}
 
 
-	const movimentoPossibile = function (i, j) {
-		if (playerShipSpeed >= calcolaDistanza(i, j)) {
+	const movimentoPossibile = function (x, y) {
+		if (playerShipSpeed >= calcolaDistanza(x, y)) {
 			return true
 		} else {
 			return false
 		}
 	}
 
-	const spostaPlayer = function (x, y) {
+	const spostaPlayer = function (cella, x, y) {
 		balloon.remove()
 		if (movimentoPossibile(x, y)) {
 			animaSpostaShipPlayer(x, y)
+			setPlayerPosition(cella)
+
 			setTimeout(function () {
-				setPlayerPosition(x, y)
 			}, 0.5 * calcolaDistanza(x, y))
 		}
 	}
 	if (document.getElementById('mouse-balloon')) {
-		console.log("Non trovato")
-		//balloon.remove()
+		document.getElementById('mouse-balloon').remove()
 	}
 
 	// Creazione del balloon
@@ -200,7 +202,7 @@ const popUpBaloon = function (cell) {
 	headerBalloon.style.display = 'flex'
 	headerBalloon.style.justifyContent = 'space-between'
 	const pHeader = document.createElement('p')
-	pHeader.textContent = `[ info cellaX(${i})Y(${j}) ] --`
+	pHeader.textContent = `[ info cellaX(${cella.getAttribute(`data-row`)})Y(${cella.getAttribute(`data-col`)}) ] --`
 	headerBalloon.appendChild(pHeader)
 	headerBalloon.appendChild(xIcon)
 
@@ -219,7 +221,6 @@ const popUpBaloon = function (cell) {
 	balloon.appendChild(headerBalloon)
 	balloon.appendChild(pMidBalloon)
 	balloon.appendChild(divFooter)
-	console.log(balloon)
 	document.body.appendChild(balloon)
 	// Impostazione del timeout per rimuovere il balloon dopo 30 secondi
 	setTimeout(function () {
@@ -230,7 +231,6 @@ const popUpBaloon = function (cell) {
 }
 
 const spownShore = (cell, orientation) => {
-	console.log(`spownShore: cell ${cell}, orientation ${orientation}`)
 	const shore = document.createElement('div')
 	shore.classList.add('shore')
 	shore.classList.add(orientation)
@@ -357,7 +357,9 @@ document.addEventListener('keydown', e => {
 })
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const setPlayerPosition = function (targetX, targetY, playerX, playerY) {
+const setPlayerPosition = function (cell) {
+	let targetX = cell.getAttribute("data-row")
+	let targetY = cell.getAttribute("data-col")
 	if (!playerX || !playerY) {
 		document.querySelector(`[data-row="${targetX}"][data-col="${targetY}"]`).appendChild(playerShip)
 
@@ -375,8 +377,15 @@ const setPlayerPosition = function (targetX, targetY, playerX, playerY) {
 	}
 }
 
+const getCellaInizialeSpawn = function (xIniziale, yIniziale) {
+	console.log(document.querySelector(`.game .map .row[data-row="${xIniziale}"] [data-col="${yIniziale}"]`))
+	return document.querySelector(`.game .map .row[data-row="${xIniziale}"] [data-col="${yIniziale}"]`)
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 generateMap(40, 40)
 
-setPlayerPosition(24, 26)
+const cellaIniziale = getCellaInizialeSpawn(24, 26)
+
+setPlayerPosition(cellaIniziale)
