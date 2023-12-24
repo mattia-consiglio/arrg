@@ -28,7 +28,7 @@ document.addEventListener('mousemove', function (event) {
 })
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const aggiornaPlayerDirectionGraphic = function () {
+const updatePlayerDirectionGraphic = function () {
 	playerShip.innerHTML = ``
 	switch (playerDirection) {
 		case 'destra':
@@ -55,7 +55,7 @@ const aggiornaPlayerDirectionGraphic = function () {
 	playerShip.appendChild(playerGraphic)
 }
 
-aggiornaPlayerDirectionGraphic()
+updatePlayerDirectionGraphic()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Metodo per ottenere le caselle visibili a schermo. Solo gli
@@ -92,15 +92,15 @@ const getVisibleCells = () => {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const templateDiFaiQualcosaConXeYdellaCella = function (i, j) {
-	console.log(`Cell: X ${i}, Y ${j}`)
+const templateDoSomethingWithXandYofCell = function (x, y) {
+	console.log(`Cell: X ${x}, Y ${y}`)
 	// La i è la X, la j è la Y
 }
 
-const popUpSchermo = function (messaggio) {
+const popUpScreen = function (messagge) {
 	const divMessaggio = document.createElement('div')
 	const pMessaggio = document.createElement('p')
-	pMessaggio.textContent = messaggio
+	pMessaggio.textContent = messagge
 	const buttonClose = document.createElement('p')
 	buttonClose.innerText = '[CHIUDI]'
 	buttonClose.onclick = function () {
@@ -127,19 +127,19 @@ const popUpBaloon = function (cell) {
 		balloon.remove()
 	}
 
-	const calcolaDistanza = function (x, y) {
+	const calculateDistance = function (x, y) {
 		return parseInt(Math.sqrt(Math.pow(x - playerX, 2) + Math.pow(y - playerY, 2)))
 	}
 
-	const animaSpostaShipPlayer = function (cellaDestinazione) {
+	const animateMouveShipPlayer = function (destinationCell) {
 		const playerGraphic = document.getElementById('playerGraphic')
 		let currentPlayerX = playerShip.parentElement.offsetTop
 		let currentPlayerY = playerShip.parentElement.offsetLeft
-		let xDestinazione = cellaDestinazione.offsetTop
-		let yDestinazione = cellaDestinazione.offsetLeft
+		let xDestinazione = destinationCell.offsetTop
+		let yDestinazione = destinationCell.offsetLeft
 		console.log(xDestinazione - currentPlayerX)
 		console.log(yDestinazione - currentPlayerY)
-		let durataAnimazione = 0.5 * calcolaDistanza(xDestinazione, yDestinazione)
+		let durataAnimazione = 0.5 * calculateDistance(xDestinazione, yDestinazione)
 
 		playerGraphic.animate(
 			[
@@ -156,22 +156,22 @@ const popUpBaloon = function (cell) {
 		)
 	}
 
-	const movimentoPossibile = function (x, y) {
-		if (playerShipSpeed >= calcolaDistanza(x, y)) {
+	const mouvementPossible = function (x, y) {
+		if (playerShipSpeed >= calculateDistance(x, y)) {
 			return true
 		} else {
 			return false
 		}
 	}
 
-	const spostaPlayer = function (cella, x, y) {
+	const mouvePlayer = function (cell, x, y) {
 		balloon.remove()
-		if (movimentoPossibile(x, y)) {
-			animaSpostaShipPlayer(cella)
+		if (mouvementPossible(x, y)) {
+			animateMouveShipPlayer(cell)
 
 			setTimeout(function () {
-				setPlayerPosition(cella)
-			}, 0.5 * calcolaDistanza(x, y) * 1050)
+				setPlayerPosition(cell)
+			}, 0.5 * calculateDistance(x, y) * 1050)
 		}
 	}
 	if (document.getElementById('mouse-balloon')) {
@@ -205,16 +205,16 @@ const popUpBaloon = function (cell) {
 
 	const pMidBalloon = document.createElement('p')
 	pMidBalloon.style.margin = '8px'
-	pMidBalloon.innerText = `Distanza casella: [${calcolaDistanza(
+	pMidBalloon.innerText = `Distanza casella: [${calculateDistance(
 		i,
 		j
-	)}]\nTipo: [Acqua] \n Movimento possibile [${movimentoPossibile(i, j)}]\n`
+	)}]\nTipo: [Acqua] \n Movimento possibile [${mouvementPossible(i, j)}]\n`
 
 	const divFooter = document.createElement('div')
 	const buttonMuoviti = document.createElement('p')
 	buttonMuoviti.innerText = '[VAI QUI]'
 	buttonMuoviti.onclick = function () {
-		spostaPlayer(cella, i, j)
+		mouvePlayer(cella, i, j)
 	}
 	divFooter.appendChild(buttonMuoviti)
 
@@ -378,15 +378,15 @@ const setPlayerPosition = function (cell) {
 	}
 }
 
-const getCellaInizialeSpawn = function (xIniziale, yIniziale) {
-	let cella = document.querySelector(`div [data-row="${xIniziale}"][data-col="${yIniziale}"]`)
-	return cella
+const getinitalSpawnCell = function (xInitial, yInitial) {
+	let cell = document.querySelector(`div [data-row="${xInitial}"][data-col="${yInitial}"]`)
+	return cell
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 generateMap(40, 40)
 
-const cellaIniziale = getCellaInizialeSpawn(24, 26)
+const InitialCell = getinitalSpawnCell(24, 26)
 
-setPlayerPosition(cellaIniziale)
+setPlayerPosition(InitialCell)
