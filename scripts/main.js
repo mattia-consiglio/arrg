@@ -143,15 +143,29 @@ const popUpBaloon = function (cell) {
 		console.log(yDestinazione - currentPlayerY)
 		let durataAnimazione = 0.5 * calcolaDistanza(xDestinazione, yDestinazione)
 
-		player.animate([
+
+		let translAnimation = [
 			{ transform: `translate( ${yDestinazione - currentPlayerY}px, ${xDestinazione - currentPlayerX}px)` }
-		], {
+		]
+
+		let animOp = {
 			duration: durataAnimazione,
 			fill: 'forwards'
-		})
-		animazione.onfinish = function () {
-			player.style.animation = 'none';
-		};
+		}
+
+		let animOp2 = {
+			duration: 0,
+			fill: 'forwards'
+		}
+
+		let animationObj = playerShip.animate(translAnimation, animOp)
+		setTimeout(() => {
+			setPlayerPosition(cellaDestinazione)
+			let animationObj2 = playerShip.animate({ transform: `translate(0px,0px)` }, animOp2)
+
+		}, durataAnimazione);
+
+
 	}
 
 	const movimentoPossibile = function (x, y) {
@@ -165,11 +179,8 @@ const popUpBaloon = function (cell) {
 	const spostaPlayer = function (cella, x, y) {
 		balloon.remove()
 		if (movimentoPossibile(x, y)) {
-			animaSpostaShipPlayer(cella)
 
-			setTimeout(function () {
-				setPlayerPosition(cella)
-			}, 0.5 * calcolaDistanza(x, y) * 1050)
+			animaSpostaShipPlayer(cella)
 		}
 	}
 	if (document.getElementById('mouse-balloon')) {
@@ -355,6 +366,8 @@ document.addEventListener('keydown', e => {
 const setPlayerPosition = function (cell) {
 	let targetX = cell.getAttribute("data-row")
 	let targetY = cell.getAttribute("data-col")
+
+	playerShip.style.animation = "none"
 
 	if (!document.getElementById('player')) {
 		document.querySelector(`[data-row="${targetX}"][data-col="${targetY}"]`).appendChild(playerShip)
