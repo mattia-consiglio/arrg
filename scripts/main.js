@@ -133,7 +133,7 @@ const popUpBaloon = function (cell) {
 		return parseInt(Math.sqrt(Math.pow(x - playerX, 2) + Math.pow(y - playerY, 2)))
 	}
 
-	const animaSpostaShipPlayer = function (cellaDestinazione) {
+	const animateMouveShipPlayer = function (cellaDestinazione) {
 		const player = document.getElementById('player')
 		let currentPlayerX = playerShip.parentElement.offsetTop
 		let currentPlayerY = playerShip.parentElement.offsetLeft
@@ -180,7 +180,7 @@ const popUpBaloon = function (cell) {
 		balloon.remove()
 		if (movimentoPossibile(x, y)) {
 
-			animaSpostaShipPlayer(cella)
+			animateMouveShipPlayer(cella)
 		}
 	}
 	if (document.getElementById('mouse-balloon')) {
