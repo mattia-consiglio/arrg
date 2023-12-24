@@ -122,8 +122,7 @@ const popUpBaloon = function (cell) {
 	cella = cell
 	let i = cella.getAttribute(`data-row`)
 	let j = cella.getAttribute(`data-col`)
-	console.log(i)
-	console.log(j)
+
 	const removeBalloon = function () {
 		balloon.remove()
 	}
@@ -132,8 +131,29 @@ const popUpBaloon = function (cell) {
 		return parseInt(Math.sqrt(Math.pow(x - playerX, 2) + Math.pow(y - playerY, 2)))
 	}
 
-	const animaSpostaShipPlayer = function (x, y) {
-		let durataAnimazione = 0.5 * calcolaDistanza(x, y)
+	const animaSpostaShipPlayer = function (cellaDestinazione) {
+		const playerGraphic = document.getElementById('playerGraphic')
+		let currentPlayerX = playerShip.parentElement.offsetTop
+		let currentPlayerY = playerShip.parentElement.offsetLeft
+		let xDestinazione = cellaDestinazione.offsetTop
+		let yDestinazione = cellaDestinazione.offsetLeft
+		console.log(xDestinazione - currentPlayerX)
+		console.log(yDestinazione - currentPlayerY)
+		let durataAnimazione = 0.5 * calcolaDistanza(xDestinazione, yDestinazione)
+
+		playerGraphic.animate(
+			[
+				{
+					transform: `translate(${xDestinazione - currentPlayerX}px, ${
+						yDestinazione - currentPlayerY
+					}px)`,
+				},
+			],
+			{
+				duration: durataAnimazione,
+				fill: 'forwards',
+			}
+		)
 	}
 
 	const movimentoPossibile = function (x, y) {
@@ -147,10 +167,11 @@ const popUpBaloon = function (cell) {
 	const spostaPlayer = function (cella, x, y) {
 		balloon.remove()
 		if (movimentoPossibile(x, y)) {
-			//animaSpostaShipPlayer(x, y)
-			setPlayerPosition(cella)
+			animaSpostaShipPlayer(cella)
 
-			setTimeout(function () {}, 0.5 * calcolaDistanza(x, y))
+			setTimeout(function () {
+				setPlayerPosition(cella)
+			}, 0.5 * calcolaDistanza(x, y) * 1050)
 		}
 	}
 	if (document.getElementById('mouse-balloon')) {
@@ -359,7 +380,6 @@ const setPlayerPosition = function (cell) {
 
 const getCellaInizialeSpawn = function (xIniziale, yIniziale) {
 	let cella = document.querySelector(`div [data-row="${xIniziale}"][data-col="${yIniziale}"]`)
-	console.log(cella.getAttribute('data-row'))
 	return cella
 }
 
