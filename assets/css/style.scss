@@ -77,16 +77,19 @@ body {
 	height: 100px;
 	width: 100px;
 	position: absolute;
-	// border: 1px solid red;
 	transition: all 500ms;
 	z-index: 100;
+	border: 2px solid #dbf9c8;
+	top: -2px;
+	left: -2px;
+	background-color: rgb(84 184 20 / 25%);
 
 	img {
 		transform: translate(-26%, -50%);
 	}
 }
 
-.shore {
+.port {
 	width: 200px;
 	height: 200px;
 	position: absolute;
