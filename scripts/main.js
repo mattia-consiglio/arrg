@@ -8,8 +8,8 @@ let mouseX
 let mouseY
 
 //variabili per la playership
-let playerX = 24 //senza dati iniziali il metodo setPlayerPosition si rompe. Non corrispondono all'effettiva posizione iniziale, aggiornare nel caso si aggiorni la posizione iniziale
-let playerY = 26 //senza dati iniziali il metodo setPlayerPosition si rompe. Non corrispondono all'effettiva posizione iniziale, aggiornare nel caso si aggiorni la posizione iniziale
+let playerX
+let playerY
 let playerDirection = "giu" //senza questi dati il metodo setPlayerPosition si rompe. Non corrispondono all'effettiva posizione iniziale, aggiornare nel caso si aggiorni la posizione iniziale
 let playerGraphic = document.createElement("img")
 playerGraphic.id = "playerGraphic"
@@ -22,10 +22,12 @@ playerShip.style.position = "absolute"
 playerShip.style.transition = "top 0.5s, left 0.5s;"
 playerShip.style.border = "1px solid green"
 playerShip.appendChild(playerGraphic)
-let playerShipSpeed = 40
+let playerShipSpeed = 4
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
+document.addEventListener('mousemove', function (event) {
+	mouseX = event.clientX
+	mouseY = event.clientY
+})
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const aggiornaPlayerDirectionGraphic = function () {
@@ -118,42 +120,22 @@ const popUpSchermo = function (messaggio) {
 }
 
 const popUpBaloon = function (cell) {
-	const cella = document.createElement("div")
-	cella.innerHTML = cell
+	let cella = document.createElement("div")
+	cella = cell
 	let i = cella.getAttribute(`data-row`)
 	let j = cella.getAttribute(`data-col`)
-
+	console.log(i)
+	console.log(j)
 	const removeBalloon = function () {
 		balloon.remove()
 	}
 
 	const calcolaDistanza = function (x, y) {
-		console.log(Math.sqrt(Math.pow(x - playerX, 2) + Math.pow(y - playerY, 2)))
-		return Math.round(Math.sqrt(Math.pow(x - playerX, 2) + Math.pow(y - playerY, 2)))
+		return parseInt(Math.sqrt(Math.pow(x - playerX, 2) + Math.pow(y - playerY, 2)))
 	}
 
 	const animaSpostaShipPlayer = function (x, y) {
 		let durataAnimazione = 0.5 * calcolaDistanza(x, y)
-		let animazioneShipPlayer = `<style id="animazioneUsaeGetta">
-		@keyframes animazioneSpostaShipPlayer {
-			0%, 100% { 
-				transform: translate(0,0); 
-			}
-			99.99% {
-				transform: translate(${(playerX - x) * 100}px,${(playerY - y) * 100}px); 
-				}
-		}</style>`
-		console.log(animazioneShipPlayer)
-		let stileUsaeGetta = document.createElement('style');
-		stileUsaeGetta.innerHTML = ``
-		stileUsaeGetta.id = "stileusaegetta"
-		stileUsaeGetta.innerHTML = animazioneShipPlayer
-		document.head.appendChild(stileUsaeGetta)
-
-		playerGraphic.style.animation = ``;
-		console.log(playerGraphic.style.animation)
-		playerGraphic.style.animation = `animazioneSpostaShipPlayer ${durataAnimazione}s ease-in-out forwards`;
-		console.log(playerGraphic.style.animation)
 	}
 
 
@@ -168,7 +150,7 @@ const popUpBaloon = function (cell) {
 	const spostaPlayer = function (cella, x, y) {
 		balloon.remove()
 		if (movimentoPossibile(x, y)) {
-			animaSpostaShipPlayer(x, y)
+			//animaSpostaShipPlayer(x, y)
 			setPlayerPosition(cella)
 
 			setTimeout(function () {
@@ -200,7 +182,7 @@ const popUpBaloon = function (cell) {
 	headerBalloon.style.display = 'flex'
 	headerBalloon.style.justifyContent = 'space-between'
 	const pHeader = document.createElement('p')
-	pHeader.textContent = `[ info cellaX(${cella.getAttribute(`data-row`)})Y(${cella.getAttribute(`data-col`)}) ] --`
+	pHeader.textContent = `[ info cellaX(${i})Y(${j}) ] --`
 	headerBalloon.appendChild(pHeader)
 	headerBalloon.appendChild(xIcon)
 
@@ -212,7 +194,7 @@ const popUpBaloon = function (cell) {
 	const buttonMuoviti = document.createElement('p')
 	buttonMuoviti.innerText = '[VAI QUI]'
 	buttonMuoviti.onclick = function () {
-		spostaPlayer(i, j)
+		spostaPlayer(cella, i, j)
 	}
 	divFooter.appendChild(buttonMuoviti)
 
@@ -308,9 +290,6 @@ const muoveMap = direction => {
 	let x = matrix.m41
 	let y = matrix.m42
 
-	// Salva la trasformazione isometrica come stringa
-	const isometricTransform = 'rotateX(50deg) rotateZ(45deg)';
-
 	// Aggiornare x o y in base alla direzione
 	switch (direction) {
 		case 'up':
@@ -339,7 +318,7 @@ const muoveMap = direction => {
 	}
 
 	// Applicare il nuovo valore di traslazione
-	map.style.transform = `${isometricTransform}, translate(${x}px, ${y}px)`;
+	map.style.transform = `translate(${x}px, ${y}px)`
 }
 
 document.addEventListener('keydown', e => {
@@ -361,7 +340,8 @@ document.addEventListener('keydown', e => {
 const setPlayerPosition = function (cell) {
 	let targetX = cell.getAttribute("data-row")
 	let targetY = cell.getAttribute("data-col")
-	if (!playerX || !playerY) {
+
+	if (!document.getElementById('player')) {
 		document.querySelector(`[data-row="${targetX}"][data-col="${targetY}"]`).appendChild(playerShip)
 
 		document.getElementById('player').top = cellWidth
@@ -370,7 +350,7 @@ const setPlayerPosition = function (cell) {
 		playerX = targetX
 		playerY = targetY
 	} else {
-		//document.getElementById('player').remove()
+		document.getElementById('player').remove()
 		document.querySelector(`[data-row="${targetX}"][data-col="${targetY}"]`).appendChild(playerShip)
 
 		playerX = targetX
