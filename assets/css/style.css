@@ -87,6 +87,7 @@ body {
 #player img {
   -webkit-transform: translate(-26%, -50%);
           transform: translate(-26%, -50%);
+  pointer-events: none;
 }
 
 .port {

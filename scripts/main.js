@@ -1,5 +1,14 @@
-import { shipsTemplate, shipsArray } from './shipsModule.js'
-console.log(shipsTemplate)
+import {
+	shipsTemplate,
+	shipsArray,
+	morningRounds,
+	nightRounds,
+	dayRounds,
+	maxRoundsWithoutWater,
+	maxRoundsWithoutFood,
+	hpRapairOnPlaceRate,
+	shipMotionBaseTime,
+} from './shipsModule.js'
 
 const gameEl = document.getElementById('game')
 const ships = {}
@@ -299,9 +308,7 @@ const getMapRelativeGaps = () => {
 	}
 }
 
-const muoveMap = direction => {
-	console.log(direction)
-
+const mouveMap = direction => {
 	const gaps = getMapRelativeGaps()
 	const map = document.querySelector('.map')
 	const transform = window.getComputedStyle(map).transform
@@ -343,16 +350,16 @@ const muoveMap = direction => {
 
 document.addEventListener('keydown', e => {
 	if (e.key === 'ArrowUp') {
-		muoveMap('down')
+		mouveMap('down')
 	}
 	if (e.key === 'ArrowDown') {
-		muoveMap('up')
+		mouveMap('up')
 	}
 	if (e.key === 'ArrowLeft') {
-		muoveMap('right')
+		mouveMap('right')
 	}
 	if (e.key === 'ArrowRight') {
-		muoveMap('left')
+		mouveMap('left')
 	}
 })
 
@@ -385,7 +392,14 @@ const getinitalSpawnCell = function (xInitial, yInitial) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//inizilizza il gioco
+
 generateMap(40, 40)
+
+document.getElementById('up').onclick = () => mouveMap('down')
+document.getElementById('down').onclick = () => mouveMap('up')
+document.getElementById('left').onclick = () => mouveMap('right')
+document.getElementById('right').onclick = () => mouveMap('left')
 
 const InitialCell = getinitalSpawnCell(24, 26)
 
