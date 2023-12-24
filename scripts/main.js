@@ -13,6 +13,7 @@ let playerY
 let playerDirection = "giu" //senza questi dati il metodo setPlayerPosition si rompe. Non corrispondono all'effettiva posizione iniziale, aggiornare nel caso si aggiorni la posizione iniziale
 let playerGraphic = document.createElement("img")
 playerGraphic.id = "playerGraphic"
+playerGraphic.style.transform = "translate(-75px, -158px)";
 const playerShip = document.createElement("div")
 playerShip.style.height = "96px"
 playerShip.style.width = "96px"
@@ -20,7 +21,7 @@ playerShip.id = "player"
 playerShip.classList.add("barca")
 playerShip.style.position = "absolute"
 playerShip.style.transition = "top 0.5s, left 0.5s;"
-playerShip.style.border = "1px solid green"
+playerShip.style.border = "10px solid green"
 playerShip.appendChild(playerGraphic)
 let playerShipSpeed = 4
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,20 +36,20 @@ const aggiornaPlayerDirectionGraphic = function () {
 	switch (playerDirection) {
 		case "destra":
 			playerGraphic.src = "../assets/sprites/Right_playership.png"
-			playerGraphic.style.transform = "translate(-28%, -50%)";
+			playerGraphic.style.transform = "translate()";
 
 			break;
 		case "sinistra":
 			playerGraphic.src = "../assets/sprites/Left_playership.png"
-			playerGraphic.style.transform = "translate(-31%, -50%)";
+			playerGraphic.style.transform = "translate()";
 			break;
 		case "su":
 			playerGraphic.src = "../assets/sprites/Up_playership.png"
-			playerGraphic.style.transform = "translate(-30%, -61%)";
+			playerGraphic.style.transform = "translate()";
 			break;
 		case "giu":
 			playerGraphic.src = "../assets/sprites/Down_playership.png"
-			playerGraphic.style.transform = "translate(-30%, -61%)";
+			playerGraphic.style.transform = "translate()";
 			break;
 		default:
 			console.log("Errore ridirezionamento")
@@ -134,7 +135,7 @@ const popUpBaloon = function (cell) {
 	}
 
 	const animaSpostaShipPlayer = function (cellaDestinazione) {
-		const playerGraphic = document.getElementById('playerGraphic')
+		const player = document.getElementById('player')
 		let currentPlayerX = playerShip.parentElement.offsetTop
 		let currentPlayerY = playerShip.parentElement.offsetLeft
 		let xDestinazione = cellaDestinazione.offsetTop
@@ -143,12 +144,15 @@ const popUpBaloon = function (cell) {
 		console.log(yDestinazione - currentPlayerY)
 		let durataAnimazione = 0.5 * calcolaDistanza(xDestinazione, yDestinazione)
 
-		playerGraphic.animate([
-			{ transform: `translate(${xDestinazione - currentPlayerX}px, ${yDestinazione - currentPlayerY}px)` }
+		player.animate([
+			{ transform: `translate( ${yDestinazione - currentPlayerY}px, ${xDestinazione - currentPlayerX}px)` }
 		], {
 			duration: durataAnimazione,
 			fill: 'forwards'
 		})
+		animazione.onfinish = function () {
+			player.style.animation = 'none';
+		};
 	}
 
 	const movimentoPossibile = function (x, y) {

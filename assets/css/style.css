@@ -73,10 +73,6 @@ body {
   transition: all 500ms;
   z-index: 100;
 }
-#player img {
-  transform: translate(-26%, -50%);
-}
-
 .shore {
   width: 200px;
   height: 200px;
