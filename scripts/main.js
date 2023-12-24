@@ -24,10 +24,8 @@ playerShip.style.border = "1px solid green"
 playerShip.appendChild(playerGraphic)
 let playerShipSpeed = 40
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-document.addEventListener('mousemove', function (event) {
-	mouseX = event.clientX
-	mouseY = event.clientY
-})
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const aggiornaPlayerDirectionGraphic = function () {
@@ -310,6 +308,9 @@ const muoveMap = direction => {
 	let x = matrix.m41
 	let y = matrix.m42
 
+	// Salva la trasformazione isometrica come stringa
+	const isometricTransform = 'rotateX(50deg) rotateZ(45deg)';
+
 	// Aggiornare x o y in base alla direzione
 	switch (direction) {
 		case 'up':
@@ -338,7 +339,7 @@ const muoveMap = direction => {
 	}
 
 	// Applicare il nuovo valore di traslazione
-	map.style.transform = `translate(${x}px, ${y}px)`
+	map.style.transform = `${isometricTransform}, translate(${x}px, ${y}px)`;
 }
 
 document.addEventListener('keydown', e => {
@@ -369,7 +370,7 @@ const setPlayerPosition = function (cell) {
 		playerX = targetX
 		playerY = targetY
 	} else {
-		document.getElementById('player').remove()
+		//document.getElementById('player').remove()
 		document.querySelector(`[data-row="${targetX}"][data-col="${targetY}"]`).appendChild(playerShip)
 
 		playerX = targetX
@@ -378,8 +379,9 @@ const setPlayerPosition = function (cell) {
 }
 
 const getCellaInizialeSpawn = function (xIniziale, yIniziale) {
-	console.log(document.querySelector(`.game .map .row[data-row="${xIniziale}"] [data-col="${yIniziale}"]`))
-	return document.querySelector(`.game .map .row[data-row="${xIniziale}"] [data-col="${yIniziale}"]`)
+	let cella = document.querySelector(`div [data-row="${xIniziale}"][data-col="${yIniziale}"]`)
+	console.log(cella.getAttribute("data-row"))
+	return cella
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
