@@ -265,7 +265,7 @@ const popUpBaloon = function (cell) {
 
 const spownPort = (cell, orientation) => {
 	const port = document.createElement('div')
-	port.classList.add('port')
+	port.classList.add('Porto')
 	port.classList.add(orientation)
 	port.innerHTML = `<img src="../assets/sprites/shore.png" alt="shore">`
 	cell.appendChild(port)
@@ -276,6 +276,7 @@ const generateMap = (rows, cols) => {
 	map.classList.add('map')
 	const halfWidth = Math.floor(cols / 2) - 1
 	const halfHeight = Math.floor(cols / 2) - 1
+	let portoNemicoCasuale
 	for (let i = 0; i < rows; i++) {
 		const row = document.createElement('div')
 		row.classList.add('row')
@@ -287,16 +288,16 @@ const generateMap = (rows, cols) => {
 			cell.setAttribute('data-col', j)
 
 			if (i === 0 && j === halfWidth) {
-				spownPort(cell, 'north')
+				spownPort(cell, 'nord')
 			}
 			if (i === rows - 1 && j === halfWidth) {
-				spownPort(cell, 'south')
+				spownPort(cell, 'sud')
 			}
 			if (j === 0 && i === halfHeight) {
-				spownPort(cell, 'west')
+				spownPort(cell, 'ovest')
 			}
 			if (j === cols - 1 && i === halfHeight) {
-				spownPort(cell, 'east')
+				spownPort(cell, 'est')
 			}
 
 			// Aggiungi un listener di eventi con una funzione chiusura

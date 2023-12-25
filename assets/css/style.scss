@@ -88,26 +88,30 @@ body {
 	img {}
 }
 
-.port {
+.Porto {
 	width: 200px;
 	height: 200px;
 	position: absolute;
 	z-index: 100;
 
-	&.west {
+	&.ovest {
 		transform: rotate(90deg);
 	}
 
-	&.east {
+	&.est {
 		transform: translateX(-100px) rotate(-90deg);
 	}
 
-	&.north {
+	&.nord {
 		transform: rotate(180deg);
 	}
 
-	&.south {
+	&.sud {
 		transform: translateY(-100px);
+	}
+
+	&.attracco {
+		background-color: #b86666;
 	}
 
 	img {
