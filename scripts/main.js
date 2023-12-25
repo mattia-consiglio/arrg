@@ -13,14 +13,14 @@ let mouseY
 //variabili per la playership
 let playerX
 let playerY
-let playerDirection = 'giu' //senza questi dati il metodo setPlayerPosition si rompe. Non corrispondono all'effettiva posizione iniziale, aggiornare nel caso si aggiorni la posizione iniziale
+let playerDirection = 'sinistra' //senza questi dati il metodo setPlayerPosition si rompe. Non corrispondono all'effettiva posizione iniziale, aggiornare nel caso si aggiorni la posizione iniziale
 let playerGraphic = document.createElement('img')
 playerGraphic.id = 'playerGraphic'
 const playerShip = document.createElement('div')
 playerShip.id = 'player'
 playerShip.classList.add('barca')
 playerShip.appendChild(playerGraphic)
-let playerShipSpeed = 4
+let playerShipSpeed = 3
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 document.addEventListener('mousemove', function (event) {
 	mouseX = event.clientX
@@ -28,25 +28,25 @@ document.addEventListener('mousemove', function (event) {
 })
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const updatePlayerDirectionGraphic = function () {
-	playerShip.innerHTML = ``
-	switch (playerDirection) {
+const updatePlayerDirectionGraphic = function (direzione) {
+	console.log("Prova")
+	switch (direzione) {
 		case "destra":
 			playerGraphic.src = "../assets/sprites/Right_playership.png"
-			playerGraphic.style.transform = "translate()";
+			playerGraphic.style.transform = "translate(-62px, -130px)";
 
 			break;
 		case "sinistra":
 			playerGraphic.src = "../assets/sprites/Left_playership.png"
-			playerGraphic.style.transform = "translate()";
+			playerGraphic.style.transform = "translate(-70px, -130px)";
 			break;
 		case "su":
 			playerGraphic.src = "../assets/sprites/Up_playership.png"
-			playerGraphic.style.transform = "translate()";
+			playerGraphic.style.transform = "translate(-66px, -150px)";
 			break;
 		case "giu":
 			playerGraphic.src = "../assets/sprites/Down_playership.png"
-			playerGraphic.style.transform = "translate(-75px, -158px)"
+			playerGraphic.style.transform = "translate(-65px, -150px)"
 			break;
 		default:
 			console.log('Errore ridirezionamento')
@@ -54,8 +54,8 @@ const updatePlayerDirectionGraphic = function () {
 	}
 	playerShip.appendChild(playerGraphic)
 }
+updatePlayerDirectionGraphic(playerDirection)
 
-updatePlayerDirectionGraphic()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Metodo per ottenere le caselle visibili a schermo. Solo gli
@@ -131,7 +131,7 @@ const popUpBaloon = function (cell) {
 		return parseInt(Math.sqrt(Math.pow(x - playerX, 2) + Math.pow(y - playerY, 2)))
 	}
 
-	const animateMouveShipPlayer = function (cellaDestinazione) {
+	const animateMouveShipPlayer = function (destinationCell) {
 		const player = document.getElementById('player')
 		let currentPlayerX = playerShip.parentElement.offsetTop
 		let currentPlayerY = playerShip.parentElement.offsetLeft
@@ -141,6 +141,21 @@ const popUpBaloon = function (cell) {
 		console.log(yDestinazione - currentPlayerY)
 		let durataAnimazione = 0.5 * calculateDistance(xDestinazione, yDestinazione)
 
+		if (Math.abs(xDestinazione - currentPlayerX) > Math.abs(yDestinazione - currentPlayerY)) {
+			if (xDestinazione - currentPlayerX > 0) {
+				playerDirection = "giu"
+			}
+			if (xDestinazione - currentPlayerX < 0) {
+				playerDirection = "su"
+			}
+		} else {
+			if (yDestinazione - currentPlayerY > 0) {
+				playerDirection = "destra"
+			} else {
+				playerDirection = "sinistra"
+			}
+		}
+		updatePlayerDirectionGraphic(playerDirection)
 
 		let translAnimation = [
 			{ transform: `translate( ${yDestinazione - currentPlayerY}px, ${xDestinazione - currentPlayerX}px)` }
@@ -158,7 +173,7 @@ const popUpBaloon = function (cell) {
 
 		let animationObj = playerShip.animate(translAnimation, animOp)
 		setTimeout(() => {
-			setPlayerPosition(cellaDestinazione)
+			setPlayerPosition(destinationCell)
 			let animationObj2 = playerShip.animate({ transform: `translate(0px,0px)` }, animOp2)
 
 		}, durataAnimazione);
@@ -176,7 +191,7 @@ const popUpBaloon = function (cell) {
 
 	const mouvePlayer = function (cell, x, y) {
 		balloon.remove()
-		if (movimentoPossibile(x, y)) {
+		if (mouvementPossible(x, y)) {
 
 			animateMouveShipPlayer(cella)
 		}
@@ -385,6 +400,7 @@ const setPlayerPosition = function (cell) {
 		playerX = targetX
 		playerY = targetY
 	}
+
 }
 
 const getinitalSpawnCell = function (xInitial, yInitial) {
