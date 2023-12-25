@@ -1,5 +1,4 @@
 import { shipsTemplate, shipsArray } from './shipsModule.js'
-console.log(shipsTemplate)
 
 const gameEl = document.getElementById('game')
 const ships = {}
@@ -29,7 +28,6 @@ document.addEventListener('mousemove', function (event) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const updatePlayerDirectionGraphic = function (direzione) {
-	console.log("Prova")
 	switch (direzione) {
 		case "destra":
 			playerGraphic.src = "../assets/sprites/Right_playership.png"
@@ -131,14 +129,24 @@ const popUpBaloon = function (cell) {
 		return parseInt(Math.sqrt(Math.pow(x - playerX, 2) + Math.pow(y - playerY, 2)))
 	}
 
+	const defineCellType = function (analyzedCell) {
+		const contenutoCella = analyzedCell.children
+		let classeContenutoCella
+		if (contenutoCella.length > 0) {
+			classeContenutoCella = contenutoCella[0].className
+			return classeContenutoCella
+		} else {
+			return "Acqua"
+
+		}
+	}
+
 	const animateMouveShipPlayer = function (destinationCell) {
 		const player = document.getElementById('player')
 		let currentPlayerX = playerShip.parentElement.offsetTop
 		let currentPlayerY = playerShip.parentElement.offsetLeft
 		let xDestinazione = destinationCell.offsetTop
 		let yDestinazione = destinationCell.offsetLeft
-		console.log(xDestinazione - currentPlayerX)
-		console.log(yDestinazione - currentPlayerY)
 		let durataAnimazione = 0.5 * calculateDistance(xDestinazione, yDestinazione)
 
 		if (Math.abs(xDestinazione - currentPlayerX) > Math.abs(yDestinazione - currentPlayerY)) {
@@ -182,9 +190,12 @@ const popUpBaloon = function (cell) {
 	}
 
 	const mouvementPossible = function (x, y) {
-		if (playerShipSpeed >= calculateDistance(x, y)) {
+		if (playerShipSpeed >= calculateDistance(x, y) && defineCellType(document.querySelector(`div [data-row="${x}"][data-col="${y}"]`)) === "Acqua") {
+			console.log(defineCellType(document.querySelector(`div [data-row="${x}"][data-col="${y}"]`)))
 			return true
 		} else {
+			console.log(defineCellType(document.querySelector(`div [data-row="${x}"][data-col="${y}"]`)))
+
 			return false
 		}
 	}
@@ -230,7 +241,7 @@ const popUpBaloon = function (cell) {
 	pMidBalloon.innerText = `Distanza casella: [${calculateDistance(
 		i,
 		j
-	)}]\nTipo: [Acqua] \n Movimento possibile [${mouvementPossible(i, j)}]\n`
+	)}]\nContenuto: [${defineCellType(cell)}] \n Movimento possibile [${mouvementPossible(i, j)}]\n`
 
 	const divFooter = document.createElement('div')
 	const buttonMuoviti = document.createElement('p')
@@ -322,7 +333,6 @@ const getMapRelativeGaps = () => {
 }
 
 const muoveMap = direction => {
-	console.log(direction)
 
 	const gaps = getMapRelativeGaps()
 	const map = document.querySelector('.map')
