@@ -5,7 +5,7 @@
 }
 
 body {
-  background-color: #1e1e1e;
+  background-color: #002d5a;
 }
 
 #game {
@@ -72,7 +72,7 @@ body {
   fill: #fff;
 }
 
-#player {
+.ship {
   height: 100px;
   width: 100px;
   position: absolute;
@@ -85,7 +85,7 @@ body {
   background-color: rgba(84, 184, 20, 0.25);
   pointer-events: none;
 }
-#player img {
+.ship .shipImg {
   -webkit-transform: translate(-26%, -50%);
           transform: translate(-26%, -50%);
   pointer-events: none;
@@ -149,4 +149,28 @@ body {
 #playerStats .stat span {
   font-size: 2rem;
   font-weight: 800;
+}
+
+#mouse-balloon {
+  position: fixed;
+  padding: 20px;
+  background-color: #000;
+  color: #fff;
+  border: 3px solid red;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  max-width: 280px;
+}
+#mouse-balloon .balloon-header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }/*# sourceMappingURL=style.css.map */
