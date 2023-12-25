@@ -173,4 +173,29 @@ body {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
+}
+
+.hpBar {
+  width: 200px;
+  height: 15px;
+  background-color: #c0c8d0;
+  position: relative;
+  left: 50%;
+  -webkit-transform: translate(-50%, -395px);
+          transform: translate(-50%, -395px);
+}
+.hpBar::before {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: var(--hp);
+}
+.hpBar.green::before {
+  background-color: #48e217;
+}
+.hpBar.yellow::before {
+  background-color: #e2c917;
+}
+.hpBar.red::before {
+  background-color: #e21717;
 }/*# sourceMappingURL=style.css.map */

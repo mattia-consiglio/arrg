@@ -3,6 +3,7 @@ import { shipsTemplate, templateResources } from './shipsModule.js'
 export class Ship {
 	static DOMShipWrap
 	static DOMShipImg
+	static hpBar
 	id
 	type
 	level
@@ -22,7 +23,7 @@ export class Ship {
 	static sprites
 	posX
 	posY
-	direction = 'right'
+	direction = 'left'
 
 	constructor({ type, level = 1, id = 0, ports = [] }) {
 		if (type !== 'player' && type !== 'bot') return console.log('Wrong Ship type')
@@ -65,10 +66,30 @@ export class Ship {
 		this.DOMShipImg.classList.add('shipImg')
 		this.DOMShipWrap.appendChild(this.DOMShipImg)
 		const cell = this.getinitalSpawnCell(ports)
-		console.log(cell)
 
 		this.setShipPosition(cell)
 		this.updateShipImageDirection()
+
+		this.hpBar = document.createElement('div')
+		this.hpBar.classList.add('hpBar')
+		this.DOMShipWrap.appendChild(this.hpBar)
+		this.updateHpBar()
+	}
+
+	updateHpBar() {
+		const perc = (this.hp / this.maxHp) * 100
+		console.log
+		this.hpBar.classList.remove('green')
+		this.hpBar.classList.remove('yellow')
+		this.hpBar.classList.remove('red')
+		if (perc > 50) {
+			this.hpBar.classList.add('green')
+		} else if (perc > 20) {
+			this.hpBar.classList.add('yellow')
+		} else {
+			this.hpBar.classList.add('red')
+		}
+		this.hpBar.style.setProperty('--hp', perc + '%')
 	}
 
 	/**
@@ -82,7 +103,6 @@ export class Ship {
 	}
 
 	setShipPosition(cell) {
-		console.log(cell)
 		const targetX = cell.getAttribute('data-row')
 		const targetY = cell.getAttribute('data-col')
 
@@ -196,6 +216,5 @@ export class Ship {
 				console.log('Errore: direzione non valida')
 				break
 		}
-		this.DOMShipWrap.appendChild(this.DOMShipImg)
 	}
 }

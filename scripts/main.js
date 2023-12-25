@@ -11,8 +11,6 @@ import {
 } from './shipsModule.js'
 import { Ship } from './ShipClass.js'
 
-console.log(Ship)
-
 const gameEl = document.getElementById('game')
 // la larghezza di una cella
 export const cellWidth = 100
@@ -21,10 +19,6 @@ export const cellWidth = 100
 let mouseX
 let mouseY
 
-//variabili per la playership
-let playerX
-let playerY
-let playerDirection = 'sinistra' //senza questi dati il metodo setPlayerPosition si rompe. Non corrispondono all'effettiva posizione iniziale, aggiornare nel caso si aggiorni la posizione iniziale
 let playerGraphic = document.createElement('img')
 playerGraphic.id = 'playerGraphic'
 const playerShip = document.createElement('div')
@@ -40,34 +34,6 @@ document.addEventListener('mousemove', function (event) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const ports = []
-
-const updatePlayerDirectionGraphic = function (direzione) {
-	console.log('Prova')
-	switch (direzione) {
-		case 'destra':
-			playerGraphic.src = '../assets/sprites/Right_playership.png'
-			playerGraphic.style.transform = 'translate(-62px, -130px)'
-
-			break
-		case 'sinistra':
-			playerGraphic.src = '../assets/sprites/Left_playership.png'
-			playerGraphic.style.transform = 'translate(-70px, -130px)'
-			break
-		case 'su':
-			playerGraphic.src = '../assets/sprites/Up_playership.png'
-			playerGraphic.style.transform = 'translate(-66px, -150px)'
-			break
-		case 'giu':
-			playerGraphic.src = '../assets/sprites/Down_playership.png'
-			playerGraphic.style.transform = 'translate(-65px, -150px)'
-			break
-		default:
-			console.log('Errore ridirezionamento')
-			break
-	}
-	playerShip.appendChild(playerGraphic)
-}
-updatePlayerDirectionGraphic(playerDirection)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Metodo per ottenere le caselle visibili a schermo. Solo gli
@@ -237,8 +203,6 @@ const generateMap = (rows, cols) => {
 		map.appendChild(row)
 	}
 	gameEl.appendChild(map)
-
-	console.log('Mappa generata')
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
