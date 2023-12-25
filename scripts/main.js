@@ -22,14 +22,14 @@ let mouseY
 //variabili per la playership
 let playerX
 let playerY
-let playerDirection = 'giu' //senza questi dati il metodo setPlayerPosition si rompe. Non corrispondono all'effettiva posizione iniziale, aggiornare nel caso si aggiorni la posizione iniziale
+let playerDirection = 'sinistra' //senza questi dati il metodo setPlayerPosition si rompe. Non corrispondono all'effettiva posizione iniziale, aggiornare nel caso si aggiorni la posizione iniziale
 let playerGraphic = document.createElement('img')
 playerGraphic.id = 'playerGraphic'
 const playerShip = document.createElement('div')
 playerShip.id = 'player'
 playerShip.classList.add('barca')
 playerShip.appendChild(playerGraphic)
-let playerShipSpeed = 4
+let playerShipSpeed = 3
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 document.addEventListener('mousemove', function (event) {
 	mouseX = event.clientX
@@ -37,34 +37,34 @@ document.addEventListener('mousemove', function (event) {
 })
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const updatePlayerDirectionGraphic = function () {
-	playerShip.innerHTML = ``
-	switch (playerDirection) {
-		case 'destra':
-			playerGraphic.src = '../assets/sprites/Right_playership.png'
-			playerGraphic.style.transform = 'translate(-28%, -50%)'
+const updatePlayerDirectionGraphic = function (direzione) {
+	console.log("Prova")
+	switch (direzione) {
+		case "destra":
+			playerGraphic.src = "../assets/sprites/Right_playership.png"
+			playerGraphic.style.transform = "translate(-62px, -130px)";
 
-			break
-		case 'sinistra':
-			playerGraphic.src = '../assets/sprites/Left_playership.png'
-			playerGraphic.style.transform = 'translate(-31%, -50%)'
-			break
-		case 'su':
-			playerGraphic.src = '../assets/sprites/Up_playership.png'
-			playerGraphic.style.transform = 'translate(-30%, -61%)'
-			break
-		case 'giu':
-			playerGraphic.src = '../assets/sprites/Down_playership.png'
-			playerGraphic.style.transform = 'translate(-30%, -61%)'
-			break
+			break;
+		case "sinistra":
+			playerGraphic.src = "../assets/sprites/Left_playership.png"
+			playerGraphic.style.transform = "translate(-70px, -130px)";
+			break;
+		case "su":
+			playerGraphic.src = "../assets/sprites/Up_playership.png"
+			playerGraphic.style.transform = "translate(-66px, -150px)";
+			break;
+		case "giu":
+			playerGraphic.src = "../assets/sprites/Down_playership.png"
+			playerGraphic.style.transform = "translate(-65px, -150px)"
+			break;
 		default:
 			console.log('Errore ridirezionamento')
 			break
 	}
 	playerShip.appendChild(playerGraphic)
 }
+updatePlayerDirectionGraphic(playerDirection)
 
-updatePlayerDirectionGraphic()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Metodo per ottenere le caselle visibili a schermo. Solo gli
@@ -141,7 +141,7 @@ const popUpBaloon = function (cell) {
 	}
 
 	const animateMouveShipPlayer = function (destinationCell) {
-		const playerGraphic = document.getElementById('playerGraphic')
+		const player = document.getElementById('player')
 		let currentPlayerX = playerShip.parentElement.offsetTop
 		let currentPlayerY = playerShip.parentElement.offsetLeft
 		let xDestinazione = destinationCell.offsetTop
@@ -150,19 +150,44 @@ const popUpBaloon = function (cell) {
 		console.log(yDestinazione - currentPlayerY)
 		let durataAnimazione = 0.5 * calculateDistance(xDestinazione, yDestinazione)
 
-		playerGraphic.animate(
-			[
-				{
-					transform: `translate(${xDestinazione - currentPlayerX}px, ${
-						yDestinazione - currentPlayerY
-					}px)`,
-				},
-			],
-			{
-				duration: durataAnimazione,
-				fill: 'forwards',
+		if (Math.abs(xDestinazione - currentPlayerX) > Math.abs(yDestinazione - currentPlayerY)) {
+			if (xDestinazione - currentPlayerX > 0) {
+				playerDirection = "giu"
 			}
-		)
+			if (xDestinazione - currentPlayerX < 0) {
+				playerDirection = "su"
+			}
+		} else {
+			if (yDestinazione - currentPlayerY > 0) {
+				playerDirection = "destra"
+			} else {
+				playerDirection = "sinistra"
+			}
+		}
+		updatePlayerDirectionGraphic(playerDirection)
+
+		let translAnimation = [
+			{ transform: `translate( ${yDestinazione - currentPlayerY}px, ${xDestinazione - currentPlayerX}px)` }
+		]
+
+		let animOp = {
+			duration: durataAnimazione,
+			fill: 'forwards'
+		}
+
+		let animOp2 = {
+			duration: 0,
+			fill: 'forwards'
+		}
+
+		let animationObj = playerShip.animate(translAnimation, animOp)
+		setTimeout(() => {
+			setPlayerPosition(destinationCell)
+			let animationObj2 = playerShip.animate({ transform: `translate(0px,0px)` }, animOp2)
+
+		}, durataAnimazione);
+
+
 	}
 
 	const mouvementPossible = function (x, y) {
@@ -176,11 +201,8 @@ const popUpBaloon = function (cell) {
 	const mouvePlayer = function (cell, x, y) {
 		balloon.remove()
 		if (mouvementPossible(x, y)) {
-			animateMouveShipPlayer(cell)
 
-			setTimeout(function () {
-				setPlayerPosition(cell)
-			}, 0.5 * calculateDistance(x, y) * 1050)
+			animateMouveShipPlayer(cella)
 		}
 	}
 	if (document.getElementById('mouse-balloon')) {
@@ -368,6 +390,8 @@ const setPlayerPosition = function (cell) {
 	let targetX = cell.getAttribute('data-row')
 	let targetY = cell.getAttribute('data-col')
 
+	playerShip.style.animation = "none"
+
 	if (!document.getElementById('player')) {
 		document.querySelector(`[data-row="${targetX}"][data-col="${targetY}"]`).appendChild(playerShip)
 
@@ -383,6 +407,7 @@ const setPlayerPosition = function (cell) {
 		playerX = targetX
 		playerY = targetY
 	}
+
 }
 
 const getinitalSpawnCell = function (xInitial, yInitial) {
