@@ -1,6 +1,7 @@
 * {
   margin: 0;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 body {
@@ -14,6 +15,8 @@ body {
 }
 
 .row {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
 }
 
@@ -23,6 +26,7 @@ body {
   min-width: 100px;
   min-height: 100px;
   border-collapse: collapse;
+  -webkit-transition: 200ms;
   transition: 200ms;
   position: relative;
 }
@@ -32,7 +36,9 @@ body {
 
 .map {
   position: absolute;
-  transform: translate(-2050px, -2050px);
+  -webkit-transform: translate(-2050px, -2050px);
+          transform: translate(-2050px, -2050px);
+  -webkit-transition: 200ms;
   transition: 200ms;
 }
 
@@ -70,6 +76,7 @@ body {
   height: 100px;
   width: 100px;
   position: absolute;
+  -webkit-transition: all 500ms;
   transition: all 500ms;
   z-index: 100;
   border: 2px solid #dbf9c8;
@@ -78,28 +85,68 @@ body {
   background-color: rgba(84, 184, 20, 0.25);
   pointer-events: none;
 }
-.Porto {
+#player img {
+  -webkit-transform: translate(-26%, -50%);
+          transform: translate(-26%, -50%);
+  pointer-events: none;
+}
+
+.port {
   width: 200px;
   height: 200px;
   position: absolute;
   z-index: 100;
 }
-.Porto.ovest {
-  transform: rotate(90deg);
+.port.west {
+  -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
 }
-.Porto.est {
-  transform: translateX(-100px) rotate(-90deg);
+.port.east {
+  -webkit-transform: translateX(-100px) rotate(-90deg);
+          transform: translateX(-100px) rotate(-90deg);
 }
-.Porto.nord {
-  transform: rotate(180deg);
+.port.north {
+  -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
 }
-.Porto.sud {
-  transform: translateY(-100px);
+.port.south {
+  -webkit-transform: translateY(-100px);
+          transform: translateY(-100px);
 }
-.Porto.attracco {
-  background-color: #b86666;
-}
-.Porto img {
+.port img {
   width: 100%;
   height: 100%;
+}
+
+#playerStats {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  position: fixed;
+  z-index: 900;
+  padding: 20px;
+  background-image: url("../sprites/Repeatable_wooden_plank.png");
+  gap: 10px;
+  border-radius: 10px;
+  top: 10px;
+  left: 10px;
+}
+#playerStats .stat {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 5px;
+  border-radius: 10px;
+}
+#playerStats .stat img {
+  width: 30px;
+  height: 30px;
+}
+#playerStats .stat span {
+  font-size: 2rem;
+  font-weight: 800;
 }/*# sourceMappingURL=style.css.map */

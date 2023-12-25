@@ -1,4 +1,14 @@
-import { shipsTemplate, shipsArray } from './shipsModule.js'
+import {
+	shipsTemplate,
+	shipsArray,
+	morningRounds,
+	nightRounds,
+	dayRounds,
+	maxRoundsWithoutWater,
+	maxRoundsWithoutFood,
+	hpRapairOnPlaceRate,
+	shipMotionBaseTime,
+} from './shipsModule.js'
 
 const gameEl = document.getElementById('game')
 const ships = {}
@@ -29,23 +39,23 @@ document.addEventListener('mousemove', function (event) {
 
 const updatePlayerDirectionGraphic = function (direzione) {
 	switch (direzione) {
-		case "destra":
-			playerGraphic.src = "../assets/sprites/Right_playership.png"
-			playerGraphic.style.transform = "translate(-62px, -130px)";
+		case 'destra':
+			playerGraphic.src = '../assets/sprites/Right_playership.png'
+			playerGraphic.style.transform = 'translate(-62px, -130px)'
 
-			break;
-		case "sinistra":
-			playerGraphic.src = "../assets/sprites/Left_playership.png"
-			playerGraphic.style.transform = "translate(-70px, -130px)";
-			break;
-		case "su":
-			playerGraphic.src = "../assets/sprites/Up_playership.png"
-			playerGraphic.style.transform = "translate(-66px, -150px)";
-			break;
-		case "giu":
-			playerGraphic.src = "../assets/sprites/Down_playership.png"
-			playerGraphic.style.transform = "translate(-65px, -150px)"
-			break;
+			break
+		case 'sinistra':
+			playerGraphic.src = '../assets/sprites/Left_playership.png'
+			playerGraphic.style.transform = 'translate(-70px, -130px)'
+			break
+		case 'su':
+			playerGraphic.src = '../assets/sprites/Up_playership.png'
+			playerGraphic.style.transform = 'translate(-66px, -150px)'
+			break
+		case 'giu':
+			playerGraphic.src = '../assets/sprites/Down_playership.png'
+			playerGraphic.style.transform = 'translate(-65px, -150px)'
+			break
 		default:
 			console.log('Errore ridirezionamento')
 			break
@@ -53,7 +63,6 @@ const updatePlayerDirectionGraphic = function (direzione) {
 	playerShip.appendChild(playerGraphic)
 }
 updatePlayerDirectionGraphic(playerDirection)
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Metodo per ottenere le caselle visibili a schermo. Solo gli
@@ -151,42 +160,42 @@ const popUpBaloon = function (cell) {
 
 		if (Math.abs(xDestinazione - currentPlayerX) > Math.abs(yDestinazione - currentPlayerY)) {
 			if (xDestinazione - currentPlayerX > 0) {
-				playerDirection = "giu"
+				playerDirection = 'giu'
 			}
 			if (xDestinazione - currentPlayerX < 0) {
-				playerDirection = "su"
+				playerDirection = 'su'
 			}
 		} else {
 			if (yDestinazione - currentPlayerY > 0) {
-				playerDirection = "destra"
+				playerDirection = 'destra'
 			} else {
-				playerDirection = "sinistra"
+				playerDirection = 'sinistra'
 			}
 		}
 		updatePlayerDirectionGraphic(playerDirection)
 
 		let translAnimation = [
-			{ transform: `translate( ${yDestinazione - currentPlayerY}px, ${xDestinazione - currentPlayerX}px)` }
+			{
+				transform: `translate( ${yDestinazione - currentPlayerY}px, ${xDestinazione - currentPlayerX
+					}px)`,
+			},
 		]
 
 		let animOp = {
 			duration: durataAnimazione,
-			fill: 'forwards'
+			fill: 'forwards',
 		}
 
 		let animOp2 = {
 			duration: 0,
-			fill: 'forwards'
+			fill: 'forwards',
 		}
 
 		let animationObj = playerShip.animate(translAnimation, animOp)
 		setTimeout(() => {
 			setPlayerPosition(destinationCell)
 			let animationObj2 = playerShip.animate({ transform: `translate(0px,0px)` }, animOp2)
-
-		}, durataAnimazione);
-
-
+		}, durataAnimazione)
 	}
 
 	const mouvementPossible = function (x, y) {
@@ -203,7 +212,6 @@ const popUpBaloon = function (cell) {
 	const mouvePlayer = function (cell, x, y) {
 		balloon.remove()
 		if (mouvementPossible(x, y)) {
-
 			animateMouveShipPlayer(cella)
 		}
 	}
@@ -219,7 +227,7 @@ const popUpBaloon = function (cell) {
 	balloon.style.top = `${mouseY - 60}px`
 	balloon.style.padding = `20px`
 	balloon.style.backgroundColor = 'black'
-	balloon.style.color = 'White'
+	balloon.style.color = 'white'
 	balloon.style.borderColor = 'red'
 	balloon.style.border = '3px'
 	balloon.style.display = 'flex'
@@ -263,7 +271,7 @@ const popUpBaloon = function (cell) {
 	}, 30000)
 }
 
-const spownPort = (cell, orientation) => {
+const spawnPort = (cell, orientation) => {
 	const port = document.createElement('div')
 	port.classList.add('Porto')
 	port.classList.add(orientation)
@@ -333,8 +341,7 @@ const getMapRelativeGaps = () => {
 	}
 }
 
-const muoveMap = direction => {
-
+const mouveMap = direction => {
 	const gaps = getMapRelativeGaps()
 	const map = document.querySelector('.map')
 	const transform = window.getComputedStyle(map).transform
@@ -376,16 +383,16 @@ const muoveMap = direction => {
 
 document.addEventListener('keydown', e => {
 	if (e.key === 'ArrowUp') {
-		muoveMap('down')
+		mouveMap('down')
 	}
 	if (e.key === 'ArrowDown') {
-		muoveMap('up')
+		mouveMap('up')
 	}
 	if (e.key === 'ArrowLeft') {
-		muoveMap('right')
+		mouveMap('right')
 	}
 	if (e.key === 'ArrowRight') {
-		muoveMap('left')
+		mouveMap('left')
 	}
 })
 
@@ -394,7 +401,7 @@ const setPlayerPosition = function (cell) {
 	let targetX = cell.getAttribute('data-row')
 	let targetY = cell.getAttribute('data-col')
 
-	playerShip.style.animation = "none"
+	playerShip.style.animation = 'none'
 
 	if (!document.getElementById('player')) {
 		document.querySelector(`[data-row="${targetX}"][data-col="${targetY}"]`).appendChild(playerShip)
@@ -411,7 +418,6 @@ const setPlayerPosition = function (cell) {
 		playerX = targetX
 		playerY = targetY
 	}
-
 }
 
 const getinitalSpawnCell = function (xInitial, yInitial) {
@@ -421,7 +427,14 @@ const getinitalSpawnCell = function (xInitial, yInitial) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//inizilizza il gioco
+
 generateMap(40, 40)
+
+document.getElementById('up').onclick = () => mouveMap('down')
+document.getElementById('down').onclick = () => mouveMap('up')
+document.getElementById('left').onclick = () => mouveMap('right')
+document.getElementById('right').onclick = () => mouveMap('left')
 
 const InitialCell = getinitalSpawnCell(24, 26)
 
