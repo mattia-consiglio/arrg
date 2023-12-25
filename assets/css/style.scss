@@ -118,3 +118,32 @@ body {
 		height: 100%;
 	}
 }
+
+#playerStats {
+	display: flex;
+	position: fixed;
+	z-index: 900;
+	// height: 60px;
+	padding: 20px;
+	background-image: url('../sprites/Repeatable_wooden_plank.png');
+	gap: 10px;
+	border-radius: 10px;
+	top: 10px;
+	left: 10px;
+	.stat {
+		display: flex;
+		align-items: center;
+		background-color: rgb(255 255 255 / 80%);
+		padding: 5px;
+		border-radius: 10px;
+
+		img {
+			width: 30px;
+			height: 30px;
+		}
+		span {
+			font-size: 2rem;
+			font-weight: 800;
+		}
+	}
+}
