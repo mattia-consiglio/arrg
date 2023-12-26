@@ -22,3 +22,6 @@ export const setFriendlyShoreCell = function () {
     });
 };
 
+export const shopMenu = function () {
+
+}

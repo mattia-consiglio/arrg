@@ -9,7 +9,7 @@ import {
 	hpRapairOnPlaceRate,
 	shipMotionBaseTime,
 } from './shipsModule.js'
-import { setFriendlyShoreCell } from './shopModule.js'
+import { setFriendlyShoreCell, shopMenu } from './shopModule.js'
 
 const gameEl = document.getElementById('game')
 const ships = {}
