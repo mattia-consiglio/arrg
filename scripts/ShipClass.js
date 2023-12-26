@@ -146,11 +146,10 @@ export class Ship {
 	}
 
 	animateMouveShip(destinationCell) {
-
-		if (destinationCell.classList[2] === "amichevole") {
-			document.getElementById("shopButton").style.visibility = "visible"
+		if (destinationCell.classList[2] === 'amichevole') {
+			document.getElementById('shopButton').style.visibility = 'visible'
 		} else {
-			document.getElementById("shopButton").style.visibility = "hidden"
+			document.getElementById('shopButton').style.visibility = 'hidden'
 		}
 
 		let currentShipX = this.DOMShipWrap.parentElement.offsetTop

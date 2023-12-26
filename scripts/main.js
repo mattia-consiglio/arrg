@@ -16,25 +16,17 @@ const gameEl = document.getElementById('game')
 // la larghezza di una cella
 export const cellWidth = 100
 
-//variabili comuni a tutti i metodi per tracciare il mouse
-let mouseX
-let mouseY
-
-let playerGraphic = document.createElement('img')
-playerGraphic.id = 'playerGraphic'
-const playerShip = document.createElement('div')
-playerShip.id = 'player'
-playerShip.classList.add('barca')
-playerShip.appendChild(playerGraphic)
-let playerShipSpeed = 3
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-document.addEventListener('mousemove', function (event) {
-	mouseX = event.clientX
-	mouseY = event.clientY
-})
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 const ports = []
+
+// Variabili per tracciare lo stato del drag-and-drop
+let isDragging = false
+let initialMouseX, initialMouseY
+let initialX, initialY
+const maxMapX = cellWidth / 2
+const maxMapY = cellWidth / 2
+let minMapX, minMapY
+
+const map = document.createElement('div')
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Metodo per ottenere le caselle visibili a schermo. Solo gli
@@ -103,13 +95,12 @@ const popUpScreen = function (messagge) {
 }
 
 const popUpBaloon = function (cell) {
-	let cella = document.createElement('div')
-	cella = cell
-	let x = cella.getAttribute(`data-row`)
-	let y = cella.getAttribute(`data-col`)
+	let x = cell.getAttribute(`data-row`)
+	let y = cell.getAttribute(`data-col`)
 	const balloon = document.createElement('div')
 
 	const removeBalloon = function () {
+		console.log('X')
 		balloon.remove()
 	}
 
@@ -121,9 +112,9 @@ const popUpBaloon = function (cell) {
 			return classeContenutoCella
 		} else {
 			if (analyzedCell.classList.length > 1) {
-				return analyzedCell.classList[1] + " " + analyzedCell.classList[2]
+				return analyzedCell.classList[1] + ' ' + analyzedCell.classList[2]
 			} else {
-				return "Acqua"
+				return 'Acqua'
 			}
 		}
 	}
@@ -131,11 +122,9 @@ const popUpBaloon = function (cell) {
 	if (document.getElementById('mouse-balloon')) {
 		document.getElementById('mouse-balloon').remove()
 	}
-
 	// Creazione del balloon
 	balloon.id = 'mouse-balloon'
-	balloon.style.left = `${mouseX - 60}px`
-	balloon.style.top = `${mouseY - 60}px`
+
 	const xIcon = document.createElement('div')
 	xIcon.innerHTML = `<i class="far fa-times-circle" style="color: #cc0000;"></i>`
 	xIcon.onclick = removeBalloon
@@ -165,13 +154,15 @@ const popUpBaloon = function (cell) {
 	balloon.appendChild(headerBalloon)
 	balloon.appendChild(pMidBalloon)
 	balloon.appendChild(divFooter)
-	document.body.appendChild(balloon)
+	cell.appendChild(balloon)
+	balloon.style.left = `${0}px`
+	balloon.style.top = `${(balloon.offsetHeight / 2) * -1}px`
 	// Impostazione del timeout per rimuovere il balloon dopo 30 secondi
-	setTimeout(function () {
-		if (balloon) {
-			balloon.remove()
-		}
-	}, 30000)
+	// setTimeout(function () {
+	// 	if (balloon) {
+	// 		balloon.remove()
+	// 	}
+	// }, 30000)
 }
 
 const spawnPort = (cell, orientation) => {
@@ -183,7 +174,6 @@ const spawnPort = (cell, orientation) => {
 }
 
 const generateMap = (rows, cols) => {
-	const map = document.createElement('div')
 	map.classList.add('map')
 	const halfWidth = Math.floor(cols / 2) - 1
 	const halfHeight = Math.floor(cols / 2) - 1
@@ -211,17 +201,6 @@ const generateMap = (rows, cols) => {
 				spawnPort(cell, 'est')
 			}
 
-			// Aggiungi un listener di eventi con una funzione chiusura
-			cell.addEventListener(
-				'click',
-				(function (event, i, j) {
-					return function () {
-						//templateDiFaiQualcosaConXeYdellaCella(i, j)
-						popUpBaloon(cell)
-					}
-				})(i, j)
-			)
-
 			row.appendChild(cell)
 		}
 		map.appendChild(row)
@@ -231,22 +210,13 @@ const generateMap = (rows, cols) => {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const getMapRelativeGaps = () => {
-	const map = document.querySelector('.map')
-	const offsets = map.getBoundingClientRect()
 
-	const windowHeight = window.innerHeight
-	const windowWidth = window.innerWidth
-	return {
-		top: offsets.top,
-		left: offsets.left,
-		bottom: windowHeight - offsets.bottom,
-		right: windowWidth - offsets.right,
-	}
+const setMapMinXY = () => {
+	minMapX = Math.min(cellWidth / 2, window.innerWidth - map.offsetWidth - cellWidth / 2)
+	minMapY = Math.min(cellWidth / 2, window.innerHeight - map.offsetHeight - cellWidth / 2)
 }
 
 const mouveMap = direction => {
-	const gaps = getMapRelativeGaps()
 	const map = document.querySelector('.map')
 	const transform = window.getComputedStyle(map).transform
 	// Estrarre i valori di traslazione (x, y)
@@ -257,45 +227,77 @@ const mouveMap = direction => {
 	// Aggiornare x o y in base alla direzione
 	switch (direction) {
 		case 'up':
-			if (gaps.bottom + cellWidth < cellWidth) {
-				y -= cellWidth
-			}
+			y -= cellWidth
 			break
 		case 'down':
-			if (gaps.top + cellWidth < cellWidth) {
-				y += cellWidth
-			}
+			y += cellWidth
+
 			break
 		case 'left':
-			if (gaps.right + cellWidth < cellWidth) {
-				x -= cellWidth
-			}
+			x -= cellWidth
 			break
 		case 'right':
-			if (gaps.left + cellWidth < cellWidth) {
-				x += cellWidth
-			}
-
+			x += cellWidth
 			break
 		default:
 			console.log('Direzione non valida')
 	}
 
+	x = Math.min(maxMapX, Math.max(x, minMapX))
+	y = Math.min(maxMapY, Math.max(y, minMapY))
+
 	// Applicare il nuovo valore di traslazione
 	map.style.transform = `translate(${x}px, ${y}px)`
 }
 
+// Funzione per iniziare il trascinamento
+function startDrag(e) {
+	isDragging = true
+	initialMouseX = e.clientX
+	initialMouseY = e.clientY
+	const matrix = new DOMMatrixReadOnly(window.getComputedStyle(map).transform)
+	initialX = matrix.m41
+	initialY = matrix.m42
+	// Aggiungi questi event listener nel tuo metodo startDrag
+	window.addEventListener('mousemove', onDrag)
+	window.addEventListener('mouseup', endDrag)
+}
+
+// Funzione per aggiornare la posizione dell'elemento
+function onDrag(e) {
+	if (!isDragging) return
+	let deltaX = e.clientX - initialMouseX
+	let deltaY = e.clientY - initialMouseY
+
+	let finalX = initialX + deltaX
+	let finalY = initialY + deltaY
+
+	finalX = Math.min(maxMapX, Math.max(finalX, minMapX))
+	finalY = Math.min(maxMapY, Math.max(finalY, minMapY))
+
+	// console.log({ finalX, finalY })
+	map.style.transform = `translate(${finalX}px, ${finalY}px)`
+}
+
+// Funzione per terminare il trascinamento
+function endDrag() {
+	isDragging = false
+
+	window.removeEventListener('mousemove', onDrag)
+	window.removeEventListener('mouseup', endDrag)
+}
+
 document.addEventListener('keydown', e => {
-	if (e.key === 'ArrowUp') {
+	if (e.key === 'ArrowUp' || e.key === 'w') {
 		mouveMap('down')
 	}
-	if (e.key === 'ArrowDown') {
+	if (e.key === 'ArrowDown' || e.key === 's') {
 		mouveMap('up')
 	}
-	if (e.key === 'ArrowLeft') {
+	if (e.key === 'ArrowLeft' || e.key === 'a') {
 		mouveMap('right')
 	}
-	if (e.key === 'ArrowRight') {
+	if (e.key === 'ArrowRight' || e.key === 'd') {
 		mouveMap('left')
 	}
 })
@@ -303,10 +305,54 @@ document.addEventListener('keydown', e => {
 //inizilizza il gioco
 
 generateMap(40, 40)
+setMapMinXY()
+window.addEventListener('resize', () => {
+	setMapMinXY()
+})
 
 document.getElementById('up').onclick = () => mouveMap('down')
 document.getElementById('down').onclick = () => mouveMap('up')
 document.getElementById('left').onclick = () => mouveMap('right')
 document.getElementById('right').onclick = () => mouveMap('left')
 
-export const player = new Ship({ type: 'player', ports })
+const player = new Ship({ type: 'player', ports })
+
+// Aggiungi event listener per il drag-and-drop
+map.addEventListener('mousedown', startDrag)
+
+let wasDragged = false
+const dragThreshold = 10 // Soglia in pixel per considerare un movimento come trascinamento
+
+//eseguire la funzioni solo se il mouse non è stato trascinato per più del dragThreshold
+document.addEventListener('mousedown', function (e) {
+	wasDragged = false
+	const startX = e.clientX
+	const startY = e.clientY
+
+	function onMouseMove(e) {
+		if (
+			Math.abs(e.clientX - startX) > dragThreshold ||
+			Math.abs(e.clientY - startY) > dragThreshold
+		) {
+			wasDragged = true
+			document.removeEventListener('mousemove', onMouseMove)
+		}
+	}
+
+	document.addEventListener('mousemove', onMouseMove)
+
+	document.addEventListener(
+		'mouseup',
+		function () {
+			document.removeEventListener('mousemove', onMouseMove)
+			if (!wasDragged) {
+				// cliccato ma non tracinato
+				if (e.target.offsetParent.id !== 'mouse-balloon') {
+					const cell = e.target.closest('.cell')
+					popUpBaloon(cell)
+				}
+			}
+		},
+		{ once: true }
+	)
+})
