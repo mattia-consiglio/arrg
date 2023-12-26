@@ -21,7 +21,6 @@ export class Ship {
 	constructor(type, level = 1) {
 		this.type = type
 		this.level = level
-		console.log(this.getShipTemplateByLevel(this.level))
 	}
 
 	getShipTemplateByLevel(level) {

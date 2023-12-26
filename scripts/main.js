@@ -9,6 +9,7 @@ import {
 	hpRapairOnPlaceRate,
 	shipMotionBaseTime,
 } from './shipsModule.js'
+import { setFriendlyShoreCell } from './shopModule.js'
 
 const gameEl = document.getElementById('game')
 const ships = {}
@@ -145,8 +146,11 @@ const popUpBaloon = function (cell) {
 			classeContenutoCella = contenutoCella[0].className
 			return classeContenutoCella
 		} else {
-			return "Acqua"
-
+			if (analyzedCell.classList.length > 1) {
+				return analyzedCell.classList[1] + " " + analyzedCell.classList[2]
+			} else {
+				return "Acqua"
+			}
 		}
 	}
 
@@ -296,16 +300,16 @@ const generateMap = (rows, cols) => {
 			cell.setAttribute('data-col', j)
 
 			if (i === 0 && j === halfWidth) {
-				spownPort(cell, 'nord')
+				spawnPort(cell, 'nord')
 			}
 			if (i === rows - 1 && j === halfWidth) {
-				spownPort(cell, 'sud')
+				spawnPort(cell, 'sud')
 			}
 			if (j === 0 && i === halfHeight) {
-				spownPort(cell, 'ovest')
+				spawnPort(cell, 'ovest')
 			}
 			if (j === cols - 1 && i === halfHeight) {
-				spownPort(cell, 'est')
+				spawnPort(cell, 'est')
 			}
 
 			// Aggiungi un listener di eventi con una funzione chiusura
@@ -439,3 +443,4 @@ document.getElementById('right').onclick = () => mouveMap('left')
 const InitialCell = getinitalSpawnCell(24, 26)
 
 setPlayerPosition(InitialCell)
+setFriendlyShoreCell()
