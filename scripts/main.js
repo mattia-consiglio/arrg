@@ -315,7 +315,7 @@ document.getElementById('down').onclick = () => mouveMap('up')
 document.getElementById('left').onclick = () => mouveMap('right')
 document.getElementById('right').onclick = () => mouveMap('left')
 
-const player = new Ship({ type: 'player', ports })
+export const player = new Ship({ type: 'player', ports })
 
 // Aggiungi event listener per il drag-and-drop
 map.addEventListener('mousedown', startDrag)
