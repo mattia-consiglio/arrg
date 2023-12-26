@@ -145,7 +145,7 @@ const popUpBaloon = function (cell) {
 	pMidBalloon.innerText = `Distanza casella: [${player.calculateDistance(
 		x,
 		y
-	)}]\nTipo: [Acqua] \n Movimento possibile [${player.mouvementPossible(x, y)}]\n`
+	)}]\nTipo: [${defineCellType(cell)}] \n Movimento possibile [${player.mouvementPossible(x, y)}]\n`
 
 	const divFooter = document.createElement('div')
 	const buttonMuoviti = document.createElement('p')
