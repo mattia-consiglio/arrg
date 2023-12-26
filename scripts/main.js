@@ -63,6 +63,11 @@ const getVisibleCells = () => {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+document.getElementById("shopButton").onclick = function () {
+	document.body.appendChild(shopMenu());
+}
+
+
 const templateDoSomethingWithXandYofCell = function (x, y) {
 	console.log(`Cell: X ${x}, Y ${y}`)
 	// La i è la X, la j è la Y
@@ -142,6 +147,7 @@ const popUpBaloon = function (cell) {
 	buttonMuoviti.onclick = function () {
 		player.mouveShip(cell, x, y, balloon)
 	}
+	buttonMuoviti.style.cursor = "pointer"
 	divFooter.appendChild(buttonMuoviti)
 
 	balloon.appendChild(headerBalloon)

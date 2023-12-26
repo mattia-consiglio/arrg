@@ -1,3 +1,4 @@
+@import url("https://fonts.cdnfonts.com/css/barletta-2");
 * {
   margin: 0;
   -webkit-box-sizing: border-box;
@@ -123,6 +124,21 @@ body {
 .Porto img {
   width: 100%;
   height: 100%;
+}
+
+#shopButton {
+  position: fixed;
+  z-index: 3;
+  right: 25px;
+  top: 25px;
+  color: white;
+  background-color: black;
+  border: 3px solid red;
+  font-size: 3rem;
+  font-family: "Barletta", sans-serif;
+  padding: 15px;
+  visibility: hidden;
+  cursor: pointer;
 }
 
 .amichevole {
