@@ -9,21 +9,17 @@ import {
 	hpRapairOnPlaceRate,
 	shipMotionBaseTime,
 } from './shipsModule.js'
+import { Ship } from './ShipClass.js'
 import { setFriendlyShoreCell, shopMenu, listenerOpenShopMenu } from './shopModule.js'
 
 const gameEl = document.getElementById('game')
-const ships = {}
 // la larghezza di una cella
-const cellWidth = 100
+export const cellWidth = 100
 
 //variabili comuni a tutti i metodi per tracciare il mouse
 let mouseX
 let mouseY
 
-//variabili per la playership
-let playerX
-let playerY
-let playerDirection = 'sinistra' //senza questi dati il metodo setPlayerPosition si rompe. Non corrispondono all'effettiva posizione iniziale, aggiornare nel caso si aggiorni la posizione iniziale
 let playerGraphic = document.createElement('img')
 playerGraphic.id = 'playerGraphic'
 const playerShip = document.createElement('div')
@@ -38,32 +34,7 @@ document.addEventListener('mousemove', function (event) {
 })
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const updatePlayerDirectionGraphic = function (direzione) {
-	switch (direzione) {
-		case 'destra':
-			playerGraphic.src = '../assets/sprites/Right_playership.png'
-			playerGraphic.style.transform = 'translate(-62px, -130px)'
-
-			break
-		case 'sinistra':
-			playerGraphic.src = '../assets/sprites/Left_playership.png'
-			playerGraphic.style.transform = 'translate(-70px, -130px)'
-			break
-		case 'su':
-			playerGraphic.src = '../assets/sprites/Up_playership.png'
-			playerGraphic.style.transform = 'translate(-66px, -150px)'
-			break
-		case 'giu':
-			playerGraphic.src = '../assets/sprites/Down_playership.png'
-			playerGraphic.style.transform = 'translate(-65px, -150px)'
-			break
-		default:
-			console.log('Errore ridirezionamento')
-			break
-	}
-	playerShip.appendChild(playerGraphic)
-}
-updatePlayerDirectionGraphic(playerDirection)
+const ports = []
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Metodo per ottenere le caselle visibili a schermo. Solo gli
@@ -128,15 +99,12 @@ const popUpScreen = function (messagge) {
 const popUpBaloon = function (cell) {
 	let cella = document.createElement('div')
 	cella = cell
-	let i = cella.getAttribute(`data-row`)
-	let j = cella.getAttribute(`data-col`)
+	let x = cella.getAttribute(`data-row`)
+	let y = cella.getAttribute(`data-col`)
+	const balloon = document.createElement('div')
 
 	const removeBalloon = function () {
 		balloon.remove()
-	}
-
-	const calculateDistance = function (x, y) {
-		return parseInt(Math.sqrt(Math.pow(x - playerX, 2) + Math.pow(y - playerY, 2)))
 	}
 
 	const defineCellType = function (analyzedCell) {
@@ -154,112 +122,36 @@ const popUpBaloon = function (cell) {
 		}
 	}
 
-	const animateMouveShipPlayer = function (destinationCell) {
-		const player = document.getElementById('player')
-		let currentPlayerX = playerShip.parentElement.offsetTop
-		let currentPlayerY = playerShip.parentElement.offsetLeft
-		let xDestinazione = destinationCell.offsetTop
-		let yDestinazione = destinationCell.offsetLeft
-		let durataAnimazione = 0.5 * calculateDistance(xDestinazione, yDestinazione)
-
-		if (Math.abs(xDestinazione - currentPlayerX) > Math.abs(yDestinazione - currentPlayerY)) {
-			if (xDestinazione - currentPlayerX > 0) {
-				playerDirection = 'giu'
-			}
-			if (xDestinazione - currentPlayerX < 0) {
-				playerDirection = 'su'
-			}
-		} else {
-			if (yDestinazione - currentPlayerY > 0) {
-				playerDirection = 'destra'
-			} else {
-				playerDirection = 'sinistra'
-			}
-		}
-		updatePlayerDirectionGraphic(playerDirection)
-
-		let translAnimation = [
-			{
-				transform: `translate( ${yDestinazione - currentPlayerY}px, ${xDestinazione - currentPlayerX
-					}px)`,
-			},
-		]
-
-		let animOp = {
-			duration: durataAnimazione,
-			fill: 'forwards',
-		}
-
-		let animOp2 = {
-			duration: 0,
-			fill: 'forwards',
-		}
-
-		let animationObj = playerShip.animate(translAnimation, animOp)
-		setTimeout(() => {
-			setPlayerPosition(destinationCell)
-			let animationObj2 = playerShip.animate({ transform: `translate(0px,0px)` }, animOp2)
-		}, durataAnimazione)
-	}
-
-	const mouvementPossible = function (x, y) {
-		if (playerShipSpeed >= calculateDistance(x, y) && defineCellType(document.querySelector(`div [data-row="${x}"][data-col="${y}"]`)) === "Acqua") {
-			console.log(defineCellType(document.querySelector(`div [data-row="${x}"][data-col="${y}"]`)))
-			return true
-		} else {
-			console.log(defineCellType(document.querySelector(`div [data-row="${x}"][data-col="${y}"]`)))
-
-			return false
-		}
-	}
-
-	const mouvePlayer = function (cell, x, y) {
-		balloon.remove()
-		if (mouvementPossible(x, y)) {
-			animateMouveShipPlayer(cella)
-		}
-	}
 	if (document.getElementById('mouse-balloon')) {
 		document.getElementById('mouse-balloon').remove()
 	}
 
 	// Creazione del balloon
-	const balloon = document.createElement('div')
 	balloon.id = 'mouse-balloon'
-	balloon.style.position = 'fixed'
 	balloon.style.left = `${mouseX - 60}px`
 	balloon.style.top = `${mouseY - 60}px`
-	balloon.style.padding = `20px`
-	balloon.style.backgroundColor = 'black'
-	balloon.style.color = 'white'
-	balloon.style.borderColor = 'red'
-	balloon.style.border = '3px'
-	balloon.style.display = 'flex'
-	balloon.style.flexDirection = 'column'
-	balloon.style.maxWidth = '280px'
 	const xIcon = document.createElement('div')
 	xIcon.innerHTML = `<i class="far fa-times-circle" style="color: #cc0000;"></i>`
 	xIcon.onclick = removeBalloon
 	const headerBalloon = document.createElement('div')
-	headerBalloon.style.display = 'flex'
-	headerBalloon.style.justifyContent = 'space-between'
+	headerBalloon.classList.add('balloon-header')
 	const pHeader = document.createElement('p')
-	pHeader.textContent = `[ info cellaX(${i})Y(${j}) ] --`
+	pHeader.textContent = `[ info cellaX(${x})Y(${y}) ] --`
 	headerBalloon.appendChild(pHeader)
 	headerBalloon.appendChild(xIcon)
 
 	const pMidBalloon = document.createElement('p')
 	pMidBalloon.style.margin = '8px'
-	pMidBalloon.innerText = `Distanza casella: [${calculateDistance(
-		i,
-		j
-	)}]\nContenuto: [${defineCellType(cell)}] \n Movimento possibile [${mouvementPossible(i, j)}]\n`
+	pMidBalloon.innerText = `Distanza casella: [${player.calculateDistance(
+		x,
+		y
+	)}]\nTipo: [Acqua] \n Movimento possibile [${player.mouvementPossible(x, y)}]\n`
 
 	const divFooter = document.createElement('div')
 	const buttonMuoviti = document.createElement('p')
 	buttonMuoviti.innerText = '[VAI QUI]'
 	buttonMuoviti.onclick = function () {
-		mouvePlayer(cella, i, j)
+		player.mouveShip(cell, x, y, balloon)
 	}
 	divFooter.appendChild(buttonMuoviti)
 
@@ -400,37 +292,6 @@ document.addEventListener('keydown', e => {
 	}
 })
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const setPlayerPosition = function (cell) {
-	let targetX = cell.getAttribute('data-row')
-	let targetY = cell.getAttribute('data-col')
-
-	playerShip.style.animation = 'none'
-
-	if (!document.getElementById('player')) {
-		document.querySelector(`[data-row="${targetX}"][data-col="${targetY}"]`).appendChild(playerShip)
-
-		document.getElementById('player').top = cellWidth
-		document.getElementById('player').left = cellWidth
-
-		playerX = targetX
-		playerY = targetY
-	} else {
-		document.getElementById('player').remove()
-		document.querySelector(`[data-row="${targetX}"][data-col="${targetY}"]`).appendChild(playerShip)
-
-		playerX = targetX
-		playerY = targetY
-	}
-}
-
-const getinitalSpawnCell = function (xInitial, yInitial) {
-	let cell = document.querySelector(`div [data-row="${xInitial}"][data-col="${yInitial}"]`)
-	return cell
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 //inizilizza il gioco
 
 generateMap(40, 40)
@@ -440,7 +301,4 @@ document.getElementById('down').onclick = () => mouveMap('up')
 document.getElementById('left').onclick = () => mouveMap('right')
 document.getElementById('right').onclick = () => mouveMap('left')
 
-const InitialCell = getinitalSpawnCell(24, 26)
-
-setPlayerPosition(InitialCell)
-setFriendlyShoreCell()
+const player = new Ship({ type: 'player', ports })

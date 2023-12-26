@@ -4,7 +4,7 @@
 }
 
 body {
-  background-color: #1e1e1e;
+  background-color: #002d5a;
 }
 
 #game {
@@ -66,7 +66,7 @@ body {
   fill: #fff;
 }
 
-#player {
+.ship {
   height: 100px;
   width: 100px;
   position: absolute;
@@ -78,7 +78,7 @@ body {
   background-color: rgba(20, 184, 149, 0.25);
   pointer-events: none;
 }
-#player img {
+.ship .shipImg {
   transform: translate(-26%, -50%);
   pointer-events: none;
 }
@@ -142,4 +142,43 @@ body {
 #playerStats .stat span {
   font-size: 2rem;
   font-weight: 800;
+}
+
+#mouse-balloon {
+  position: fixed;
+  padding: 20px;
+  background-color: #000;
+  color: #fff;
+  border: 3px solid red;
+  display: flex;
+  flex-direction: column;
+  max-width: 280px;
+}
+#mouse-balloon .balloon-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.hpBar {
+  width: 200px;
+  height: 15px;
+  background-color: #c0c8d0;
+  position: relative;
+  left: 50%;
+  transform: translate(-50%, -395px);
+}
+.hpBar::before {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: var(--hp);
+}
+.hpBar.green::before {
+  background-color: #48e217;
+}
+.hpBar.yellow::before {
+  background-color: #e2c917;
+}
+.hpBar.red::before {
+  background-color: #e21717;
 }/*# sourceMappingURL=style.css.map */
