@@ -122,8 +122,8 @@ export class Ship {
 		 * controllo del tipo di nave
 		 * controllare se ci sono porti liberi e il tipo
 		 */
-		const xInitial = 24
-		const yInitial = 26
+		const xInitial = 21
+		const yInitial = 35
 		this.posX = xInitial
 		this.posX = yInitial
 		const cell = document.querySelector(`div[data-row="${xInitial}"][data-col="${yInitial}"]`)
@@ -146,12 +146,18 @@ export class Ship {
 	}
 
 	animateMouveShip(destinationCell) {
+
+		if (destinationCell.classList[2] === "amichevole") {
+			document.getElementById("shopButton").style.visibility = "visible"
+		} else {
+			document.getElementById("shopButton").style.visibility = "hidden"
+		}
+
 		let currentShipX = this.DOMShipWrap.parentElement.offsetTop
 		let currentShipY = this.DOMShipWrap.parentElement.offsetLeft
 		let xDestination = destinationCell.offsetTop
 		let yDestination = destinationCell.offsetLeft
-		console.log(xDestination - currentShipX)
-		console.log(yDestination - currentShipY)
+
 		let animationDuration = 0.5 * this.calculateDistance(xDestination, yDestination)
 
 		if (Math.abs(xDestination - currentShipX) > Math.abs(yDestination - currentShipY)) {

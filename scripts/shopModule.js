@@ -23,5 +23,7 @@ export const setFriendlyShoreCell = function () {
 };
 
 export const shopMenu = function () {
-
+    const divMenuShop = document.createElement("div")
+    console.log("Hello")
+    return divMenuShop
 }
