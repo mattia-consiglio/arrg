@@ -148,6 +148,35 @@ body {
 	border: 1px solid rgb(255, 98, 98);
 }
 
+#tableCommercio {
+	font-size: 1.8em;
+	margin: 2%;
+	width: 65%;
+}
+
+#tableCommercio tr td:nth-child(3) {
+	background-color: #1d1d1d;
+	width: "200px"
+}
+
+#tableCommercio tr td:nth-child(1) {
+	width: "120px"
+}
+
+#tableCommercio td {
+	text-align: center;
+	min-width: 50px;
+	padding: 2%;
+}
+
+#tableCommercio .button {
+	cursor: pointer;
+}
+
+#tableCommercio .button:hover {
+	color: red
+}
+
 #playerStats {
 	display: flex;
 	position: fixed;

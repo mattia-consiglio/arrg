@@ -28,8 +28,9 @@ export const shipMotionBaseTime = 1000 //in millisecondi
 
 export const templateResources = {
 	gold: 0, //moneta di scambio del gioco
-	water: 0, //commericiabile nei porti amici. Richiesta per a sopravvivenza dell'equipaggio
-	food: 0,
+	rhum: 0, //oggetto di scambio nei porti amici
+	food: 0,//commericiabile nei porti amici. Richiesta per a sopravvivenza dell'equipaggio
+	xp: 0,
 }
 
 export const shipsTemplate = [

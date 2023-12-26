@@ -72,7 +72,8 @@ const getVisibleCells = () => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 document.getElementById("shopButton").onclick = function () {
-	document.body.appendChild(shopMenu());
+	player.resources.gold += 250
+	document.getElementsByTagName('body')[0].appendChild(shopMenu(player.resources.gold, player.resources.rhum, player.resources.food))
 }
 
 
@@ -308,4 +309,4 @@ document.getElementById('down').onclick = () => mouveMap('up')
 document.getElementById('left').onclick = () => mouveMap('right')
 document.getElementById('right').onclick = () => mouveMap('left')
 
-const player = new Ship({ type: 'player', ports })
+export const player = new Ship({ type: 'player', ports })
