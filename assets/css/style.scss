@@ -1,6 +1,7 @@
 * {
 	margin: 0;
 	box-sizing: border-box;
+	user-select: none;
 }
 
 body {
@@ -163,7 +164,7 @@ body {
 }
 
 #mouse-balloon {
-	position: fixed;
+	position: absolute;
 	padding: 20px;
 	background-color: #000;
 	color: #fff;
@@ -171,6 +172,8 @@ body {
 	display: flex;
 	flex-direction: column;
 	max-width: 280px;
+	width: max-content;
+	z-index: 900;
 
 	.balloon-header {
 		display: flex;

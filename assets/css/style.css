@@ -1,6 +1,11 @@
 * {
   margin: 0;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 body {
@@ -14,6 +19,8 @@ body {
 }
 
 .row {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
 }
 
@@ -23,6 +30,7 @@ body {
   min-width: 100px;
   min-height: 100px;
   border-collapse: collapse;
+  -webkit-transition: 200ms;
   transition: 200ms;
   position: relative;
 }
@@ -32,7 +40,9 @@ body {
 
 .map {
   position: absolute;
-  transform: translate(-2050px, -2050px);
+  -webkit-transform: translate(-2050px, -2050px);
+          transform: translate(-2050px, -2050px);
+  -webkit-transition: 200ms;
   transition: 200ms;
 }
 
@@ -70,6 +80,7 @@ body {
   height: 100px;
   width: 100px;
   position: absolute;
+  -webkit-transition: all 500ms;
   transition: all 500ms;
   z-index: 100;
   border: 2px solid #dbf9c8;
@@ -79,7 +90,8 @@ body {
   pointer-events: none;
 }
 .ship .shipImg {
-  transform: translate(-26%, -50%);
+  -webkit-transform: translate(-26%, -50%);
+          transform: translate(-26%, -50%);
   pointer-events: none;
 }
 
@@ -90,16 +102,20 @@ body {
   z-index: 100;
 }
 .Porto.ovest {
-  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
 }
 .Porto.est {
-  transform: translateX(-100px) rotate(-90deg);
+  -webkit-transform: translateX(-100px) rotate(-90deg);
+          transform: translateX(-100px) rotate(-90deg);
 }
 .Porto.nord {
-  transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
 }
 .Porto.sud {
-  transform: translateY(-100px);
+  -webkit-transform: translateY(-100px);
+          transform: translateY(-100px);
 }
 .Porto.attracco {
   background-color: #b86666;
@@ -118,6 +134,8 @@ body {
 }
 
 #playerStats {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   position: fixed;
   z-index: 900;
@@ -129,8 +147,12 @@ body {
   left: 10px;
 }
 #playerStats .stat {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   background-color: rgba(255, 255, 255, 0.8);
   padding: 5px;
   border-radius: 10px;
@@ -145,18 +167,31 @@ body {
 }
 
 #mouse-balloon {
-  position: fixed;
+  position: absolute;
   padding: 20px;
   background-color: #000;
   color: #fff;
   border: 3px solid red;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   max-width: 280px;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  z-index: 900;
 }
 #mouse-balloon .balloon-header {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 .hpBar {
@@ -165,7 +200,8 @@ body {
   background-color: #c0c8d0;
   position: relative;
   left: 50%;
-  transform: translate(-50%, -395px);
+  -webkit-transform: translate(-50%, -395px);
+          transform: translate(-50%, -395px);
 }
 .hpBar::before {
   content: "";

@@ -150,8 +150,8 @@ export class Ship {
 		let currentShipY = this.DOMShipWrap.parentElement.offsetLeft
 		let xDestination = destinationCell.offsetTop
 		let yDestination = destinationCell.offsetLeft
-		console.log(xDestination - currentShipX)
-		console.log(yDestination - currentShipY)
+		// console.log(xDestination - currentShipX)
+		// console.log(yDestination - currentShipY)
 		let animationDuration = 0.5 * this.calculateDistance(xDestination, yDestination)
 
 		if (Math.abs(xDestination - currentShipX) > Math.abs(yDestination - currentShipY)) {
