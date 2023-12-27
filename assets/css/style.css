@@ -30,7 +30,9 @@ body {
   background-color: #02b6d2;
   border: 2px solid #002d5a;
   min-width: 100px;
+  max-width: 100px;
   min-height: 100px;
+  max-height: 100px;
   border-collapse: collapse;
   -webkit-transition: 200ms;
   transition: 200ms;
@@ -42,8 +44,8 @@ body {
 
 .map {
   position: absolute;
-  -webkit-transform: translate(-2050px, -2050px);
-          transform: translate(-2050px, -2050px);
+  -webkit-transform: translate(-25%, -25%);
+          transform: translate(-25%, -25%);
   -webkit-transition: 200ms;
   transition: 200ms;
 }
@@ -81,7 +83,7 @@ body {
 .ship {
   height: 100px;
   width: 100px;
-  position: absolute;
+  position: relative;
   -webkit-transition: all 500ms;
   transition: all 500ms;
   z-index: 100;
@@ -90,11 +92,37 @@ body {
   left: -2px;
   background-color: rgba(20, 184, 149, 0.25);
   pointer-events: none;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 1rem;
 }
 .ship .shipImg {
-  -webkit-transform: translate(-26%, -50%);
-          transform: translate(-26%, -50%);
+  min-width: 222px;
+  height: 238px;
   pointer-events: none;
+}
+.ship .shipImg.left, .ship .shipImg.right {
+  margin-bottom: -12px;
+}
+.ship .shipImg.up, .ship .shipImg.down {
+  margin-bottom: 12px;
+}
+.ship .level-text {
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 800;
+  font-family: "Courier New", Courier, monospace;
 }
 
 .Porto {
@@ -342,13 +370,11 @@ body {
 }
 
 .hpBar {
-  width: 200px;
-  height: 15px;
-  background-color: #c0c8d0;
   position: relative;
-  left: 50%;
-  -webkit-transform: translate(-50%, -395px);
-          transform: translate(-50%, -395px);
+  width: 200px;
+  min-height: 15px;
+  background-color: #c0c8d0;
+  bottom: 0;
 }
 .hpBar::before {
   content: "";

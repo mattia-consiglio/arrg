@@ -96,8 +96,8 @@ const popUpScreen = function (messagge) {
 }
 
 const popUpBaloon = function (cell) {
-	let x = cell.getAttribute(`data-row`)
-	let y = cell.getAttribute(`data-col`)
+	let x = cell.getAttribute(`data-col`)
+	let y = cell.getAttribute(`data-row`)
 	const balloon = document.createElement('div')
 
 	const removeBalloon = function () {
@@ -303,24 +303,6 @@ document.addEventListener('keydown', e => {
 	}
 })
 
-//inizilizza il gioco
-
-generateMap(40, 40)
-setMapMinXY()
-window.addEventListener('resize', () => {
-	setMapMinXY()
-})
-
-document.getElementById('up').onclick = () => mouveMap('down')
-document.getElementById('down').onclick = () => mouveMap('up')
-document.getElementById('left').onclick = () => mouveMap('right')
-document.getElementById('right').onclick = () => mouveMap('left')
-
-export const player = new Ship({ type: 'player', ports })
-
-// Aggiungi event listener per il drag-and-drop
-map.addEventListener('mousedown', startDrag)
-
 let wasDragged = false
 const dragThreshold = 10 // Soglia in pixel per considerare un movimento come trascinamento
 
@@ -350,7 +332,11 @@ document.addEventListener('mousedown', function (e) {
 				// cliccato ma non tracinato
 
 				console.log()
-				if (!e.target.closest('#mouse-balloon') && !e.target.closest('#playerStats')) {
+				if (
+					!e.target.closest('#mouse-balloon') &&
+					!e.target.closest('#playerStats') &&
+					!e.target.closest('#controls')
+				) {
 					const cell = e.target.closest('.cell')
 					popUpBaloon(cell)
 				}
@@ -359,3 +345,24 @@ document.addEventListener('mousedown', function (e) {
 		{ once: true }
 	)
 })
+
+//inizilizza il gioco
+
+export const rowCount = 40
+export const colCount = 40
+
+generateMap(rowCount, colCount)
+setMapMinXY()
+window.addEventListener('resize', () => {
+	setMapMinXY()
+})
+
+document.getElementById('up').onclick = () => mouveMap('down')
+document.getElementById('down').onclick = () => mouveMap('up')
+document.getElementById('left').onclick = () => mouveMap('right')
+document.getElementById('right').onclick = () => mouveMap('left')
+
+export const player = new Ship({ type: 'player', ports })
+
+// Aggiungi event listener per il drag-and-drop
+map.addEventListener('mousedown', startDrag)

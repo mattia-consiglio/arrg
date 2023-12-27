@@ -30,6 +30,7 @@ export const templateResources = {
 	gold: 0, //moneta di scambio del gioco
 	rhum: 0, //oggetto di scambio nei porti amici
 	food: 0, //commericiabile nei porti amici. Richiesta per a sopravvivenza dell'equipaggio
+	water: 0,
 }
 
 export const shipsTemplate = [

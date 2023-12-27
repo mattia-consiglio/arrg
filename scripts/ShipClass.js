@@ -1,9 +1,10 @@
 import { shipsTemplate, templateResources } from './shipsModule.js'
-// import { cellWidth } from './main.js'
+import { rowCount, colCount } from './main.js'
 export class Ship {
 	static DOMShipWrap
 	static DOMShipImg
 	static hpBar
+	static levelText
 	id
 	type
 	level
@@ -25,6 +26,7 @@ export class Ship {
 	posX
 	posY
 	direction = 'left'
+	attackRangeCells = []
 
 	constructor({ type, level = 1, id = 0, ports = [] }) {
 		if (type !== 'player' && type !== 'bot') return console.log('Wrong Ship type')
@@ -42,6 +44,7 @@ export class Ship {
 			autoStartAttack,
 			autoFollow,
 			motionRange,
+			attackRange,
 			speed,
 			sprites,
 		} = this.getShipTemplateByLevel(this.level)
@@ -56,11 +59,26 @@ export class Ship {
 		this.autoStartAttack = autoStartAttack
 		this.autoFollow = autoFollow
 		this.motionRange = motionRange
+		this.attackRange = attackRange
 		this.speed = speed
 		this.sprites = sprites[this.type]
 
+		//creating ship wapper
 		this.id = id
 		this.DOMShipWrap = document.createElement('div')
+
+		this.levelText = document.createElement('h2')
+		this.levelText.classList.add('level-text')
+		this.DOMShipWrap.appendChild(this.levelText)
+		this.updateLevelText()
+
+		//adding hp bar
+		this.hpBar = document.createElement('div')
+		this.hpBar.classList.add('hpBar')
+		this.DOMShipWrap.appendChild(this.hpBar)
+		this.updateHpBar()
+
+		//adding ship
 		this.DOMShipWrap.id = id
 		this.DOMShipWrap.classList.add('ship')
 		this.DOMShipImg = document.createElement('img')
@@ -70,11 +88,10 @@ export class Ship {
 
 		this.setShipPosition(cell)
 		this.updateShipImageDirection()
+	}
 
-		this.hpBar = document.createElement('div')
-		this.hpBar.classList.add('hpBar')
-		this.DOMShipWrap.appendChild(this.hpBar)
-		this.updateHpBar()
+	updateLevelText() {
+		this.levelText.innerText = `LVL ${this.level}`
 	}
 
 	updateHpBar() {
@@ -104,17 +121,17 @@ export class Ship {
 	}
 
 	setShipPosition(cell) {
-		const targetX = cell.getAttribute('data-row')
-		const targetY = cell.getAttribute('data-col')
-
+		const targetX = parseInt(cell.getAttribute('data-col'))
+		const targetY = parseInt(cell.getAttribute('data-row'))
 		this.DOMShipWrap.style.animation = 'none'
 
 		if (this.DOMShipWrap) {
 			this.DOMShipWrap.remove()
 		}
 		cell.appendChild(this.DOMShipWrap)
-		this.posX = targetX
 		this.posY = targetY
+		this.posX = targetX
+		this.calculateAttackRangeCells()
 	}
 
 	getinitalSpawnCell(ports) {
@@ -124,10 +141,10 @@ export class Ship {
 		 * controllare se ci sono porti liberi e il tipo
 		 */
 		const xInitial = 21
-		const yInitial = 35
+		const yInitial = 15
 		this.posX = xInitial
-		this.posX = yInitial
-		const cell = document.querySelector(`div[data-row="${xInitial}"][data-col="${yInitial}"]`)
+		this.posY = yInitial
+		const cell = document.querySelector(`div[data-row="${yInitial}"][data-col="${xInitial}"]`)
 		return cell
 	}
 
@@ -140,6 +157,24 @@ export class Ship {
 
 	calculateDistance(x, y) {
 		return parseInt(Math.sqrt(Math.pow(x - this.posX, 2) + Math.pow(y - this.posY, 2)))
+	}
+
+	calculateAttackRangeCells() {
+		this.attackRangeCells.length = 0
+		const minX = Math.max(0, this.posX - this.attackRange)
+		const maxX = Math.min(colCount - 1, this.posX + this.attackRange)
+		const minY = Math.max(0, this.posY - this.attackRange)
+		const maxY = Math.min(rowCount - 1, this.posY + this.attackRange)
+
+		for (let y = minY; y <= maxY; y++) {
+			for (let x = minX; x <= maxX; x++) {
+				if (x === this.posX && y === this.posY) {
+					continue
+				}
+				this.attackRangeCells.push({ x, y })
+			}
+		}
+		console.log(this.attackRangeCells)
 	}
 
 	mouvementPossible(targetX, targetY) {
@@ -158,7 +193,7 @@ export class Ship {
 		let xDestination = destinationCell.offsetTop
 		let yDestination = destinationCell.offsetLeft
 
-		let animationDuration = 0.5 * this.calculateDistance(xDestination, yDestination)
+		let animationDuration = 0.4 * this.calculateDistance(xDestination, yDestination)
 
 		if (Math.abs(xDestination - currentShipX) > Math.abs(yDestination - currentShipY)) {
 			if (xDestination - currentShipX > 0) {
@@ -192,31 +227,36 @@ export class Ship {
 			fill: 'forwards',
 		}
 
-		this.DOMShipWrap.animate(translAnimation, animOp)
-		setTimeout(() => {
+		const animation = this.DOMShipWrap.animate(translAnimation, animOp)
+		animation.onfinish = () => {
 			this.setShipPosition(destinationCell)
 			this.DOMShipWrap.animate({ transform: `translate(0px,0px)` }, animOp2)
-		}, animationDuration)
+		}
 	}
 
 	updateShipImageDirection() {
+		this.DOMShipImg.classList.remove('right')
+		this.DOMShipImg.classList.remove('left')
+		this.DOMShipImg.classList.remove('up')
+		this.DOMShipImg.classList.remove('down')
 		switch (this.direction) {
 			case 'right':
 				this.DOMShipImg.src = '../assets/sprites/' + this.sprites.right
-				this.DOMShipImg.style.transform = 'translate(-62px, -130px)'
+				this.DOMShipImg.classList.add('right')
 
 				break
 			case 'left':
 				this.DOMShipImg.src = '../assets/sprites/' + this.sprites.left
-				this.DOMShipImg.style.transform = 'translate(-70px, -130px)'
+				this.DOMShipImg.classList.add('left')
+
 				break
 			case 'up':
 				this.DOMShipImg.src = '../assets/sprites/' + this.sprites.up
-				this.DOMShipImg.style.transform = 'translate(-66px, -150px)'
+				this.DOMShipImg.classList.add('up')
 				break
 			case 'down':
 				this.DOMShipImg.src = '../assets/sprites/' + this.sprites.down
-				this.DOMShipImg.style.transform = 'translate(-65px, -150px)'
+				this.DOMShipImg.classList.add('down')
 				break
 			default:
 				console.log('Errore: direzione non valida')
