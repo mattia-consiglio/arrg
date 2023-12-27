@@ -13,6 +13,7 @@ export class Ship {
 	resources = templateResources
 	maxStorage
 	crew
+	xp = 0
 	xpNeeded
 	xpGiven
 	autoStartAttack

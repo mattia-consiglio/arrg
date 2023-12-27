@@ -63,11 +63,12 @@ const getVisibleCells = () => {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-document.getElementById("shopButton").onclick = function () {
+document.getElementById('shopButton').onclick = function () {
 	player.resources.gold += 250
-	document.getElementsByTagName('body')[0].appendChild(shopMenu(player.resources.gold, player.resources.rhum, player.resources.food))
+	document
+		.getElementsByTagName('body')[0]
+		.appendChild(shopMenu(player.resources.gold, player.resources.rhum, player.resources.food))
 }
-
 
 const templateDoSomethingWithXandYofCell = function (x, y) {
 	console.log(`Cell: X ${x}, Y ${y}`)
@@ -148,7 +149,7 @@ const popUpBaloon = function (cell) {
 	buttonMuoviti.onclick = function () {
 		player.mouveShip(cell, x, y, balloon)
 	}
-	buttonMuoviti.style.cursor = "pointer"
+	buttonMuoviti.style.cursor = 'pointer'
 	divFooter.appendChild(buttonMuoviti)
 
 	balloon.appendChild(headerBalloon)
@@ -347,7 +348,9 @@ document.addEventListener('mousedown', function (e) {
 			document.removeEventListener('mousemove', onMouseMove)
 			if (!wasDragged) {
 				// cliccato ma non tracinato
-				if (e.target.offsetParent.id !== 'mouse-balloon') {
+
+				console.log()
+				if (!e.target.closest('#mouse-balloon') && !e.target.closest('#playerStats')) {
 					const cell = e.target.closest('.cell')
 					popUpBaloon(cell)
 				}

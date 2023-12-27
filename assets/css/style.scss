@@ -8,6 +8,7 @@
 
 body {
 	background-color: #002d5a;
+	min-height: 100vh;
 }
 
 #game {
@@ -137,7 +138,7 @@ body {
 	font-size: 3rem;
 	font-family: 'Barletta', sans-serif;
 	padding: 15px;
-	visibility: hidden;
+	// visibility: hidden;
 	cursor: pointer;
 }
 
@@ -149,33 +150,117 @@ body {
 	border: 1px solid rgb(255, 98, 98);
 }
 
-#tableCommercio {
-	font-size: 1.8em;
-	margin: 2%;
-	width: 65%;
-}
+.shop-wrapper {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	overflow-y: auto;
 
-#tableCommercio tr td:nth-child(3) {
-	background-color: #1d1d1d;
-	width: "200px"
-}
+	.shop {
+		background-image: url('../sprites/Repeatable_wooden_plank.png');
+		position: relative;
+		padding: 3%;
+		z-index: 900;
+		min-width: 60vw;
+		min-height: 60vh;
 
-#tableCommercio tr td:nth-child(1) {
-	width: "120px"
-}
+		&::before {
+			content: '';
+			display: block;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+			background-color: rgba(0, 0, 0, 70%);
+			z-index: -1;
+		}
 
-#tableCommercio td {
-	text-align: center;
-	min-width: 50px;
-	padding: 2%;
-}
+		.shop-header {
+			display: flex;
+			justify-content: space-between;
+			h1 {
+				color: #fff;
+				font-size: 3em;
+				font-family: 'Barletta';
+				width: 100%;
+				text-align: center;
+			}
+			.far.fa-times-circle {
+				font-size: 1.5rem;
+				cursor: pointer;
+			}
+		}
 
-#tableCommercio .button {
-	cursor: pointer;
-}
+		.table-wrap {
+			color: #fff;
+			display: flex;
+			justify-content: center;
+			#tableCommercio {
+				font-size: 1.8em;
+				margin: 2%;
+				width: 65%;
 
-#tableCommercio .button:hover {
-	color: red
+				tr {
+					display: flex;
+					td {
+						text-align: center;
+						min-width: 50px;
+						width: 100%;
+						padding: 2%;
+
+						&:nth-child(3) {
+							background-color: #1d1d1d;
+							min-width: 200px;
+						}
+						&:nth-child(1) {
+							min-width: 120px;
+						}
+					}
+				}
+
+				.button {
+					cursor: pointer;
+
+					&:hover {
+						color: red;
+					}
+				}
+			}
+		}
+		.btn {
+			color: #fff;
+			background-color: #000;
+			font-size: 1.2em;
+			padding: 1% 2.5%;
+			border: 2px solid #fff;
+			cursor: pointer;
+			text-align: center;
+		}
+		.shop-footer {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-end;
+
+			.bottom-right {
+				display: flex;
+				flex-direction: column;
+				gap: 0.5rem;
+
+				.btn {
+					white-space: nowrap;
+					min-width: 220px;
+					min-height: 2rem;
+					line-height: 3rem;
+				}
+			}
+		}
+	}
 }
 
 #playerStats {
