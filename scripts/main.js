@@ -10,7 +10,7 @@ import {
 	shipMotionBaseTime,
 } from './shipsModule.js'
 import { Ship } from './ShipClass.js'
-import { setFriendlyShoreCell, shopMenu } from './shopModule.js'
+import { shopMenu } from './shopModule.js'
 
 const gameEl = document.getElementById('game')
 // la larghezza di una cella
