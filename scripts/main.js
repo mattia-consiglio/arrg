@@ -15,6 +15,9 @@ import { setFriendlyShoreCell, shopMenu } from './shopModule.js'
 const gameEl = document.getElementById('game')
 // la larghezza di una cella
 export const cellWidth = 100
+export const rowCount = 40
+export const colCount = 40
+const portRange = 2
 
 const ports = []
 
@@ -166,18 +169,103 @@ const popUpBaloon = function (cell) {
 	// }, 30000)
 }
 
-const spawnPort = (cell, orientation) => {
+const spawnPort = (x, y, direction, ownedByPlayer) => {
+	const portObj = {
+		direction,
+		owner: ownedByPlayer ? 'player' : 'bot',
+		interactionCells: [],
+	}
+	const cell = document.querySelector(`.cell[data-col="${x}"][data-row="${y}"]`)
 	const port = document.createElement('div')
 	port.classList.add('Porto')
-	port.classList.add(orientation)
+	port.classList.add(direction)
 	port.innerHTML = `<img src="../assets/sprites/shore.png" alt="shore">`
 	cell.appendChild(port)
+
+	let minX, maxX, minY, maxY
+	let deadZones = [] //celle in cui non agginger la classe Molo
+
+	if (direction === 'nord' || direction === 'sud') {
+		minX = x - portRange
+		maxX = x + 1 + portRange
+	}
+	if (direction === 'nord') {
+		minY = 0
+		maxY = y + 1 + portRange
+		deadZones = [
+			{ x: x + 1, y: 0 },
+			{ x, y: 1 },
+			{ x: x + 1, y: 1 },
+		]
+	}
+	if (direction === 'sud') {
+		minY = y - 1 - portRange
+		maxY = y
+		deadZones = [
+			{ x, y: y - 1 },
+			{ x: x + 1, y: y - 1 },
+			{ x: x + 1, y },
+		]
+	}
+
+	if (direction === 'est' || direction === 'ovest') {
+		minY = y - portRange
+		maxY = y + 1 + portRange
+	}
+
+	if (direction === 'ovest') {
+		minX = 0
+		maxX = x + 1 + portRange
+		deadZones = [
+			{ x: 1, y: y },
+			{ x: 0, y: y + 1 },
+			{ x: 1, y: y + 1 },
+		]
+	}
+	if (direction === 'est') {
+		minX = x - 1 - portRange
+		maxX = x
+		deadZones = [
+			{ x: x - 1, y },
+			{ x, y: y + 1 },
+			{ x: x - 1, y: y + 1 },
+		]
+	}
+	deadZones.push({ x, y })
+
+	for (let y = minY; y <= maxY; y++) {
+		for (let x = minX; x <= maxX; x++) {
+			if (deadZones.find(coordinate => coordinate.x === x && coordinate.y === y)) {
+				continue
+			}
+			portObj.interactionCells.push({ x, y })
+			const cell = document.querySelector(`.cell[data-col="${x}"][data-row="${y}"]`)
+
+			cell.classList.add('Molo') // aggiungo la classe Mol le tutte le celle di interazione con il porto
+			if (ownedByPlayer) {
+				cell.classList.add('amichevole')
+			} else {
+				cell.classList.add('nemico')
+			}
+		}
+	}
+	ports.push(portObj)
+}
+
+const spawnPorts = () => {
+	const halfWidth = Math.floor(colCount / 2) - 1
+	const halfHeight = Math.floor(rowCount / 2) - 1
+	let portoAlleato = Math.floor(Math.random() * 4)
+
+	spawnPort(halfWidth, 0, 'nord', portoAlleato === 0)
+	spawnPort(colCount - 1, halfHeight, 'est', portoAlleato === 1)
+	spawnPort(halfWidth, rowCount - 1, 'sud', portoAlleato === 2)
+	spawnPort(0, halfHeight, 'ovest', portoAlleato === 3)
 }
 
 const generateMap = (rows, cols) => {
 	map.classList.add('map')
-	const halfWidth = Math.floor(cols / 2) - 1
-	const halfHeight = Math.floor(cols / 2) - 1
+
 	let portoNemicoCasuale
 	for (let i = 0; i < rows; i++) {
 		const row = document.createElement('div')
@@ -189,25 +277,13 @@ const generateMap = (rows, cols) => {
 			cell.setAttribute('data-row', i)
 			cell.setAttribute('data-col', j)
 
-			if (i === 0 && j === halfWidth) {
-				spawnPort(cell, 'nord')
-			}
-			if (i === rows - 1 && j === halfWidth) {
-				spawnPort(cell, 'sud')
-			}
-			if (j === 0 && i === halfHeight) {
-				spawnPort(cell, 'ovest')
-			}
-			if (j === cols - 1 && i === halfHeight) {
-				spawnPort(cell, 'est')
-			}
-
 			row.appendChild(cell)
 		}
 		map.appendChild(row)
 	}
 	gameEl.appendChild(map)
-	setFriendlyShoreCell()
+	spawnPorts()
+	// setFriendlyShoreCell()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -347,9 +423,6 @@ document.addEventListener('mousedown', function (e) {
 })
 
 //inizilizza il gioco
-
-export const rowCount = 40
-export const colCount = 40
 
 generateMap(rowCount, colCount)
 setMapMinXY()

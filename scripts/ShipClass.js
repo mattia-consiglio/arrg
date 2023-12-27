@@ -144,7 +144,7 @@ export class Ship {
 		const yInitial = 15
 		this.posX = xInitial
 		this.posY = yInitial
-		const cell = document.querySelector(`div[data-row="${yInitial}"][data-col="${xInitial}"]`)
+		const cell = document.querySelector(`.cell[data-row="${yInitial}"][data-col="${xInitial}"]`)
 		return cell
 	}
 
@@ -174,7 +174,6 @@ export class Ship {
 				this.attackRangeCells.push({ x, y })
 			}
 		}
-		console.log(this.attackRangeCells)
 	}
 
 	mouvementPossible(targetX, targetY) {

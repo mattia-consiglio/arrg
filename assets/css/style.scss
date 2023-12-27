@@ -44,12 +44,15 @@ body {
 }
 
 #controls {
-	bottom: 0;
-	right: 0;
+	bottom: 10px;
+	right: 10px;
+	position: fixed;
 
 	div {
 		cursor: pointer;
-		position: fixed;
+		position: absolute;
+		font-size: 57.14px;
+		color: #fff;
 
 		&#left {
 			bottom: 50px;
