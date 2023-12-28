@@ -288,6 +288,10 @@ const generateMap = (rows, cols) => {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const isTouchDevice = () => {
+	return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0
+}
+
 const setMapMinXY = () => {
 	minMapX = Math.min(cellWidth / 2, window.innerWidth - map.offsetWidth - cellWidth / 2)
 	minMapY = Math.min(cellWidth / 2, window.innerHeight - map.offsetHeight - cellWidth / 2)
@@ -330,12 +334,33 @@ const mouveMap = direction => {
 // Funzione per iniziare il trascinamento
 function startDrag(e) {
 	isDragging = true
-	initialMouseX = e.clientX
-	initialMouseY = e.clientY
+
+	// Controlla se l'evento è di tipo touch
+	if (e.type === 'touchstart') {
+		// Assicurati che ci sia almeno un tocco
+		if (e.touches.length > 0) {
+			initialMouseX = e.touches[0].clientX
+			initialMouseY = e.touches[0].clientY
+		}
+	} else {
+		// Altrimenti, usa le coordinate del mouse
+		initialMouseX = e.clientX
+		initialMouseY = e.clientY
+	}
+
 	const matrix = new DOMMatrixReadOnly(window.getComputedStyle(map).transform)
 	initialX = matrix.m41
 	initialY = matrix.m42
+
 	// Aggiungi questi event listener nel tuo metodo startDrag
+
+	//aggiungo i touch listerner solo se il il dipositivo è abilitato al touch
+	if (e.type === 'touchstart') {
+		window.addEventListener('touchmove', onDrag)
+		window.addEventListener('touchend', endDrag)
+	}
+
+	//aggiunngo gli evnt listeter per il mose perché anche un dipositivo touch può avere un input mouse
 	window.addEventListener('mousemove', onDrag)
 	window.addEventListener('mouseup', endDrag)
 }
@@ -343,23 +368,46 @@ function startDrag(e) {
 // Funzione per aggiornare la posizione dell'elemento
 function onDrag(e) {
 	if (!isDragging) return
-	let deltaX = e.clientX - initialMouseX
-	let deltaY = e.clientY - initialMouseY
 
+	let clientX, clientY
+
+	// Controlla se l'evento è di tipo touch
+	if (e.type === 'touchmove') {
+		// Assicurati che ci sia almeno un tocco
+		if (e.touches.length > 0) {
+			clientX = e.touches[0].clientX
+			clientY = e.touches[0].clientY
+		}
+	} else {
+		// Altrimenti, usa le coordinate del mouse
+		clientX = e.clientX
+		clientY = e.clientY
+	}
+
+	// Calcola la differenza tra le coordinate correnti e quelle iniziali
+	let deltaX = clientX - initialMouseX
+	let deltaY = clientY - initialMouseY
+
+	// Calcola le nuove posizioni
 	let finalX = initialX + deltaX
 	let finalY = initialY + deltaY
 
+	// Limita la posizione alle dimensioni della mappa
 	finalX = Math.min(maxMapX, Math.max(finalX, minMapX))
 	finalY = Math.min(maxMapY, Math.max(finalY, minMapY))
 
-	// console.log({ finalX, finalY })
+	console.log({ finalX, finalY })
+	// Aggiorna la trasformazione CSS per spostare la mappa
 	map.style.transform = `translate(${finalX}px, ${finalY}px)`
 }
 
 // Funzione per terminare il trascinamento
 function endDrag() {
 	isDragging = false
-
+	if (isTouchDevice()) {
+		window.removeEventListener('touchmove', onDrag)
+		window.removeEventListener('touchend', endDrag)
+	}
 	window.removeEventListener('mousemove', onDrag)
 	window.removeEventListener('mouseup', endDrag)
 }
@@ -438,4 +486,10 @@ document.getElementById('right').onclick = () => mouveMap('left')
 export const player = new Ship({ type: 'player', ports })
 
 // Aggiungi event listener per il drag-and-drop
-map.addEventListener('mousedown', startDrag)
+
+if (isTouchDevice()) {
+	// console.log('touch')
+
+	map.addEventListener('touchstart', startDrag)
+}
+// map.addEventListener('mousedown', startDrag)
