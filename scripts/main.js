@@ -396,7 +396,6 @@ function onDrag(e) {
 	finalX = Math.min(maxMapX, Math.max(finalX, minMapX))
 	finalY = Math.min(maxMapY, Math.max(finalY, minMapY))
 
-	console.log({ finalX, finalY })
 	// Aggiorna la trasformazione CSS per spostare la mappa
 	map.style.transform = `translate(${finalX}px, ${finalY}px)`
 }
@@ -454,8 +453,6 @@ document.addEventListener('mousedown', function (e) {
 			document.removeEventListener('mousemove', onMouseMove)
 			if (!wasDragged) {
 				// cliccato ma non tracinato
-
-				console.log()
 				if (
 					!e.target.closest('#mouse-balloon') &&
 					!e.target.closest('#playerStats') &&
