@@ -456,7 +456,11 @@ document.addEventListener('mousedown', function (e) {
 				if (
 					!e.target.closest('#mouse-balloon') &&
 					!e.target.closest('#playerStats') &&
-					!e.target.closest('#controls')
+					!e.target.closest('#controls') &&
+					!e.target.closest('#table-wrap') &&
+					!e.target.closest('.shop') &&
+					!e.target.closest('.button')
+
 				) {
 					const cell = e.target.closest('.cell')
 					popUpBaloon(cell)

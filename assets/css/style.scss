@@ -212,6 +212,7 @@ body {
 		.shop-header {
 			display: flex;
 			justify-content: space-between;
+
 			h1 {
 				color: #fff;
 				font-size: 3em;
@@ -219,6 +220,7 @@ body {
 				width: 100%;
 				text-align: center;
 			}
+
 			.far.fa-times-circle {
 				font-size: 1.5rem;
 				cursor: pointer;
@@ -229,6 +231,7 @@ body {
 			color: #fff;
 			display: flex;
 			justify-content: center;
+
 			#tableCommercio {
 				font-size: 1.8em;
 				margin: 2%;
@@ -236,6 +239,7 @@ body {
 
 				tr {
 					display: flex;
+
 					td {
 						text-align: center;
 						min-width: 50px;
@@ -246,6 +250,7 @@ body {
 							background-color: #1d1d1d;
 							min-width: 200px;
 						}
+
 						&:nth-child(1) {
 							min-width: 120px;
 						}
@@ -261,6 +266,7 @@ body {
 				}
 			}
 		}
+
 		.btn {
 			color: #fff;
 			background-color: #000;
@@ -270,6 +276,7 @@ body {
 			cursor: pointer;
 			text-align: center;
 		}
+
 		.shop-footer {
 			display: flex;
 			justify-content: space-between;

@@ -48,6 +48,7 @@ export const shopMenu = function (initialResources) {
     tableCommercio.classList.add('table-wrap')
     const table = document.createElement("table")
     const tBody = document.createElement("tbody")
+    tBody.id = "tableCommercio"
     const tdVuoto = document.createElement("td")
     const tr1 = document.createElement("tr")
     tr1.appendChild(tdVuoto)
@@ -60,38 +61,61 @@ export const shopMenu = function (initialResources) {
     tr1.appendChild(tdVuoto)
     tBody.appendChild(tr1)
 
-    Object.entries(shopMenuRes).forEach(([resourceName, resourceValue]) => {
-        const newTr = document.createElement("tr")
-        const tdResourceName = document.createElement("td")
-        const pResourceName = document.createElement("p")
-        pResourceName.textContent = `${resourceName}:`
-        tdResourceName.appendChild(pResourceName)
-        const tdMinusButton = document.createElement("td")
-        const pMinusButton = document.createElement("p")
-        pMinusButton.textContent = "-"
-        tdMinusButton.appendChild(pMinusButton)
-        const tdResourceValue = document.createElement("td")
-        const pResourceValue = document.createElement("p")
-        pResourceValue.textContent = `[ ${resourceValue} ]`
-        tdResourceValue.appendChild(pResourceValue)
-        const tdPlusButton = document.createElement("td")
-        const pPlusButton = document.createElement("p")
-        pPlusButton.textContent = "+"
-        tdPlusButton.appendChild(pPlusButton)
-        newTr.appendChild(tdResourceName)
-        newTr.appendChild(tdMinusButton)
-        newTr.appendChild(tdResourceValue)
-        newTr.appendChild(tdPlusButton)
-
-        tBody.append(newTr)
-    })
-
     const lastTr = document.createElement("tr")
     lastTr.appendChild(tdVuoto)
     lastTr.appendChild(tdVuoto)
     const tdGoldIn = document.createElement("td")
     const pGoldIn = document.createElement("p")
     pGoldIn.innerText = `Gold: [ ${shopMenuRes.gold} ]`
+
+
+    Object.entries(shopMenuRes).forEach(([resourceName, resourceValue]) => {
+        if (resourceName !== 'gold') {
+            const tdResourceValue = document.createElement("td")
+            const pResourceValue = document.createElement("p")
+            pResourceValue.textContent = `[ ${resourceValue} ]`
+
+            const newTr = document.createElement("tr")
+            const tdResourceName = document.createElement("td")
+            const pResourceName = document.createElement("p")
+            pResourceName.textContent = `${resourceName}:`
+            tdResourceName.appendChild(pResourceName)
+            const tdMinusButton = document.createElement("td")
+            const pMinusButton = document.createElement("p")
+            pMinusButton.classList.add("button")
+            pMinusButton.addEventListener('click', function () {
+                if (resourceValue > 0) {
+                    resourceValue--
+                    pResourceValue.innerHTML = `[ <span style='color:${deltaColorResource(initialResources[resourceName], resourceValue)}'>${resourceValue}</span> ]`
+                    shopMenuRes.gold++
+                    pGoldIn.innerHTML = `Gold: [ <span style='color:${deltaColorResource(initialResources.gold, shopMenuRes.gold)}'>${shopMenuRes.gold}</span> ]`
+                }
+            });
+            pMinusButton.textContent = "-"
+            tdMinusButton.appendChild(pMinusButton)
+            tdResourceValue.appendChild(pResourceValue)
+            const tdPlusButton = document.createElement("td")
+            const pPlusButton = document.createElement("p")
+            pPlusButton.addEventListener('click', function () {
+                if (shopMenuRes.gold > 0) {
+                    resourceValue++
+                    pResourceValue.innerHTML = `[ <span style='color:${deltaColorResource(initialResources[resourceName], resourceValue)}'>${resourceValue}</span> ]`
+                    shopMenuRes.gold--
+                    pGoldIn.innerHTML = `Gold: [ <span style='color:${deltaColorResource(initialResources.gold, shopMenuRes.gold)}'>${shopMenuRes.gold}</span> ]`
+                }
+            });
+            pPlusButton.classList.add("button")
+            pPlusButton.textContent = "+"
+            tdPlusButton.appendChild(pPlusButton)
+            newTr.appendChild(tdResourceName)
+            newTr.appendChild(tdMinusButton)
+            newTr.appendChild(tdResourceValue)
+            newTr.appendChild(tdPlusButton)
+
+            tBody.append(newTr)
+        }
+    })
+
     tdGoldIn.appendChild(pGoldIn)
     lastTr.appendChild(tdGoldIn)
     lastTr.appendChild(tdVuoto)
