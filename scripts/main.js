@@ -70,7 +70,7 @@ document.getElementById('shopButton').onclick = function () {
 	player.resources.gold += 250
 	document
 		.getElementsByTagName('body')[0]
-		.appendChild(shopMenu(player.resources.gold, player.resources.rhum, player.resources.food))
+		.appendChild(shopMenu(player.resources))
 }
 
 const templateDoSomethingWithXandYofCell = function (x, y) {
