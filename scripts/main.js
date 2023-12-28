@@ -67,6 +67,7 @@ const getVisibleCells = () => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 document.getElementById('shopButton').onclick = function () {
+	player.resources.gold += 250
 
 	document
 		.getElementsByTagName('body')[0]

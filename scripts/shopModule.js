@@ -40,8 +40,17 @@ export const shopMenu = function (initialResources) {
     const repairButton = document.createElement('div')
     const acceptButton = document.createElement('div')
     const reparationsRange = document.createElement('input')
+    reparationsRange.id = "reparationsRange"
+    const wrapperReparationsRange = document.createElement('div')
+    wrapperReparationsRange.id = "wrapperReparationsRange"
+    wrapperReparationsRange.appendChild(reparationsRange)
+
 
     reparationsRange.type = 'range'
+    reparationsRange.min = "1"
+    reparationsRange.max = "100"
+    reparationsRange.style.width = `${100 - (player.hp / player.maxHp) * 100}%`
+
 
     acceptButton.innerHTML = `Accetta [<span style="color: ${colorDirezioneDelta(
         shopMenuRes.gold - initialResources.gold
@@ -173,7 +182,7 @@ export const shopMenu = function (initialResources) {
     repairButton.classList.add('btn')
     cancelButton.classList.add('btn')
 
-    divBottomRight.appendChild(reparationsRange)
+    divBottomRight.appendChild(wrapperReparationsRange)
     divBottomRight.appendChild(repairButton)
     divBottomRight.appendChild(acceptButton)
     shopFooter.appendChild(cancelButton)

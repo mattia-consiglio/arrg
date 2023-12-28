@@ -36,7 +36,7 @@ export const templateResources = {
 export const shipsTemplate = [
 	{
 		level: 1,
-		hp: 100, //hp decrementabile se si subiscono danni
+		hp: 30, //hp decrementabile se si subiscono danni
 		maxHp: 100, // hp massimo
 		cannonPower: 15, //danno per colpo di cannone
 		cannonAmount: 2, //il numero di cannoni influenza quante cannonate si possono sparare per turno

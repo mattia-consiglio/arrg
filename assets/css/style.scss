@@ -231,11 +231,12 @@ body {
 			color: #fff;
 			display: flex;
 			justify-content: center;
+			width: 100%;
 
 			#tableCommercio {
 				font-size: 1.8em;
 				margin: 2%;
-				width: 65%;
+				max-width: 65%;
 
 				tr {
 					display: flex;
@@ -247,7 +248,6 @@ body {
 						padding: 2%;
 
 						&:nth-child(3) {
-							background-color: #1d1d1d;
 							min-width: 200px;
 						}
 
@@ -265,6 +265,24 @@ body {
 					}
 				}
 			}
+		}
+
+		#wrapperReparationsRange {
+			height: 8px;
+			padding: 2%;
+			width: 100%;
+			position: relative;
+			background-color: #48e217;
+		}
+
+		#reparationsRange {
+			-webkit-appearance: none;
+			height: 9px;
+			border: none;
+			position: absolute;
+			right: 0;
+			top: 2%;
+			background-color: #274eff;
 		}
 
 		.btn {

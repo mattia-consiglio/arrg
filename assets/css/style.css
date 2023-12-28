@@ -244,11 +244,12 @@ body {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+  width: 100%;
 }
 .shop-wrapper .shop .table-wrap #tableCommercio {
   font-size: 1.8em;
   margin: 2%;
-  width: 65%;
+  max-width: 65%;
 }
 .shop-wrapper .shop .table-wrap #tableCommercio tr {
   display: -webkit-box;
@@ -262,7 +263,6 @@ body {
   padding: 2%;
 }
 .shop-wrapper .shop .table-wrap #tableCommercio tr td:nth-child(3) {
-  background-color: #1d1d1d;
   min-width: 200px;
 }
 .shop-wrapper .shop .table-wrap #tableCommercio tr td:nth-child(1) {
@@ -273,6 +273,22 @@ body {
 }
 .shop-wrapper .shop .table-wrap #tableCommercio .button:hover {
   color: red;
+}
+.shop-wrapper .shop #wrapperReparationsRange {
+  height: 8px;
+  padding: 2%;
+  width: 100%;
+  position: relative;
+  background-color: #48e217;
+}
+.shop-wrapper .shop #reparationsRange {
+  -webkit-appearance: none;
+  height: 9px;
+  border: none;
+  position: absolute;
+  right: 0;
+  top: 2%;
+  background-color: #274eff;
 }
 .shop-wrapper .shop .btn {
   color: #fff;
