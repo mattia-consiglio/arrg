@@ -68,6 +68,8 @@ const getVisibleCells = () => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 document.getElementById('shopButton').onclick = function () {
 	player.resources.gold += 250
+	player.resources.rhum += 250
+	player.resources.food += 250
 	document
 		.getElementsByTagName('body')[0]
 		.appendChild(shopMenu(player.resources))
