@@ -1,3 +1,5 @@
+import { player } from "./main.js"
+
 const colorDirezioneDelta = function (delta) {
     if (delta > 0) {
         return 'green'
@@ -33,7 +35,7 @@ export const shopMenu = function (initialResources) {
     const xIcon = document.createElement('div')
     xIcon.innerHTML = `<i class="far fa-times-circle" style="color: #cc0000;"></i>`
     xIcon.onclick = function () {
-        divMenuShop.remove()
+        divWrapper.remove()
     }
     const repairButton = document.createElement('div')
     const acceptButton = document.createElement('div')
@@ -105,12 +107,13 @@ export const shopMenu = function (initialResources) {
                     resourceValue--
                     pResourceValue.innerHTML = `[ <span style='color:${deltaColorResource(initialResources[resourceName], resourceValue)}'>${resourceValue}</span> ]`
                     shopMenuRes.gold++
+                    shopMenuRes[resourceName] = resourceValue
                     pGoldIn.innerHTML = `Gold: [ <span style='color:${deltaColorResource(initialResources.gold, shopMenuRes.gold)}'>${shopMenuRes.gold}</span> ]`
                     acceptButton.innerHTML = `Accetta [<span style="color: ${colorDirezioneDelta(
                         shopMenuRes.gold - initialResources.gold
                     )}"> ${shopMenuRes.gold - initialResources.gold}</span> <i class="fas fa-coins" style="color: #fac229;"></i> ]`
                 }
-            });
+            })
             pMinusButton.textContent = "-"
             tdMinusButton.appendChild(pMinusButton)
             tdResourceValue.appendChild(pResourceValue)
@@ -121,12 +124,14 @@ export const shopMenu = function (initialResources) {
                     resourceValue++
                     pResourceValue.innerHTML = `[ <span style='color:${deltaColorResource(initialResources[resourceName], resourceValue)}'>${resourceValue}</span> ]`
                     shopMenuRes.gold--
+                    shopMenuRes[resourceName] = resourceValue
                     pGoldIn.innerHTML = `Gold: [ <span style='color:${deltaColorResource(initialResources.gold, shopMenuRes.gold)}'>${shopMenuRes.gold}</span> ]`
                     acceptButton.innerHTML = `Accetta [<span style="color: ${colorDirezioneDelta(
                         shopMenuRes.gold - initialResources.gold
                     )}"> ${shopMenuRes.gold - initialResources.gold}</span> <i class="fas fa-coins" style="color: #fac229;"></i> ]`
                 }
-            });
+            })
+
             pPlusButton.classList.add("button")
             pPlusButton.textContent = "+"
             tdPlusButton.appendChild(pPlusButton)
@@ -156,6 +161,13 @@ export const shopMenu = function (initialResources) {
 
     divMenuShop.appendChild(cancelButton)
 
+    acceptButton.addEventListener('click', function () {
+        Object.entries(shopMenuRes).forEach(([resourceName, resourceValue]) => {
+            player.resources[resourceName] = resourceValue
+        })
+        console.log(player.resources)
+        divWrapper.remove()
+    })
 
     acceptButton.classList.add('btn')
     repairButton.classList.add('btn')

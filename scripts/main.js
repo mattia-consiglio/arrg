@@ -67,9 +67,7 @@ const getVisibleCells = () => {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 document.getElementById('shopButton').onclick = function () {
-	player.resources.gold += 250
-	player.resources.rhum += 250
-	player.resources.food += 250
+
 	document
 		.getElementsByTagName('body')[0]
 		.appendChild(shopMenu(player.resources))
@@ -461,8 +459,9 @@ document.addEventListener('mousedown', function (e) {
 					!e.target.closest('#controls') &&
 					!e.target.closest('#table-wrap') &&
 					!e.target.closest('.shop') &&
-					!e.target.closest('.button')
-
+					!e.target.closest('.button') &&
+					!e.target.closest('.shopButton') &&
+					!e.target.closest('.btn')
 				) {
 					const cell = e.target.closest('.cell')
 					popUpBaloon(cell)
