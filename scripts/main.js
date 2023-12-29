@@ -9,7 +9,7 @@ import {
 	hpRapairOnPlaceRate,
 	shipMotionBaseTime,
 } from './shipsModule.js'
-import { Ship } from './ShipClass.js'
+import { PlayerShip, BotShip } from './ShipClass.js'
 import { shopMenu } from './shopModule.js'
 
 const gameEl = document.getElementById('game')
@@ -69,9 +69,7 @@ const getVisibleCells = () => {
 document.getElementById('shopButton').onclick = function () {
 	player.resources.gold += 250
 
-	document
-		.getElementsByTagName('body')[0]
-		.appendChild(shopMenu(player.resources))
+	document.getElementsByTagName('body')[0].appendChild(shopMenu(player.resources))
 }
 
 const templateDoSomethingWithXandYofCell = function (x, y) {
@@ -487,13 +485,11 @@ document.getElementById('down').onclick = () => mouveMap('up')
 document.getElementById('left').onclick = () => mouveMap('right')
 document.getElementById('right').onclick = () => mouveMap('left')
 
-export const player = new Ship({ type: 'player', ports })
+export const player = new PlayerShip({ ports })
+shipsArray.push(player)
 
 // Aggiungi event listener per il drag-and-drop
-
 if (isTouchDevice()) {
-	// console.log('touch')
-
 	map.addEventListener('touchstart', startDrag)
 }
-// map.addEventListener('mousedown', startDrag)
+map.addEventListener('mousedown', startDrag)

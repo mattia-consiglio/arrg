@@ -1,6 +1,8 @@
-import { shipsTemplate, templateResources } from './shipsModule.js'
+import { shipsTemplate, templateResources, shipsArray } from './shipsModule.js'
 import { rowCount, colCount } from './main.js'
-export class Ship {
+let idCount = 1
+let botCount = 0
+class Ship {
 	static DOMShipWrap
 	static DOMShipImg
 	static hpBar
@@ -15,10 +17,9 @@ export class Ship {
 	maxStorage
 	crew
 	xp = 0
-	xpNeeded
-	xpGiven
+
 	autoStartAttack
-	autoFollow
+
 	attackRange
 	motionRange
 	speed
@@ -39,10 +40,6 @@ export class Ship {
 			cannonAmount,
 			maxStorage,
 			crew,
-			xpNeeded,
-			xpGiven,
-			autoStartAttack,
-			autoFollow,
 			motionRange,
 			attackRange,
 			speed,
@@ -54,10 +51,6 @@ export class Ship {
 		this.cannonAmount = cannonAmount
 		this.maxStorage = maxStorage
 		this.crew = crew
-		this.xpNeeded = xpNeeded
-		this.xpGiven = xpGiven
-		this.autoStartAttack = autoStartAttack
-		this.autoFollow = autoFollow
 		this.motionRange = motionRange
 		this.attackRange = attackRange
 		this.speed = speed
@@ -84,7 +77,7 @@ export class Ship {
 		this.DOMShipImg = document.createElement('img')
 		this.DOMShipImg.classList.add('shipImg')
 		this.DOMShipWrap.appendChild(this.DOMShipImg)
-		const cell = this.getinitalSpawnCell(ports)
+		const cell = this.setInitalSpawnCell(ports)
 
 		this.setShipPosition(cell)
 		this.updateShipImageDirection()
@@ -134,14 +127,30 @@ export class Ship {
 		this.calculateAttackRangeCells()
 	}
 
-	getinitalSpawnCell(ports) {
-		/**
-		 * DA FARE:
-		 * controllo del tipo di nave
-		 * controllare se ci sono porti liberi e il tipo
-		 */
-		const xInitial = 21
-		const yInitial = 15
+	setInitalSpawnCell(ports) {
+		const filteredPorts = ports.filter(port => port.owner === this.type)
+		let spawnPortIndex = 0
+		if (filteredPorts.length > 1) {
+			spawnPortIndex = Math.floor(Math.random() * filteredPorts.length)
+		}
+		const freeCells = []
+		if (this.type === 'player') {
+			freeCells.push(...filteredPorts[spawnPortIndex].interactionCells)
+		} else {
+			filteredPorts[spawnPortIndex].interactionCells.forEach(portCell => {
+				if (
+					shipsArray.findIndex(ship => ship.posX === portCell.x && ship.posY === portCell.y) > -1
+				) {
+					freeCells.push(portCell)
+				}
+			})
+		}
+
+		const spawnCell = freeCells[Math.floor(Math.random() * freeCells.length)]
+		console.log(spawnCell)
+
+		const xInitial = spawnCell.x
+		const yInitial = spawnCell.y
 		this.posX = xInitial
 		this.posY = yInitial
 		const cell = document.querySelector(`.cell[data-row="${yInitial}"][data-col="${xInitial}"]`)
@@ -261,5 +270,28 @@ export class Ship {
 				console.log('Errore: direzione non valida')
 				break
 		}
+	}
+}
+
+export class PlayerShip extends Ship {
+	xpNeeded
+	constructor({ type, level = 1, id = 0, ports = [] }) {
+		super({ type: 'player', level, id, ports })
+		const shipTemplate = this.getShipTemplateByLevel(this.level + 1)
+		if (shipTemplate) {
+			this.xpNeeded = shipTemplate.xpNeeded
+		} else {
+			this.xpNeeded = this.getShipTemplateByLevel(this.level).xpNeeded
+		}
+	}
+}
+
+export class BotShip extends Ship {
+	xpGiven
+	autoFollow
+	autoStartAttack
+	constructor({ type, level = 1, id = 0, ports = [] }) {
+		super({ type: 'bot', level, id, ports })
+		const { xpGiven, autoStartAttack, autoFollow } = this.getShipTemplateByLevel(this.level)
 	}
 }
