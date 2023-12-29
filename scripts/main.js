@@ -13,6 +13,7 @@ import {
 import { PlayerShip, BotShip } from './ShipClass.js'
 import { shopMenu } from './shopModule.js'
 import { generateMap, rowCount, colCount, setMapMinXY, moveViewportOverPlayer } from './map.js'
+import { movementMethod } from './movementModule.js'
 
 export const gameEl = document.getElementById('game')
 // la larghezza di una cella
@@ -21,41 +22,16 @@ const portRange = 2
 
 const ports = []
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Metodo per ottenere le caselle visibili a schermo. Solo gli
-//elementi grafici di questa cella vengono animati, gli altri vengono messi in hidden. Funzione da usare in futuro
-const getVisibleCells = () => {
-	const visibleCells = []
-	const map = document.querySelector('.map')
-	const cells = map.querySelectorAll('.cell')
+// Variabili per tracciare lo stato del drag-and-drop
+let isDragging = false
+let initialMouseX, initialMouseY
+let initialX, initialY
+const maxMapX = cellWidth / 2
+const maxMapY = cellWidth / 2
+let minMapX, minMapY
 
-	// Calcola i confini della finestra
-	const viewportTop = window.scrollY
-	const viewportLeft = window.scrollX
-	const viewportBottom = viewportTop + window.innerHeight
-	const viewportRight = viewportLeft + window.innerWidth
+const map = document.createElement('div')
 
-	cells.forEach(cell => {
-		const cellRect = cell.getBoundingClientRect()
-		const cellTop = cellRect.top + window.scrollY
-		const cellLeft = cellRect.left + window.scrollX
-		const cellBottom = cellTop + cellRect.height
-		const cellRight = cellLeft + cellRect.width
-
-		// Verifica se la cella è visibile all'interno della finestra
-		if (
-			cellTop < viewportBottom &&
-			cellBottom > viewportTop &&
-			cellLeft < viewportRight &&
-			cellRight > viewportLeft
-		) {
-			visibleCells.push(cell)
-		}
-	})
-	return visibleCells
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
 document.getElementById('shopButton').onclick = function () {
 	player.resources.gold += 250
 
@@ -295,7 +271,7 @@ document.addEventListener('mousedown', function (e) {
 					!e.target.closest('.btn')
 				) {
 					const cell = e.target.closest('.cell')
-					popUpBaloon(cell)
+					//popUpBaloon(cell)
 				}
 			}
 		},
@@ -313,3 +289,11 @@ window.addEventListener('resize', () => {
 export const player = new PlayerShip({ ports })
 shipsArray.push(player)
 moveViewportOverPlayer()
+
+// Aggiungi event listener per il drag-and-drop
+if (isTouchDevice()) {
+	map.addEventListener('touchstart', startDrag)
+}
+map.addEventListener('mousedown', startDrag)
+
+movementMethod()

@@ -153,7 +153,6 @@ class Ship {
 		}
 
 		const spawnCell = freeCells[Math.floor(Math.random() * freeCells.length)]
-		console.log(spawnCell)
 
 		const xInitial = spawnCell.x
 		const yInitial = spawnCell.y
