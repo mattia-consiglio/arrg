@@ -22,16 +22,6 @@ const portRange = 2
 
 const ports = []
 
-// Variabili per tracciare lo stato del drag-and-drop
-let isDragging = false
-let initialMouseX, initialMouseY
-let initialX, initialY
-const maxMapX = cellWidth / 2
-const maxMapY = cellWidth / 2
-let minMapX, minMapY
-
-const map = document.createElement('div')
-
 document.getElementById('shopButton').onclick = function () {
 	player.resources.gold += 250
 
@@ -217,7 +207,7 @@ const spawnPort = (x, y, direction, ownedByPlayer) => {
 	ports.push(portObj)
 }
 
-export const spawnPorts = () => {
+const spawnPorts = () => {
 	const halfWidth = Math.floor(colCount / 2) - 1
 	const halfHeight = Math.floor(rowCount / 2) - 1
 	let portoAlleato = Math.floor(Math.random() * 4)
@@ -234,6 +224,22 @@ export const isTouchDevice = () => {
 
 let wasDragged = false
 const dragThreshold = 10 // Soglia in pixel per considerare un movimento come trascinamento
+
+//inizilizza il gioco
+generateMap(rowCount, colCount)
+setMapMinXY()
+spawnPorts()
+
+export const player = new PlayerShip({ ports })
+shipsArray.push(player)
+moveViewportOverPlayer()
+movementMethod()
+
+// ------------------ Listeners ------------------
+
+window.addEventListener('resize', () => {
+	setMapMinXY()
+})
 
 //eseguire la funzioni solo se il mouse non è stato trascinato per più del dragThreshold
 document.addEventListener('mousedown', function (e) {
@@ -278,22 +284,3 @@ document.addEventListener('mousedown', function (e) {
 		{ once: true }
 	)
 })
-
-//inizilizza il gioco
-generateMap(rowCount, colCount)
-setMapMinXY()
-window.addEventListener('resize', () => {
-	setMapMinXY()
-})
-
-export const player = new PlayerShip({ ports })
-shipsArray.push(player)
-moveViewportOverPlayer()
-
-// Aggiungi event listener per il drag-and-drop
-if (isTouchDevice()) {
-	map.addEventListener('touchstart', startDrag)
-}
-map.addEventListener('mousedown', startDrag)
-
-movementMethod()

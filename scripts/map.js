@@ -33,8 +33,6 @@ const generateMap = (rows, cols) => {
 		map.appendChild(row)
 	}
 	gameEl.appendChild(map)
-	spawnPorts()
-	// setFriendlyShoreCell()
 }
 
 const setMapMinXY = () => {
