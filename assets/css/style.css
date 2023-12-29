@@ -245,6 +245,7 @@ body {
       -ms-flex-pack: center;
           justify-content: center;
   width: 100%;
+  word-wrap: nowrap;
 }
 .shop-wrapper .shop .table-wrap #tableCommercio {
   font-size: 1.8em;
@@ -288,7 +289,24 @@ body {
   position: absolute;
   right: 0;
   top: 0;
-  background-color: #274eff;
+  background: -webkit-gradient(linear, left top, right top, color-stop(50%, rgb(39, 107, 255)), color-stop(50%, red));
+  background: linear-gradient(to right, rgb(39, 107, 255) 50%, red 50%);
+}
+.shop-wrapper .shop #reparationsRange::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 16px;
+  background-image: url("../svg/hammer-solid.svg");
+  cursor: pointer;
+  translate: 0, 0;
+}
+.shop-wrapper .shop #reparationsRange:-moz-range-thumb {
+  width: 18px;
+  height: 16px;
+  background-image: url("../svg/hammer-solid.svg");
+  translate: 0, 0;
+  cursor: pointer;
 }
 .shop-wrapper .shop .btn {
   color: #fff;

@@ -232,6 +232,7 @@ body {
 			display: flex;
 			justify-content: center;
 			width: 100%;
+			word-wrap: nowrap;
 
 			#tableCommercio {
 				font-size: 1.8em;
@@ -282,7 +283,25 @@ body {
 			position: absolute;
 			right: 0;
 			top: 0;
-			background-color: #274eff;
+			background: linear-gradient(to right, rgb(39, 107, 255) 50%, red 50%);
+		}
+
+		#reparationsRange::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 18px;
+			height: 16px;
+			background-image: url('../svg/hammer-solid.svg');
+			cursor: pointer;
+			translate: (0, 0);
+		}
+
+		#reparationsRange:-moz-range-thumb {
+			width: 18px;
+			height: 16px;
+			background-image: url('../svg/hammer-solid.svg');
+			translate: (0, 0);
+			cursor: pointer;
 		}
 
 		.btn {

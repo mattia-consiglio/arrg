@@ -170,10 +170,14 @@ export const shopMenu = function (initialResources) {
 
     divMenuShop.appendChild(cancelButton)
 
+    cancelButton.addEventListener('click', function () {
+        divWrapper.remove()
+    })
+
     repairButton.addEventListener('click', function () {
         if (player.resources.gold > reparationsRange.value && player.hp < player.maxHp) {
             console.log(player)
-            player.hp = parseInt(reparationsRange.value)
+            player.hp = parseInt(reparationsRange.value) / 100 * player.maxHp
             player.resources.gold -= parseInt(reparationsRange.value)
             player.updateHpBar()
             console.log(player)
@@ -182,6 +186,15 @@ export const shopMenu = function (initialResources) {
             divWrapper.remove()
         }
     })
+
+    function updateSliderGradient() {
+        const percentage = (reparationsRange.value - reparationsRange.min) / (reparationsRange.max - reparationsRange.min) * 100
+        reparationsRange.style.background = `linear-gradient(to right, rgb(39, 107, 255) ${percentage}%, red ${percentage}%)`;
+    }
+
+    reparationsRange.addEventListener('input', updateSliderGradient)
+
+    updateSliderGradient()
 
     acceptButton.addEventListener('click', function () {
         Object.entries(shopMenuRes).forEach(([resourceName, resourceValue]) => {

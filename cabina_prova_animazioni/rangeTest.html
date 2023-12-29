@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Input Range Example</title>
+    <style>
+        /* Stili opzionali per migliorare l'aspetto */
+        .slider {
+            -webkit-appearance: none;
+            /* Override dell'aspetto standard */
+            width: 100%;
+            /* Larghezza completa del contenitore */
+            height: 9px;
+            /* Altezza del tracciato dello slider */
+            background: #d3d3d3;
+            /* Colore di sfondo */
+            outline: none;
+            /* Rimuove il contorno al focus */
+            opacity: 0.7;
+            /* Trasparenza (opzionale) */
+            -webkit-transition: .2s;
+            /* Transizione animata */
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+            /* Opacità al passaggio del mouse */
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 16px;
+            background-image: url('../assets/svg/hammer-solid.svg');
+            /* Sostituisci con il tuo SVG in base64 */
+            cursor: pointer;
+            translate: (0, 0);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 16px;
+            background-image: url('../assets/svg/hammer-solid.svg');
+            translate: (0, 0);
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>HTML Range Slider</h2>
+    <p>Drag the slider to display the value:</p>
+
+    <div>
+        <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+        <p>Value: <span id="demo"></span></p>
+    </div>
+
+    <script>
+        var slider = document.getElementById("myRange");
+        var output = document.getElementById("demo");
+        output.innerHTML = slider.value; // Display the default slider value
+
+        // Update the current slider value (each time you drag the slider handle)
+        slider.oninput = function () {
+            output.innerHTML = this.value;
+        }
+    </script>
+
+</body>
+
+</html>
