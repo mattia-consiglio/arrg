@@ -445,5 +445,24 @@ body {
 }
 
 .mouvable {
-  background-color: red;
+  -webkit-animation: flashWhite 1s infinite;
+          animation: flashWhite 1s infinite;
+}
+
+@-webkit-keyframes flashWhite {
+  0%, 100% {
+    background-color: #02b6d2;
+  }
+  50% {
+    background-color: #40bdce;
+  }
+}
+
+@keyframes flashWhite {
+  0%, 100% {
+    background-color: #02b6d2;
+  }
+  50% {
+    background-color: #40bdce;
+  }
 }/*# sourceMappingURL=style.css.map */

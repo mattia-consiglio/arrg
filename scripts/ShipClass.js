@@ -1,5 +1,6 @@
 import { shipsTemplate, templateResources, shipsArray } from './shipsModule.js'
 import { rowCount, colCount } from './main.js'
+import { movementMethod } from './movementModule.js'
 let idCount = 1
 let botCount = 0
 class Ship {
@@ -236,6 +237,8 @@ class Ship {
 		const animation = this.DOMShipWrap.animate(translAnimation, animOp)
 		animation.onfinish = () => {
 			this.setShipPosition(destinationCell)
+			movementMethod()
+
 			this.DOMShipWrap.animate({ transform: `translate(0px,0px)` }, animOp2)
 		}
 	}
