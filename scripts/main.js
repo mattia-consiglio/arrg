@@ -11,6 +11,7 @@ import {
 } from './shipsModule.js'
 import { PlayerShip, BotShip } from './ShipClass.js'
 import { shopMenu } from './shopModule.js'
+import { movementMethod } from './movementModule.js'
 
 const gameEl = document.getElementById('game')
 // la larghezza di una cella
@@ -31,41 +32,6 @@ let minMapX, minMapY
 
 const map = document.createElement('div')
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Metodo per ottenere le caselle visibili a schermo. Solo gli
-//elementi grafici di questa cella vengono animati, gli altri vengono messi in hidden. Funzione da usare in futuro
-const getVisibleCells = () => {
-	const visibleCells = []
-	const map = document.querySelector('.map')
-	const cells = map.querySelectorAll('.cell')
-
-	// Calcola i confini della finestra
-	const viewportTop = window.scrollY
-	const viewportLeft = window.scrollX
-	const viewportBottom = viewportTop + window.innerHeight
-	const viewportRight = viewportLeft + window.innerWidth
-
-	cells.forEach(cell => {
-		const cellRect = cell.getBoundingClientRect()
-		const cellTop = cellRect.top + window.scrollY
-		const cellLeft = cellRect.left + window.scrollX
-		const cellBottom = cellTop + cellRect.height
-		const cellRight = cellLeft + cellRect.width
-
-		// Verifica se la cella è visibile all'interno della finestra
-		if (
-			cellTop < viewportBottom &&
-			cellBottom > viewportTop &&
-			cellLeft < viewportRight &&
-			cellRight > viewportLeft
-		) {
-			visibleCells.push(cell)
-		}
-	})
-	return visibleCells
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 document.getElementById('shopButton').onclick = function () {
 	player.resources.gold += 250
 
@@ -471,7 +437,7 @@ document.addEventListener('mousedown', function (e) {
 					!e.target.closest('.btn')
 				) {
 					const cell = e.target.closest('.cell')
-					popUpBaloon(cell)
+					//popUpBaloon(cell)
 				}
 			}
 		},
@@ -502,3 +468,4 @@ if (isTouchDevice()) {
 map.addEventListener('mousedown', startDrag)
 
 
+movementMethod()
