@@ -10,7 +10,7 @@
 }
 
 body {
-  background-color: #002d5a;
+  background-color: #023239;
   min-height: 100vh;
 }
 
@@ -28,7 +28,7 @@ body {
 
 .cell {
   background-color: #02b6d2;
-  border: 2px solid #002d5a;
+  border: 2px solid #023239;
   min-width: 100px;
   max-width: 100px;
   min-height: 100px;
@@ -39,7 +39,7 @@ body {
   position: relative;
 }
 .cell:hover {
-  background-color: #00899f;
+  background-color: #028a9f;
 }
 
 .map {
@@ -90,10 +90,8 @@ body {
   -webkit-transition: all 500ms;
   transition: all 500ms;
   z-index: 100;
-  border: 2px solid #dbf9c8;
   top: -2px;
   left: -2px;
-  background-color: rgba(20, 184, 149, 0.25);
   pointer-events: none;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -110,9 +108,17 @@ body {
           align-items: center;
   gap: 1rem;
 }
+.ship.player {
+  border: 2px solid #dbf9c8;
+  background-color: rgba(20, 184, 149, 0.25);
+}
+.ship.bot {
+  border: 2px solid #f9c8c8;
+  background-color: rgba(184, 20, 20, 0.25);
+}
 .ship .shipImg {
-  min-width: 222px;
-  height: 238px;
+  min-width: 150px;
+  height: auto;
   pointer-events: none;
 }
 .ship .shipImg.left, .ship .shipImg.right {
@@ -284,6 +290,8 @@ body {
 }
 .shop-wrapper .shop #reparationsRange {
   -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
   height: 9px;
   border: none;
   position: absolute;
@@ -294,6 +302,7 @@ body {
 }
 .shop-wrapper .shop #reparationsRange::-webkit-slider-thumb {
   -webkit-appearance: none;
+          appearance: none;
   appearance: none;
   width: 18px;
   height: 16px;
@@ -445,24 +454,27 @@ body {
 }
 
 .mouvable {
-  -webkit-animation: flashWhite 1s infinite;
-          animation: flashWhite 1s infinite;
+  -webkit-animation: flashWhite 1.5s infinite ease-out;
+          animation: flashWhite 1.5s infinite ease-out;
+  border-color: #05889c;
 }
 
 @-webkit-keyframes flashWhite {
   0%, 100% {
     background-color: #02b6d2;
+    background-color: #02b6d2;
   }
   50% {
-    background-color: #40bdce;
+    background-color: #02cbe1;
   }
 }
 
 @keyframes flashWhite {
   0%, 100% {
     background-color: #02b6d2;
+    background-color: #02b6d2;
   }
   50% {
-    background-color: #40bdce;
+    background-color: #02cbe1;
   }
 }/*# sourceMappingURL=style.css.map */

@@ -1,4 +1,11 @@
+@use 'sass:color';
 @import url('https://fonts.cdnfonts.com/css/barletta-2');
+
+//colori
+$azzurro: #02b6d2;
+$azzurroScuro: color.adjust($azzurro, $lightness: -10%);
+// @debug
+$bluScuro: color.adjust($azzurro, $blackness: 60%);
 
 * {
 	margin: 0;
@@ -7,7 +14,7 @@
 }
 
 body {
-	background-color: #002d5a;
+	background-color: $bluScuro;
 	min-height: 100vh;
 }
 
@@ -22,8 +29,8 @@ body {
 }
 
 .cell {
-	background-color: #02b6d2;
-	border: 2px solid #002d5a;
+	background-color: $azzurro;
+	border: 2px solid $bluScuro;
 	min-width: 100px;
 	max-width: 100px;
 	min-height: 100px;
@@ -33,7 +40,7 @@ body {
 	position: relative;
 
 	&:hover {
-		background-color: #00899f;
+		background-color: $azzurroScuro;
 	}
 }
 
@@ -88,10 +95,8 @@ body {
 	position: relative;
 	transition: all 500ms;
 	z-index: 100;
-	border: 2px solid #dbf9c8;
 	top: -2px;
 	left: -2px;
-	background-color: rgba(20, 184, 149, 0.25);
 	pointer-events: none;
 	display: flex;
 	flex-direction: column;
@@ -99,9 +104,18 @@ body {
 	align-items: center;
 	gap: 1rem;
 
+	&.player {
+		border: 2px solid #dbf9c8;
+		background-color: rgba(20, 184, 149, 0.25);
+	}
+	&.bot {
+		border: 2px solid #f9c8c8;
+		background-color: rgba(184, 20, 20, 0.25);
+	}
+
 	.shipImg {
-		min-width: 222px;
-		height: 238px;
+		min-width: 150px;
+		height: auto;
 		pointer-events: none;
 
 		&.left,
@@ -277,7 +291,7 @@ body {
 		}
 
 		#reparationsRange {
-			-webkit-appearance: none;
+			appearance: none;
 			height: 9px;
 			border: none;
 			position: absolute;
@@ -287,7 +301,8 @@ body {
 		}
 
 		#reparationsRange::-webkit-slider-thumb {
-			-webkit-appearance: none;
+			appearance: none;
+
 			appearance: none;
 			width: 18px;
 			height: 16px;
@@ -360,16 +375,20 @@ body {
 						}
 					}
 
-					.button {}
+					.button {
+					}
 				}
 			}
 
-			.btn {}
+			.btn {
+			}
 
 			.shop-footer {
-				.bottom-right {}
+				.bottom-right {
+				}
 
-				.btn {}
+				.btn {
+				}
 			}
 		}
 	}
@@ -454,17 +473,18 @@ body {
 }
 
 .mouvable {
-	animation: flashWhite 1s infinite;
+	animation: flashWhite 1.5s infinite ease-out;
+	border-color: color.adjust($color: $bluScuro, $lightness: 20%);
 }
 
 @keyframes flashWhite {
-
 	0%,
 	100% {
-		background-color: #02b6d2;
+		background-color: $azzurro;
+		background-color: $azzurro;
 	}
 
 	50% {
-		background-color: #40bdce;
+		background-color: color.adjust($color: $azzurro, $lightness: 3%, $hue: -2);
 	}
 }

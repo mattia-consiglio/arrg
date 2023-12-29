@@ -1,15 +1,4 @@
-import {
-	shipsTemplate,
-	shipsArray,
-	morningRounds,
-	nightRounds,
-	dayRounds,
-	maxRoundsWithoutWater,
-	maxRoundsWithoutFood,
-	hpRapairOnPlaceRate,
-	shipMotionBaseTime,
-	maxBotShipsCount,
-} from './shipsModule.js'
+import { shipsArray, maxBotShipsCount } from './shipsModule.js'
 import { PlayerShip, BotShip } from './ShipClass.js'
 import { shopMenu } from './shopModule.js'
 import { generateMap, rowCount, colCount, setMapMinXY, moveViewportOverPlayer } from './map.js'
@@ -222,6 +211,16 @@ export const isTouchDevice = () => {
 	return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0
 }
 
+const spawnBots = () => {
+	const botShipsCount = shipsArray.length - 1
+	if (botShipsCount >= maxBotShipsCount) return
+	const botsToGenerate = maxBotShipsCount - botShipsCount
+	for (let i = 0; i < botsToGenerate; i++) {
+		const botShip = new BotShip({ ports })
+		shipsArray.push(botShip)
+	}
+}
+
 let wasDragged = false
 const dragThreshold = 10 // Soglia in pixel per considerare un movimento come trascinamento
 
@@ -234,6 +233,10 @@ export const player = new PlayerShip({ ports })
 shipsArray.push(player)
 moveViewportOverPlayer()
 movementMethod()
+
+spawnBots()
+// setInterval(() => {
+// }, 1000)
 
 // ------------------ Listeners ------------------
 

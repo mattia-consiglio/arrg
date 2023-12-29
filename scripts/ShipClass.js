@@ -7,7 +7,6 @@ import {
 import { rowCount, colCount } from './map.js'
 import { movementMethod } from './movementModule.js'
 let idCount = 0
-let botCount = 0
 class Ship {
 	static DOMShipWrap
 	static DOMShipImg
@@ -134,6 +133,7 @@ class Ship {
 	}
 
 	setInitalSpawnCell(ports) {
+		console.log(this.type)
 		const filteredPorts = ports.filter(port => port.owner === this.type)
 		let spawnPortIndex = 0
 		if (filteredPorts.length > 1) {
@@ -145,15 +145,18 @@ class Ship {
 		} else {
 			// mi assiucuro di creare un array di estrazione con le sole celle libere
 			filteredPorts[spawnPortIndex].interactionCells.forEach(portCell => {
+				console.log(portCell)
 				if (
-					shipsArray.findIndex(ship => ship.posX === portCell.x && ship.posY === portCell.y) > -1
+					shipsArray.findIndex(ship => ship.posX === portCell.x && ship.posY === portCell.y) === -1
 				) {
 					freeCells.push(portCell)
 				}
 			})
 		}
 
+		console.log(freeCells)
 		const spawnCell = freeCells[Math.floor(Math.random() * freeCells.length)]
+		console.log(spawnCell)
 
 		const xInitial = spawnCell.x
 		const yInitial = spawnCell.y
@@ -283,7 +286,7 @@ class Ship {
 	}
 }
 
-export class PlayerShip extends Ship {
+class PlayerShip extends Ship {
 	xpNeeded
 	constructor({ type, level = 1, id = 0, ports = [] }) {
 		super({ type: 'player', level, id, ports })
@@ -293,25 +296,26 @@ export class PlayerShip extends Ship {
 		} else {
 			this.xpNeeded = this.getShipTemplateByLevel(this.level).xpNeeded
 		}
+		this.DOMShipWrap.classList.add('player')
 	}
 }
 
-export class BotShip extends Ship {
+class BotShip extends Ship {
 	xpGiven
 	autoFollow
 	autoStartAttack
 	constructor({ type, ports = [] }) {
+		super({ type: 'bot', level: BotShip.extractLevel(), id: idCount + 1, ports })
+
 		idCount++
 		const { xpGiven, autoStartAttack, autoFollow } = this.getShipTemplateByLevel(this.level)
 		this.xpGiven = xpGiven
 		this.autoStartAttack = autoStartAttack
 		this.autoFollow = autoFollow
-		const etractedLevel = extractLevel()
-		super({ type: 'bot', level: etractedLevel, id: idCount + 1, ports })
-		botCount++
+		this.DOMShipWrap.classList.add('bot')
 	}
 
-	extractLevel() {
+	static extractLevel() {
 		const playerLevel = shipsArray[0].level
 		const chaches = shipsExtractionChanches[playerLevel]
 		const expandedChaches = shipsTemplate.flatMap((shipTemplate, index) =>
@@ -320,3 +324,5 @@ export class BotShip extends Ship {
 		return expandedChaches[Math.floor(Math.random() * expandedChaches.length)].level
 	}
 }
+
+export { PlayerShip, BotShip }
