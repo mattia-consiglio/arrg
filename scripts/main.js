@@ -77,6 +77,13 @@ const templateDoSomethingWithXandYofCell = function (x, y) {
 	// La i è la X, la j è la Y
 }
 
+const moveViewportOverPlayer = function () {
+	const traslViewBoxX = -((player.posX * 100) - window.innerWidth / 2)
+	const traslViewBoxY = -((player.posY * 100) - window.innerHeight / 2)
+	map.style.transform = `translate(${traslViewBoxX}px, ${traslViewBoxY}px)`
+	map.style.transition = "200ms"
+}
+
 const popUpScreen = function (messagge) {
 	const divMessaggio = document.createElement('div')
 	const pMessaggio = document.createElement('p')
@@ -473,7 +480,6 @@ document.addEventListener('mousedown', function (e) {
 })
 
 //inizilizza il gioco
-
 generateMap(rowCount, colCount)
 setMapMinXY()
 window.addEventListener('resize', () => {
@@ -487,9 +493,12 @@ document.getElementById('right').onclick = () => mouveMap('left')
 
 export const player = new PlayerShip({ ports })
 shipsArray.push(player)
+moveViewportOverPlayer()
 
 // Aggiungi event listener per il drag-and-drop
 if (isTouchDevice()) {
 	map.addEventListener('touchstart', startDrag)
 }
 map.addEventListener('mousedown', startDrag)
+
+
