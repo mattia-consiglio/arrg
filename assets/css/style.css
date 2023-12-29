@@ -442,4 +442,8 @@ body {
 }
 .hpBar.red::before {
   background-color: #e21717;
+}
+
+.mouvable {
+  background-color: red;
 }/*# sourceMappingURL=style.css.map */

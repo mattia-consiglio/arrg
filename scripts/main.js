@@ -44,8 +44,21 @@ const templateDoSomethingWithXandYofCell = function (x, y) {
 }
 
 const moveViewportOverPlayer = function () {
-	const traslViewBoxX = -((player.posX * 100) - window.innerWidth / 2)
-	const traslViewBoxY = -((player.posY * 100) - window.innerHeight / 2)
+	let traslViewBoxX = -((player.posX * 100) - window.innerWidth / 2)
+	let traslViewBoxY = -((player.posY * 100) - window.innerHeight / 2)
+	console.log(traslViewBoxX)
+	if (traslViewBoxY < -3100) {
+		traslViewBoxY = -3100
+	}
+	if (traslViewBoxY > 100) {
+		traslViewBoxY = 100
+	}
+	if (traslViewBoxX < -2200) {
+		traslViewBoxX = -2200
+	}
+	if (traslViewBoxX > 100) {
+		traslViewBoxX = 100
+	}
 	map.style.transform = `translate(${traslViewBoxX}px, ${traslViewBoxY}px)`
 	map.style.transition = "200ms"
 }

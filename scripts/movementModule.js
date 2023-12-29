@@ -1,34 +1,21 @@
-export const movementMethod = function () {
-    const getVisibleCells = () => {
-        const visibleCells = []
-        const map = document.querySelector('.map')
-        const cells = map.querySelectorAll('.cell')
+import { PlayerShip } from './ShipClass.js'
+import { player } from './main.js'
 
-        // Calcola i confini della finestra
-        const viewportTop = window.scrollY
-        const viewportLeft = window.scrollX
-        const viewportBottom = viewportTop + window.innerHeight
-        const viewportRight = viewportLeft + window.innerWidth
+export const movementMethod = function (x, y, shipSpeed) {
 
-        cells.forEach(cell => {
-            const cellRect = cell.getBoundingClientRect()
-            const cellTop = cellRect.top + window.scrollY
-            const cellLeft = cellRect.left + window.scrollX
-            const cellBottom = cellTop + cellRect.height
-            const cellRight = cellLeft + cellRect.width
+    const cellToReset = document.querySelectorAll(".mouvable")
+    cellToReset.forEach(function (cell) {
+        cell.classList.remove("mouvable")
 
-            // Verifica se la cella è visibile all'interno della finestra
-            if (
-                cellTop < viewportBottom &&
-                cellBottom > viewportTop &&
-                cellLeft < viewportRight &&
-                cellRight > viewportLeft
-            ) {
-                visibleCells.push(cell)
+        for (let i = player.posX - player.speed; i <= player.posX + player.speed; i++) {
+            for (let j = player.posY - player.speed; j <= player.posY + player.speed; j++) {
+                if (Math.abs(player.posX - i) + Math.abs(player.posY - j) <= player.speed) {
+                    const currentCell = document.querySelector(`.cell[data-col="${i}"][data-row="${j}"]`)
+                    currentCell.classList.add('mouvable')
+                }
             }
-        })
-        console.log(visibleCells)
-        return visibleCells
-    }
-    getVisibleCells()
+        }
+
+    });
+
 }

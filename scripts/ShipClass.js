@@ -156,9 +156,8 @@ class Ship {
 		return cell
 	}
 
-	mouveShip(cell, x, y, balloon) {
-		balloon.remove()
-		if (this.mouvementPossible(x, y)) {
+	mouveShip(cell) {
+		if (this.mouvementPossible(cell)) {
 			this.animateMouveShip(cell)
 		}
 	}
@@ -184,10 +183,10 @@ class Ship {
 		}
 	}
 
-	mouvementPossible(targetX, targetY) {
-		return this.motionRange >= this.calculateDistance(targetX, targetY)
+	mouvementPossible(cell) {
+		return this.motionRange >= this.calculateDistance(cell.getAttribute(`data-col`), cell.getAttribute(`data-row`))
 	}
-
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	animateMouveShip(destinationCell) {
 		if (destinationCell.classList[2] === 'amichevole') {
 			document.getElementById('shopButton').style.visibility = 'visible'
