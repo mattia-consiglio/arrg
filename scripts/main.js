@@ -462,6 +462,7 @@ document.addEventListener('mousedown', function (e) {
 					!e.target.closest('.shop') &&
 					!e.target.closest('.button') &&
 					!e.target.closest('.shopButton') &&
+					!e.target.closest('#reparationsRange') &&
 					!e.target.closest('.btn')
 				) {
 					const cell = e.target.closest('.cell')

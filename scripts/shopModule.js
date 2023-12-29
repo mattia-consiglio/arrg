@@ -44,22 +44,22 @@ export const shopMenu = function (initialResources) {
     const wrapperReparationsRange = document.createElement('div')
     wrapperReparationsRange.id = "wrapperReparationsRange"
     wrapperReparationsRange.appendChild(reparationsRange)
-
-
     reparationsRange.type = 'range'
-    reparationsRange.min = "1"
+    reparationsRange.min = player.hp + 1
     reparationsRange.max = "100"
+    reparationsRange.value = "1"
     reparationsRange.style.width = `${100 - (player.hp / player.maxHp) * 100}%`
-
+    reparationsRange.addEventListener('input', function (event) {
+        const newValue = event.target.value;
+        repairButton.innerHTML = `Ripara [ ${newValue}% <i class="fas fa-hammer" style="color: #800000;"></i> ]( <span style="color:red">-${newValue - player.hp}</span><i class="fas fa-coins" style="color: #fac229;"></i> )`
+    })
 
     acceptButton.innerHTML = `Accetta [<span style="color: ${colorDirezioneDelta(
         shopMenuRes.gold - initialResources.gold
     )}"> ${shopMenuRes.gold - initialResources.gold}</span> <i class="fas fa-coins" style="color: #fac229;"></i> ]`
 
 
-    repairButton.innerHTML = `Ripara [<span style="color: ${colorDirezioneDelta(
-        initialResources.gold - shopMenuRes.gold
-    )}"> ${initialResources.gold - shopMenuRes.gold}</span> <i class="fas fa-hammer" style="color: #800000;"></i> ]`
+    repairButton.innerHTML = `Ripara [ ${reparationsRange.value}% <i class="fas fa-hammer" style="color: #800000;"></i> ]( <span style="color:red">-1</span><i class="fas fa-coins" style="color: #fac229;"></i> )`
 
     const divBottomRight = document.createElement('div')
     divBottomRight.classList.add('bottom-right')
@@ -164,17 +164,29 @@ export const shopMenu = function (initialResources) {
 
     const shopFooter = document.createElement('div')
     shopFooter.classList.add('shop-footer')
-
+    shopFooter.id = "shopFooter"
     const cancelButton = document.createElement('div')
     cancelButton.textContent = 'Annulla'
 
     divMenuShop.appendChild(cancelButton)
 
+    repairButton.addEventListener('click', function () {
+        if (player.resources.gold > reparationsRange.value && player.hp < player.maxHp) {
+            console.log(player)
+            player.hp = parseInt(reparationsRange.value)
+            player.resources.gold -= parseInt(reparationsRange.value)
+            player.updateHpBar()
+            console.log(player)
+            console.log(player.resources)
+            console.log(player.hp)
+            divWrapper.remove()
+        }
+    })
+
     acceptButton.addEventListener('click', function () {
         Object.entries(shopMenuRes).forEach(([resourceName, resourceValue]) => {
             player.resources[resourceName] = resourceValue
         })
-        console.log(player.resources)
         divWrapper.remove()
     })
 
