@@ -2,12 +2,18 @@ import { PlayerShip } from './ShipClass.js'
 import { player } from './main.js'
 
 export const movementMethod = function () {
-
     const resetCells = function () {
-        const cellToReset = document.querySelectorAll(".mouvable")
+        console.log('reset cells')
+        const cellToReset = document.querySelectorAll('.mouvable')
         cellToReset.forEach(function (cell) {
-            cell.classList.remove("mouvable")
+            cell.classList.remove('mouvable')
+            cell.removeEventListener('click', handleCellClick)
         })
+    }
+
+    function handleCellClick() {
+        player.mouveShip(this)
+        resetCells()
     }
 
     function getCellsInRange(x, y, movement) {
@@ -18,12 +24,9 @@ export const movementMethod = function () {
                 if (Math.abs(x - i) + Math.abs(y - j) <= movement) {
                     const cell = document.querySelector(`.cell[data-col="${i}"][data-row="${j}"]`)
                     if (cell) {
-                        cell.classList.add("mouvable")
+                        cell.classList.add('mouvable')
                         cells.push(cell)
-                        cell.addEventListener('click', function () {
-                            player.mouveShip(cell)
-                            resetCells()
-                        })
+                        cell.addEventListener('click', handleCellClick, { once: true })
                     }
                 }
             }
@@ -33,5 +36,4 @@ export const movementMethod = function () {
 
     const arrayDaPulire = getCellsInRange(player.posX, player.posY, player.speed)
     //resetCells()
-
 }
