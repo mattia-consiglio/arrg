@@ -5,6 +5,7 @@ import {
 	shipsExtractionChanches,
 } from './shipsModule.js'
 import { rowCount, colCount } from './map.js'
+import { movementMethod } from './movementModule.js'
 let idCount = 0
 let botCount = 0
 class Ship {
@@ -162,9 +163,8 @@ class Ship {
 		return cell
 	}
 
-	mouveShip(cell, x, y, balloon) {
-		balloon.remove()
-		if (this.mouvementPossible(x, y)) {
+	mouveShip(cell) {
+		if (this.mouvementPossible(cell)) {
 			this.animateMouveShip(cell)
 		}
 	}
@@ -190,10 +190,13 @@ class Ship {
 		}
 	}
 
-	mouvementPossible(targetX, targetY) {
-		return this.motionRange >= this.calculateDistance(targetX, targetY)
+	mouvementPossible(cell) {
+		return (
+			this.motionRange >=
+			this.calculateDistance(cell.getAttribute(`data-col`), cell.getAttribute(`data-row`))
+		)
 	}
-
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	animateMouveShip(destinationCell) {
 		if (destinationCell.classList[2] === 'amichevole') {
 			document.getElementById('shopButton').style.visibility = 'visible'
@@ -243,6 +246,8 @@ class Ship {
 		const animation = this.DOMShipWrap.animate(translAnimation, animOp)
 		animation.onfinish = () => {
 			this.setShipPosition(destinationCell)
+			movementMethod()
+
 			this.DOMShipWrap.animate({ transform: `translate(0px,0px)` }, animOp2)
 		}
 	}

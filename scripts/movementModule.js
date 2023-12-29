@@ -1,34 +1,37 @@
+import { PlayerShip } from './ShipClass.js'
+import { player } from './main.js'
+
 export const movementMethod = function () {
-    const getVisibleCells = () => {
-        const visibleCells = []
-        const map = document.querySelector('.map')
-        const cells = map.querySelectorAll('.cell')
 
-        // Calcola i confini della finestra
-        const viewportTop = window.scrollY
-        const viewportLeft = window.scrollX
-        const viewportBottom = viewportTop + window.innerHeight
-        const viewportRight = viewportLeft + window.innerWidth
-
-        cells.forEach(cell => {
-            const cellRect = cell.getBoundingClientRect()
-            const cellTop = cellRect.top + window.scrollY
-            const cellLeft = cellRect.left + window.scrollX
-            const cellBottom = cellTop + cellRect.height
-            const cellRight = cellLeft + cellRect.width
-
-            // Verifica se la cella è visibile all'interno della finestra
-            if (
-                cellTop < viewportBottom &&
-                cellBottom > viewportTop &&
-                cellLeft < viewportRight &&
-                cellRight > viewportLeft
-            ) {
-                visibleCells.push(cell)
-            }
+    const resetCells = function () {
+        const cellToReset = document.querySelectorAll(".mouvable")
+        cellToReset.forEach(function (cell) {
+            cell.classList.remove("mouvable")
         })
-        console.log(visibleCells)
-        return visibleCells
     }
-    getVisibleCells()
+
+    function getCellsInRange(x, y, movement) {
+        let cells = []
+        movement++
+        for (let i = x - movement; i <= x + movement; i++) {
+            for (let j = y - movement; j <= y + movement; j++) {
+                if (Math.abs(x - i) + Math.abs(y - j) <= movement) {
+                    const cell = document.querySelector(`.cell[data-col="${i}"][data-row="${j}"]`)
+                    if (cell) {
+                        cell.classList.add("mouvable")
+                        cells.push(cell)
+                        cell.addEventListener('click', function () {
+                            player.mouveShip(cell)
+                            resetCells()
+                        })
+                    }
+                }
+            }
+        }
+        return cells
+    }
+
+    const arrayDaPulire = getCellsInRange(player.posX, player.posY, player.speed)
+    //resetCells()
+
 }

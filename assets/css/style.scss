@@ -452,3 +452,19 @@ body {
 		background-color: #e21717;
 	}
 }
+
+.mouvable {
+	animation: flashWhite 1s infinite;
+}
+
+@keyframes flashWhite {
+
+	0%,
+	100% {
+		background-color: #02b6d2;
+	}
+
+	50% {
+		background-color: #40bdce;
+	}
+}
