@@ -173,7 +173,7 @@ export const shopMenu = function (initialResources) {
     repairButton.addEventListener('click', function () {
         if (player.resources.gold > reparationsRange.value && player.hp < player.maxHp) {
             console.log(player)
-            player.hp = parseInt(reparationsRange.value)
+            player.hp = parseInt(reparationsRange.value) / 100 * player.maxHp
             player.resources.gold -= parseInt(reparationsRange.value)
             player.updateHpBar()
             console.log(player)

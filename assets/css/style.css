@@ -245,6 +245,7 @@ body {
       -ms-flex-pack: center;
           justify-content: center;
   width: 100%;
+  word-wrap: nowrap;
 }
 .shop-wrapper .shop .table-wrap #tableCommercio {
   font-size: 1.8em;
