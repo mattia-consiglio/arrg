@@ -1,4 +1,4 @@
-import { isTouchDevice, gameEl, spawnPorts, player } from './main.js'
+import { isTouchDevice, gameEl, player } from './main.js'
 
 const cellWidth = 100
 const rowCount = 40
