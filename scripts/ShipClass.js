@@ -1,6 +1,11 @@
-import { shipsTemplate, templateResources, shipsArray } from './shipsModule.js'
-import { rowCount, colCount } from './main.js'
-let idCount = 1
+import {
+	shipsTemplate,
+	templateResources,
+	shipsArray,
+	shipsExtractionChanches,
+} from './shipsModule.js'
+import { rowCount, colCount } from './map.js'
+let idCount = 0
 let botCount = 0
 class Ship {
 	static DOMShipWrap
@@ -137,6 +142,7 @@ class Ship {
 		if (this.type === 'player') {
 			freeCells.push(...filteredPorts[spawnPortIndex].interactionCells)
 		} else {
+			// mi assiucuro di creare un array di estrazione con le sole celle libere
 			filteredPorts[spawnPortIndex].interactionCells.forEach(portCell => {
 				if (
 					shipsArray.findIndex(ship => ship.posX === portCell.x && ship.posY === portCell.y) > -1
@@ -290,8 +296,23 @@ export class BotShip extends Ship {
 	xpGiven
 	autoFollow
 	autoStartAttack
-	constructor({ type, level = 1, id = 0, ports = [] }) {
-		super({ type: 'bot', level, id, ports })
+	constructor({ type, ports = [] }) {
+		idCount++
 		const { xpGiven, autoStartAttack, autoFollow } = this.getShipTemplateByLevel(this.level)
+		this.xpGiven = xpGiven
+		this.autoStartAttack = autoStartAttack
+		this.autoFollow = autoFollow
+		const etractedLevel = extractLevel()
+		super({ type: 'bot', level: etractedLevel, id: idCount + 1, ports })
+		botCount++
+	}
+
+	extractLevel() {
+		const playerLevel = shipsArray[0].level
+		const chaches = shipsExtractionChanches[playerLevel]
+		const expandedChaches = shipsTemplate.flatMap((shipTemplate, index) =>
+			Array(chaches[index]).fill(shipTemplate)
+		)
+		return expandedChaches[Math.floor(Math.random() * expandedChaches.length)].level
 	}
 }

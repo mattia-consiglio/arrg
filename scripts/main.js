@@ -8,30 +8,20 @@ import {
 	maxRoundsWithoutFood,
 	hpRapairOnPlaceRate,
 	shipMotionBaseTime,
+	maxBotShipsCount,
 } from './shipsModule.js'
 import { PlayerShip, BotShip } from './ShipClass.js'
 import { shopMenu } from './shopModule.js'
+import { generateMap, rowCount, colCount, setMapMinXY, moveViewportOverPlayer } from './map.js'
 
-const gameEl = document.getElementById('game')
+export const gameEl = document.getElementById('game')
 // la larghezza di una cella
-export const cellWidth = 100
-export const rowCount = 40
-export const colCount = 40
+
 const portRange = 2
 
 const ports = []
 
-// Variabili per tracciare lo stato del drag-and-drop
-let isDragging = false
-let initialMouseX, initialMouseY
-let initialX, initialY
-const maxMapX = cellWidth / 2
-const maxMapY = cellWidth / 2
-let minMapX, minMapY
-
-const map = document.createElement('div')
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 // Metodo per ottenere le caselle visibili a schermo. Solo gli
 //elementi grafici di questa cella vengono animati, gli altri vengono messi in hidden. Funzione da usare in futuro
 const getVisibleCells = () => {
@@ -65,7 +55,7 @@ const getVisibleCells = () => {
 	return visibleCells
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 document.getElementById('shopButton').onclick = function () {
 	player.resources.gold += 250
 
@@ -75,13 +65,6 @@ document.getElementById('shopButton').onclick = function () {
 const templateDoSomethingWithXandYofCell = function (x, y) {
 	console.log(`Cell: X ${x}, Y ${y}`)
 	// La i è la X, la j è la Y
-}
-
-const moveViewportOverPlayer = function () {
-	const traslViewBoxX = -((player.posX * 100) - window.innerWidth / 2)
-	const traslViewBoxY = -((player.posY * 100) - window.innerHeight / 2)
-	map.style.transform = `translate(${traslViewBoxX}px, ${traslViewBoxY}px)`
-	map.style.transition = "200ms"
 }
 
 const popUpScreen = function (messagge) {
@@ -258,7 +241,7 @@ const spawnPort = (x, y, direction, ownedByPlayer) => {
 	ports.push(portObj)
 }
 
-const spawnPorts = () => {
+export const spawnPorts = () => {
 	const halfWidth = Math.floor(colCount / 2) - 1
 	const halfHeight = Math.floor(rowCount / 2) - 1
 	let portoAlleato = Math.floor(Math.random() * 4)
@@ -269,168 +252,9 @@ const spawnPorts = () => {
 	spawnPort(0, halfHeight, 'ovest', portoAlleato === 3)
 }
 
-const generateMap = (rows, cols) => {
-	map.classList.add('map')
-
-	let portoNemicoCasuale
-	for (let i = 0; i < rows; i++) {
-		const row = document.createElement('div')
-		row.classList.add('row')
-
-		for (let j = 0; j < cols; j++) {
-			const cell = document.createElement('div')
-			cell.classList.add('cell')
-			cell.setAttribute('data-row', i)
-			cell.setAttribute('data-col', j)
-
-			row.appendChild(cell)
-		}
-		map.appendChild(row)
-	}
-	gameEl.appendChild(map)
-	spawnPorts()
-	// setFriendlyShoreCell()
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const isTouchDevice = () => {
+export const isTouchDevice = () => {
 	return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0
 }
-
-const setMapMinXY = () => {
-	minMapX = Math.min(cellWidth / 2, window.innerWidth - map.offsetWidth - cellWidth / 2)
-	minMapY = Math.min(cellWidth / 2, window.innerHeight - map.offsetHeight - cellWidth / 2)
-}
-
-const mouveMap = direction => {
-	const map = document.querySelector('.map')
-	const transform = window.getComputedStyle(map).transform
-	// Estrarre i valori di traslazione (x, y)
-	const matrix = new DOMMatrixReadOnly(transform)
-	let x = matrix.m41
-	let y = matrix.m42
-
-	// Aggiornare x o y in base alla direzione
-	switch (direction) {
-		case 'up':
-			y -= cellWidth
-			break
-		case 'down':
-			y += cellWidth
-
-			break
-		case 'left':
-			x -= cellWidth
-			break
-		case 'right':
-			x += cellWidth
-			break
-		default:
-			console.log('Direzione non valida')
-	}
-
-	x = Math.min(maxMapX, Math.max(x, minMapX))
-	y = Math.min(maxMapY, Math.max(y, minMapY))
-
-	// Applicare il nuovo valore di traslazione
-	map.style.transform = `translate(${x}px, ${y}px)`
-}
-
-// Funzione per iniziare il trascinamento
-function startDrag(e) {
-	isDragging = true
-
-	// Controlla se l'evento è di tipo touch
-	if (e.type === 'touchstart') {
-		// Assicurati che ci sia almeno un tocco
-		if (e.touches.length > 0) {
-			initialMouseX = e.touches[0].clientX
-			initialMouseY = e.touches[0].clientY
-		}
-	} else {
-		// Altrimenti, usa le coordinate del mouse
-		initialMouseX = e.clientX
-		initialMouseY = e.clientY
-	}
-
-	const matrix = new DOMMatrixReadOnly(window.getComputedStyle(map).transform)
-	initialX = matrix.m41
-	initialY = matrix.m42
-
-	// Aggiungi questi event listener nel tuo metodo startDrag
-
-	//aggiungo i touch listerner solo se il il dipositivo è abilitato al touch
-	if (e.type === 'touchstart') {
-		window.addEventListener('touchmove', onDrag)
-		window.addEventListener('touchend', endDrag)
-	}
-
-	//aggiunngo gli evnt listeter per il mose perché anche un dipositivo touch può avere un input mouse
-	window.addEventListener('mousemove', onDrag)
-	window.addEventListener('mouseup', endDrag)
-}
-
-// Funzione per aggiornare la posizione dell'elemento
-function onDrag(e) {
-	if (!isDragging) return
-
-	let clientX, clientY
-
-	// Controlla se l'evento è di tipo touch
-	if (e.type === 'touchmove') {
-		// Assicurati che ci sia almeno un tocco
-		if (e.touches.length > 0) {
-			clientX = e.touches[0].clientX
-			clientY = e.touches[0].clientY
-		}
-	} else {
-		// Altrimenti, usa le coordinate del mouse
-		clientX = e.clientX
-		clientY = e.clientY
-	}
-
-	// Calcola la differenza tra le coordinate correnti e quelle iniziali
-	let deltaX = clientX - initialMouseX
-	let deltaY = clientY - initialMouseY
-
-	// Calcola le nuove posizioni
-	let finalX = initialX + deltaX
-	let finalY = initialY + deltaY
-
-	// Limita la posizione alle dimensioni della mappa
-	finalX = Math.min(maxMapX, Math.max(finalX, minMapX))
-	finalY = Math.min(maxMapY, Math.max(finalY, minMapY))
-
-	// Aggiorna la trasformazione CSS per spostare la mappa
-	map.style.transform = `translate(${finalX}px, ${finalY}px)`
-}
-
-// Funzione per terminare il trascinamento
-function endDrag() {
-	isDragging = false
-	if (isTouchDevice()) {
-		window.removeEventListener('touchmove', onDrag)
-		window.removeEventListener('touchend', endDrag)
-	}
-	window.removeEventListener('mousemove', onDrag)
-	window.removeEventListener('mouseup', endDrag)
-}
-
-document.addEventListener('keydown', e => {
-	if (e.key === 'ArrowUp' || e.key === 'w') {
-		mouveMap('down')
-	}
-	if (e.key === 'ArrowDown' || e.key === 's') {
-		mouveMap('up')
-	}
-	if (e.key === 'ArrowLeft' || e.key === 'a') {
-		mouveMap('right')
-	}
-	if (e.key === 'ArrowRight' || e.key === 'd') {
-		mouveMap('left')
-	}
-})
 
 let wasDragged = false
 const dragThreshold = 10 // Soglia in pixel per considerare un movimento come trascinamento
@@ -486,19 +310,6 @@ window.addEventListener('resize', () => {
 	setMapMinXY()
 })
 
-document.getElementById('up').onclick = () => mouveMap('down')
-document.getElementById('down').onclick = () => mouveMap('up')
-document.getElementById('left').onclick = () => mouveMap('right')
-document.getElementById('right').onclick = () => mouveMap('left')
-
 export const player = new PlayerShip({ ports })
 shipsArray.push(player)
 moveViewportOverPlayer()
-
-// Aggiungi event listener per il drag-and-drop
-if (isTouchDevice()) {
-	map.addEventListener('touchstart', startDrag)
-}
-map.addEventListener('mousedown', startDrag)
-
-
