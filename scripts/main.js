@@ -177,16 +177,23 @@ const spawnPort = (x, y, direction, ownedByPlayer) => {
 	//aggiungo coodinata di spawn del porto
 	deadZones.push({ x, y })
 
-	//add deadzones to port array. Useful for removing cells to ship mouvment
-	portObj.deadZones = deadZones
+	deadZones.forEach(deadzone => {
+		const cell = document.querySelector(`.cell[data-col="${deadzone.x}"][data-row="${deadzone.y}"]`)
+
+		//addind data-interactive attribute
+		cell.dataset.interactive = false
+	})
+
+	// return
 
 	for (let y = minY; y <= maxY; y++) {
 		for (let x = minX; x <= maxX; x++) {
-			if (deadZones.find(coordinate => coordinate.x === x && coordinate.y === y)) {
+			const cell = document.querySelector(`.cell[data-col="${x}"][data-row="${y}"]`)
+			if (cell.dataset.interactive === 'false') {
 				continue
 			}
 			portObj.interactionCells.push({ x, y })
-			const cell = document.querySelector(`.cell[data-col="${x}"][data-row="${y}"]`)
+			cell.dataset.interactive = true
 
 			cell.classList.add('Molo') // aggiungo la classe Mol le tutte le celle di interazione con il porto
 			if (ownedByPlayer) {

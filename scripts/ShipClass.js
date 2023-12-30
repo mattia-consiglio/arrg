@@ -135,7 +135,7 @@ class Ship {
 		cell.appendChild(this.DOMShipWrap)
 		this.posY = targetY
 		this.posX = targetX
-		this.calculateAttackRangeCells()
+		this.getAttackRangeCells()
 		this.getMotionCellRange()
 	}
 
@@ -152,7 +152,9 @@ class Ship {
 			// mi assiucuro di creare un array di estrazione con le sole celle libere
 			filteredPorts[spawnPortIndex].interactionCells.forEach(portCell => {
 				if (
-					shipsArray.findIndex(ship => ship.posX === portCell.x && ship.posY === portCell.y) === -1
+					shipsArray.findIndex(ship => {
+						return ship.posX === portCell.x && ship.posY === portCell.y
+					}) === -1
 				) {
 					freeCells.push(portCell)
 				}
@@ -170,7 +172,7 @@ class Ship {
 	}
 
 	mouveShip(cell) {
-		if (this.mouvementPossible(cell)) {
+		if (this.mouvementPossible()) {
 			this.animateMouveShip(cell)
 		}
 	}
@@ -179,28 +181,8 @@ class Ship {
 		return parseInt(Math.sqrt(Math.pow(x - this.posX, 2) + Math.pow(y - this.posY, 2)))
 	}
 
-	calculateAttackRangeCells() {
-		this.attackRangeCells.length = 0
-		const minX = Math.max(0, this.posX - this.attackRange)
-		const maxX = Math.min(colCount - 1, this.posX + this.attackRange)
-		const minY = Math.max(0, this.posY - this.attackRange)
-		const maxY = Math.min(rowCount - 1, this.posY + this.attackRange)
-
-		for (let y = minY; y <= maxY; y++) {
-			for (let x = minX; x <= maxX; x++) {
-				if (x === this.posX && y === this.posY) {
-					continue
-				}
-				this.attackRangeCells.push({ x, y })
-			}
-		}
-	}
-
-	mouvementPossible(cell) {
-		return (
-			this.motionRange >=
-			this.calculateDistance(cell.getAttribute(`data-col`), cell.getAttribute(`data-row`))
-		)
+	mouvementPossible() {
+		return this.motionRangeCells.length > 0
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	animateMouveShip(destinationCell) {
@@ -292,11 +274,12 @@ class Ship {
 
 	resetMotionCells() {
 		this.motionRangeCells.forEach(cell => {
-			// console.log(this)
+			const cellDOM = document.querySelector(`.cell[data-col="${cell.x}"][data-row="${cell.y}"]`)
+
 			if (this.type === 'player') {
-				cell.classList.remove('mouvable')
+				cellDOM.classList.remove('mouvable')
 				// Rimuovi l'event listener 'click' da ogni cella
-				cell.removeEventListener('click', this.handleCellMotionClickBound)
+				cellDOM.removeEventListener('click', this.handleCellMotionClickBound)
 			}
 		})
 
@@ -311,17 +294,35 @@ class Ship {
 	}
 
 	getMotionCellRange() {
-		const x = this.posX
-		const y = this.posY
-		const movement = this.motionRange
-		for (let i = x - movement; i <= x + movement; i++) {
-			for (let j = y - movement; j <= y + movement; j++) {
-				if (Math.abs(x - i) + Math.abs(y - j) <= movement) {
-					const cell = document.querySelector(`.cell[data-col="${i}"][data-row="${j}"]`)
-					if (!cell) continue
+		this.getCellRange('motion')
+	}
 
-					this.motionRangeCells.push(cell)
-					if (this.type === 'player') {
+	getAttackRangeCells() {
+		this.getCellRange('attack')
+	}
+
+	getCellRange(rageType) {
+		const range = rageType === 'motion' ? this.motionRange : this.attackRange
+
+		for (let i = this.posX - range; i <= this.posX + range; i++) {
+			for (let j = this.posY - range; j <= this.posY + range; j++) {
+				if (Math.abs(this.posX - i) + Math.abs(this.posY - j) <= range) {
+					const cell = document.querySelector(`.cell[data-col="${i}"][data-row="${j}"]`)
+
+					//setting conditions
+					const baseExclusion = !cell || cell.dataset.interactive === false
+					const hasShip = cell ? cell.querySelector('.ship') !== null : false
+					const exclusionCondition =
+						rageType === 'attack' ? baseExclusion : baseExclusion || hasShip
+					if (exclusionCondition) continue
+
+					if (rageType === 'motion') {
+						this.motionRangeCells.push({ x: i, y: j })
+					}
+					if (rageType === 'attack') {
+						this.attackRangeCells.push({ x: i, y: j })
+					}
+					if (this.type === 'player' && rageType === 'motion') {
 						cell.classList.add('mouvable')
 						cell.addEventListener('click', this.handleCellMotionClickBound)
 					}
