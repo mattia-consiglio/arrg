@@ -10,10 +10,6 @@ const portRange = 2
 
 export const ports = []
 
-document.getElementById('shopButton').onclick = function () {
-	document.getElementsByTagName('body')[0].appendChild(shopMenu(player.resources))
-}
-
 const templateDoSomethingWithXandYofCell = function (x, y) {
 	console.log(`Cell: X ${x}, Y ${y}`)
 	// La i è la X, la j è la Y
@@ -251,6 +247,10 @@ setInterval(() => {
 window.addEventListener('resize', () => {
 	setMapMinXY()
 })
+
+document.getElementById('shopButton').onclick = function () {
+	document.getElementsByTagName('body')[0].appendChild(shopMenu())
+}
 
 //eseguire la funzioni solo se il mouse non è stato trascinato per più del dragThreshold
 document.addEventListener('mousedown', function (e) {

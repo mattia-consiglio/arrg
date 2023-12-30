@@ -19,7 +19,7 @@ class Ship {
 	hp
 	cannonPower
 	cannonAmount
-	resources = templateResources
+	resources = { ...templateResources }
 	maxStorage
 	crew
 	xp = 0
