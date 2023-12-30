@@ -36,6 +36,7 @@ class Ship {
 	attackRangeCells = []
 	motionRangeCells = []
 	handleCellMotionClickBound
+	inMotion = false
 
 	constructor({ type, level = 1, id = 0 }) {
 		if (type !== 'player' && type !== 'bot') return console.log('Wrong Ship type')
@@ -92,6 +93,7 @@ class Ship {
 		this.handleCellMotionClickBound = this.handleCellMotionClick.bind(this)
 
 		this.getMotionCellRange()
+		this.getAttackRangeCells()
 		this.resourcesRandomizer()
 	}
 
@@ -173,7 +175,8 @@ class Ship {
 	}
 
 	mouveShip(cell) {
-		if (this.mouvementPossible()) {
+		if (this.mouvementPossible() && this.inMotion === false) {
+			this.inMotion = true
 			this.animateMouveShip(cell)
 		}
 	}
@@ -238,8 +241,8 @@ class Ship {
 		const animation = this.DOMShipWrap.animate(translAnimation, animOp)
 		animation.onfinish = () => {
 			this.setShipPosition(destinationCell)
-
 			this.DOMShipWrap.animate({ transform: `translate(0px,0px)` }, animOp2)
+			this.inMotion = false
 		}
 	}
 
@@ -274,18 +277,16 @@ class Ship {
 	}
 
 	resetMotionCells() {
+		// console.log(this.motionRangeCells)
 		this.motionRangeCells.forEach(cell => {
 			const cellDOM = document.querySelector(`.cell[data-col="${cell.x}"][data-row="${cell.y}"]`)
-
+			console.log(cellDOM)
 			if (this.type === 'player') {
 				cellDOM.classList.remove('mouvable')
 				// Rimuovi l'event listener 'click' da ogni cella
 				cellDOM.removeEventListener('click', this.handleCellMotionClickBound)
 			}
 		})
-
-		//empty movementRangeCells
-		this.motionRangeCells.length = 0
 	}
 
 	// Funzione handler che verrà utilizzata per aggiungere e rimuovere l'event listener
@@ -305,13 +306,20 @@ class Ship {
 	getCellRange(rageType) {
 		const range = rageType === 'motion' ? this.motionRange : this.attackRange
 
+		if (rageType === 'motion') {
+			this.motionRangeCells.length = 0
+		}
+		if (rageType === 'attack') {
+			this.attackRangeCells.length = 0
+		}
+
 		for (let i = this.posX - range; i <= this.posX + range; i++) {
 			for (let j = this.posY - range; j <= this.posY + range; j++) {
 				if (Math.abs(this.posX - i) + Math.abs(this.posY - j) <= range) {
 					const cell = document.querySelector(`.cell[data-col="${i}"][data-row="${j}"]`)
 
 					//setting conditions
-					const baseExclusion = !cell || cell.dataset.interactive === false
+					const baseExclusion = !cell || cell.dataset.interactive === 'false'
 					const hasShip = cell ? cell.querySelector('.ship') !== null : false
 					const exclusionCondition =
 						rageType === 'attack' ? baseExclusion : baseExclusion || hasShip
@@ -395,6 +403,25 @@ class BotShip extends Ship {
 			Array(chaches[index]).fill(shipTemplate)
 		)
 		return expandedChaches[Math.floor(Math.random() * expandedChaches.length)].level
+	}
+
+	/**
+	 * Da fare:
+	 * aggiungere un obbiettivo di direzione da raggiungere
+	 * per calcolare quale cella scegliereper muoversi ordinare in mod ascendente le celle col metodo calculateDistance
+	 * in modo da calcolare la distanza tra la cella in motionRangeCells e quella obiettivo
+	 * muovere la nave nella cella alla prima posizione [0] dell'array ordinato
+	 */
+
+	makeChoice() {
+		const chooseToMove = Math.round(Math.random()) === 1
+		if (chooseToMove) {
+			const moveTo = this.motionRangeCells[Math.floor(Math.random() * this.motionRangeCells.length)]
+			const targetCell = document.querySelector(
+				`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`
+			)
+			this.mouveShip(targetCell)
+		}
 	}
 }
 

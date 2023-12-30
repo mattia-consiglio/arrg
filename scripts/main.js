@@ -240,6 +240,10 @@ moveViewportOverPlayer()
 
 setInterval(() => {
 	spawnBots()
+	for (let i = 1; i < shipsArray.length; i++) {
+		const botShip = shipsArray[i]
+		botShip.makeChoice()
+	}
 }, 1000)
 
 // ------------------ Listeners ------------------
