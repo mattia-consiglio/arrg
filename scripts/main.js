@@ -11,8 +11,6 @@ const portRange = 2
 export const ports = []
 
 document.getElementById('shopButton').onclick = function () {
-	player.resources.gold += 250
-
 	document.getElementsByTagName('body')[0].appendChild(shopMenu(player.resources))
 }
 

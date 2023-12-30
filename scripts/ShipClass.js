@@ -92,6 +92,7 @@ class Ship {
 		this.handleCellMotionClickBound = this.handleCellMotionClick.bind(this)
 
 		this.getMotionCellRange()
+		this.resourcesRandomizer()
 	}
 
 	updateLevelText() {
@@ -330,6 +331,22 @@ class Ship {
 			}
 		}
 	}
+
+	resourcesRandomizer() {
+		const extractionPool = []
+		for (const key in this.resources) {
+			if (key === 'gold') continue
+			extractionPool.push(key)
+		}
+		for (let i = 0; i < this.maxStorage; i++) {
+			this.resources[extractionPool[Math.floor(Math.random() * extractionPool.length)]]++
+		}
+
+		const min = this.hp / 2
+		const max = this.hp * 2
+
+		this.resources.gold = Math.floor(Math.random() * (max - min) + min)
+	}
 }
 
 class PlayerShip extends Ship {
@@ -343,6 +360,16 @@ class PlayerShip extends Ship {
 			this.xpNeeded = this.getShipTemplateByLevel(this.level).xpNeeded
 		}
 		this.DOMShipWrap.classList.add('player')
+		this.updateResourcesVisual()
+	}
+
+	updateResourcesVisual() {
+		for (const [key, value] of Object.entries(this.resources)) {
+			const element = document.getElementById(key)
+			element.innerText = value
+		}
+		const element = document.getElementById('xp')
+		element.innerText = this.xp + '/' + this.xpNeeded
 	}
 }
 
