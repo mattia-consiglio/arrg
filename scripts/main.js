@@ -2,14 +2,13 @@ import { shipsArray, maxBotShipsCount } from './shipsModule.js'
 import { PlayerShip, BotShip } from './ShipClass.js'
 import { shopMenu } from './shopModule.js'
 import { generateMap, rowCount, colCount, setMapMinXY, moveViewportOverPlayer } from './map.js'
-import { movementMethod } from './movementModule.js'
 
 export const gameEl = document.getElementById('game')
 // la larghezza di una cella
 
 const portRange = 2
 
-const ports = []
+export const ports = []
 
 document.getElementById('shopButton').onclick = function () {
 	player.resources.gold += 250
@@ -162,7 +161,7 @@ const spawnPort = (x, y, direction, ownedByPlayer) => {
 		maxX = x + 1 + portRange
 		deadZones = [
 			{ x: 1, y: y },
-			{ x: 0, y: y + 1 },
+			{ x, y: y + 1 },
 			{ x: 1, y: y + 1 },
 		]
 	}
@@ -175,7 +174,11 @@ const spawnPort = (x, y, direction, ownedByPlayer) => {
 			{ x: x - 1, y: y + 1 },
 		]
 	}
+	//aggiungo coodinata di spawn del porto
 	deadZones.push({ x, y })
+
+	//add deadzones to port array. Useful for removing cells to ship mouvment
+	portObj.deadZones = deadZones
 
 	for (let y = minY; y <= maxY; y++) {
 		for (let x = minX; x <= maxX; x++) {
@@ -216,7 +219,7 @@ const spawnBots = () => {
 	if (botShipsCount >= maxBotShipsCount) return
 	const botsToGenerate = maxBotShipsCount - botShipsCount
 	for (let i = 0; i < botsToGenerate; i++) {
-		const botShip = new BotShip({ ports })
+		const botShip = new BotShip()
 		shipsArray.push(botShip)
 	}
 }
@@ -229,14 +232,14 @@ generateMap(rowCount, colCount)
 setMapMinXY()
 spawnPorts()
 
-export const player = new PlayerShip({ ports })
+export const player = new PlayerShip()
 shipsArray.push(player)
 moveViewportOverPlayer()
-movementMethod()
+// movementMethod()
 
-spawnBots()
-// setInterval(() => {
-// }, 1000)
+setInterval(() => {
+	spawnBots()
+}, 1000)
 
 // ------------------ Listeners ------------------
 

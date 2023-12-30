@@ -134,6 +134,25 @@ body {
 		font-size: 2rem;
 		font-weight: 800;
 		font-family: 'Courier New', Courier, monospace;
+		width: 200px;
+		text-align: center;
+	}
+}
+
+.mouvable {
+	animation: flashWhite 1.5s infinite ease-out;
+	border-color: color.adjust($color: $bluScuro, $lightness: 20%);
+}
+
+@keyframes flashWhite {
+	0%,
+	100% {
+		background-color: $azzurro;
+		background-color: $azzurro;
+	}
+
+	50% {
+		background-color: color.adjust($color: $azzurro, $lightness: 3%, $hue: -2);
 	}
 }
 
@@ -180,7 +199,7 @@ body {
 	font-size: 3rem;
 	font-family: 'Barletta', sans-serif;
 	padding: 15px;
-	visibility: hidden;
+	visibility: visible;
 	cursor: pointer;
 }
 
@@ -469,22 +488,5 @@ body {
 
 	&.red::before {
 		background-color: #e21717;
-	}
-}
-
-.mouvable {
-	animation: flashWhite 1.5s infinite ease-out;
-	border-color: color.adjust($color: $bluScuro, $lightness: 20%);
-}
-
-@keyframes flashWhite {
-	0%,
-	100% {
-		background-color: $azzurro;
-		background-color: $azzurro;
-	}
-
-	50% {
-		background-color: color.adjust($color: $azzurro, $lightness: 3%, $hue: -2);
 	}
 }

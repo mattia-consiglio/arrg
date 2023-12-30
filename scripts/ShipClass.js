@@ -3,9 +3,10 @@ import {
 	templateResources,
 	shipsArray,
 	shipsExtractionChanches,
+	shipMotionBaseTime,
 } from './shipsModule.js'
 import { rowCount, colCount } from './map.js'
-import { movementMethod } from './movementModule.js'
+import { player, ports } from './main.js'
 let idCount = 0
 class Ship {
 	static DOMShipWrap
@@ -33,8 +34,10 @@ class Ship {
 	posY
 	direction = 'left'
 	attackRangeCells = []
+	motionRangeCells = []
+	handleCellMotionClickBound
 
-	constructor({ type, level = 1, id = 0, ports = [] }) {
+	constructor({ type, level = 1, id = 0 }) {
 		if (type !== 'player' && type !== 'bot') return console.log('Wrong Ship type')
 		this.type = type
 		this.level = level
@@ -82,10 +85,13 @@ class Ship {
 		this.DOMShipImg = document.createElement('img')
 		this.DOMShipImg.classList.add('shipImg')
 		this.DOMShipWrap.appendChild(this.DOMShipImg)
-		const cell = this.setInitalSpawnCell(ports)
+		const cell = this.setInitalSpawnCell()
 
 		this.setShipPosition(cell)
 		this.updateShipImageDirection()
+		this.handleCellMotionClickBound = this.handleCellMotionClick.bind(this)
+
+		this.getMotionCellRange()
 	}
 
 	updateLevelText() {
@@ -130,10 +136,10 @@ class Ship {
 		this.posY = targetY
 		this.posX = targetX
 		this.calculateAttackRangeCells()
+		this.getMotionCellRange()
 	}
 
-	setInitalSpawnCell(ports) {
-		console.log(this.type)
+	setInitalSpawnCell() {
 		const filteredPorts = ports.filter(port => port.owner === this.type)
 		let spawnPortIndex = 0
 		if (filteredPorts.length > 1) {
@@ -145,7 +151,6 @@ class Ship {
 		} else {
 			// mi assiucuro di creare un array di estrazione con le sole celle libere
 			filteredPorts[spawnPortIndex].interactionCells.forEach(portCell => {
-				console.log(portCell)
 				if (
 					shipsArray.findIndex(ship => ship.posX === portCell.x && ship.posY === portCell.y) === -1
 				) {
@@ -154,9 +159,7 @@ class Ship {
 			})
 		}
 
-		console.log(freeCells)
 		const spawnCell = freeCells[Math.floor(Math.random() * freeCells.length)]
-		console.log(spawnCell)
 
 		const xInitial = spawnCell.x
 		const yInitial = spawnCell.y
@@ -212,7 +215,10 @@ class Ship {
 		let xDestination = destinationCell.offsetTop
 		let yDestination = destinationCell.offsetLeft
 
-		let animationDuration = 0.4 * this.calculateDistance(xDestination, yDestination)
+		let animationDuration =
+			(shipMotionBaseTime *
+				this.calculateDistance(destinationCell.dataset.col, destinationCell.dataset.row)) /
+			this.speed
 
 		if (Math.abs(xDestination - currentShipX) > Math.abs(yDestination - currentShipY)) {
 			if (xDestination - currentShipX > 0) {
@@ -249,7 +255,6 @@ class Ship {
 		const animation = this.DOMShipWrap.animate(translAnimation, animOp)
 		animation.onfinish = () => {
 			this.setShipPosition(destinationCell)
-			movementMethod()
 
 			this.DOMShipWrap.animate({ transform: `translate(0px,0px)` }, animOp2)
 		}
@@ -284,12 +289,52 @@ class Ship {
 				break
 		}
 	}
+
+	resetMotionCells() {
+		this.motionRangeCells.forEach(cell => {
+			// console.log(this)
+			if (this.type === 'player') {
+				cell.classList.remove('mouvable')
+				// Rimuovi l'event listener 'click' da ogni cella
+				cell.removeEventListener('click', this.handleCellMotionClickBound)
+			}
+		})
+
+		//empty movementRangeCells
+		this.motionRangeCells.length = 0
+	}
+
+	// Funzione handler che verrà utilizzata per aggiungere e rimuovere l'event listener
+	handleCellMotionClick(event) {
+		this.mouveShip(event.target)
+		this.resetMotionCells()
+	}
+
+	getMotionCellRange() {
+		const x = this.posX
+		const y = this.posY
+		const movement = this.motionRange
+		for (let i = x - movement; i <= x + movement; i++) {
+			for (let j = y - movement; j <= y + movement; j++) {
+				if (Math.abs(x - i) + Math.abs(y - j) <= movement) {
+					const cell = document.querySelector(`.cell[data-col="${i}"][data-row="${j}"]`)
+					if (!cell) continue
+
+					this.motionRangeCells.push(cell)
+					if (this.type === 'player') {
+						cell.classList.add('mouvable')
+						cell.addEventListener('click', this.handleCellMotionClickBound)
+					}
+				}
+			}
+		}
+	}
 }
 
 class PlayerShip extends Ship {
 	xpNeeded
-	constructor({ type, level = 1, id = 0, ports = [] }) {
-		super({ type: 'player', level, id, ports })
+	constructor() {
+		super({ type: 'player', level: 1, id: 0 })
 		const shipTemplate = this.getShipTemplateByLevel(this.level + 1)
 		if (shipTemplate) {
 			this.xpNeeded = shipTemplate.xpNeeded
@@ -304,8 +349,8 @@ class BotShip extends Ship {
 	xpGiven
 	autoFollow
 	autoStartAttack
-	constructor({ type, ports = [] }) {
-		super({ type: 'bot', level: BotShip.extractLevel(), id: idCount + 1, ports })
+	constructor() {
+		super({ type: 'bot', level: BotShip.extractLevel(), id: idCount + 1 })
 
 		idCount++
 		const { xpGiven, autoStartAttack, autoFollow } = this.getShipTemplateByLevel(this.level)

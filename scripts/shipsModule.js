@@ -24,7 +24,7 @@ export const dayRounds = morningRounds + nightRounds
 export const maxRoundsWithoutWater = Math.floor(1 * dayRounds) // numero massimo di turni in cui l'eqipaggio può sopravvivere senza bere. Se viene superato il giocatore ha perso.
 export const maxRoundsWithoutFood = Math.floor(3 * dayRounds) // numero massimo di turni in cui l'eqipaggio può sopravvivere senza mangiare. Se viene superato il giocatore ha perso.
 export const hpRapairOnPlaceRate = 0.4
-export const shipMotionBaseTime = 1000 //in millisecondi
+export const shipMotionBaseTime = 950 //in millisecondi
 
 export const templateResources = {
 	gold: 0, //moneta di scambio del gioco
@@ -51,7 +51,7 @@ export const maxBotShipsCount = 15
 export const shipsTemplate = [
 	{
 		level: 1,
-		hp: 30, //hp decrementabile se si subiscono danni
+		hp: 100, //hp decrementabile se si subiscono danni
 		maxHp: 100, // hp massimo
 		cannonPower: 15, //danno per colpo di cannone
 		cannonAmount: 2, //il numero di cannoni influenza quante cannonate si possono sparare per turno
@@ -291,7 +291,7 @@ export const shipsTemplate = [
 	},
 	{
 		level: 9,
-		hp: 3000,
+		hp: 30000,
 		maxHp: 30000,
 		cannonPower: 70,
 		cannonAmount: 8,

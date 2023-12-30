@@ -132,8 +132,35 @@ body {
   font-size: 2rem;
   font-weight: 800;
   font-family: "Courier New", Courier, monospace;
+  width: 200px;
+  text-align: center;
 }
 
+.mouvable {
+  -webkit-animation: flashWhite 1.5s infinite ease-out;
+          animation: flashWhite 1.5s infinite ease-out;
+  border-color: #05889c;
+}
+
+@-webkit-keyframes flashWhite {
+  0%, 100% {
+    background-color: #02b6d2;
+    background-color: #02b6d2;
+  }
+  50% {
+    background-color: #02cbe1;
+  }
+}
+
+@keyframes flashWhite {
+  0%, 100% {
+    background-color: #02b6d2;
+    background-color: #02b6d2;
+  }
+  50% {
+    background-color: #02cbe1;
+  }
+}
 .Porto {
   width: 200px;
   height: 200px;
@@ -175,7 +202,7 @@ body {
   font-size: 3rem;
   font-family: "Barletta", sans-serif;
   padding: 15px;
-  visibility: hidden;
+  visibility: visible;
   cursor: pointer;
 }
 
@@ -451,30 +478,4 @@ body {
 }
 .hpBar.red::before {
   background-color: #e21717;
-}
-
-.mouvable {
-  -webkit-animation: flashWhite 1.5s infinite ease-out;
-          animation: flashWhite 1.5s infinite ease-out;
-  border-color: #05889c;
-}
-
-@-webkit-keyframes flashWhite {
-  0%, 100% {
-    background-color: #02b6d2;
-    background-color: #02b6d2;
-  }
-  50% {
-    background-color: #02cbe1;
-  }
-}
-
-@keyframes flashWhite {
-  0%, 100% {
-    background-color: #02b6d2;
-    background-color: #02b6d2;
-  }
-  50% {
-    background-color: #02cbe1;
-  }
 }/*# sourceMappingURL=style.css.map */
