@@ -197,6 +197,7 @@ export const shopMenu = function () {
 			player.hp = (parseInt(reparationsRange.value) / 100) * player.maxHp
 			player.resources.gold -= parseInt(reparationsRange.value)
 			player.updateHpBar()
+			player.updateResourcesVisual()
 			console.log(player)
 			console.log(player.resources)
 			console.log(player.hp)

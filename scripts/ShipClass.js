@@ -196,7 +196,7 @@ class Ship {
 	mouvementPossible() {
 		return this.motionRangeCells.length > 0
 	}
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	animateMouveShip(destinationCell) {
 		if (destinationCell.classList[2] === 'amichevole') {
 			document.getElementById('shopButton').style.visibility = 'visible'
@@ -339,7 +339,9 @@ class Ship {
 						!cell ||
 						cell.dataset.interactive === 'false' ||
 						(parseInt(cell.dataset.col) === this.posX && parseInt(cell.dataset.row) === this.posY)
-					const hasShip = cell ? cell.querySelector('.ship') !== null : false
+					const hasShip = cell
+						? cell.querySelector('.ship') !== null || cell.querySelector('.barrel')
+						: false
 					const exclusionCondition =
 						rageType === 'attack' ? baseExclusion : baseExclusion || hasShip
 					if (this.type === 'bot') {

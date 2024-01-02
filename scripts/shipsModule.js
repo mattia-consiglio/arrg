@@ -51,19 +51,19 @@ export const maxBotShipsCount = 15
 export const shipsTemplate = [
 	{
 		level: 1,
-		hp: 100, //hp decrementabile se si subiscono danni
+		hp: 100, // hp decrementabile se si subiscono danni
 		maxHp: 100, // hp massimo
-		cannonPower: 15, //danno per colpo di cannone
-		cannonAmount: 2, //il numero di cannoni influenza quante cannonate si possono sparare per turno
-		maxStorage: 50, // il totale di risorse accumulabili nella stiva
-		crew: 3, // equipaggio a bordo della nave, ognigiorno richiede delle risorse per sopravvivere
-		xpNeeded: 0, //xp richiesto poter sbloccare la nave di livello x
+		cannonPower: 15, // danno per colpo di cannone
+		cannonAmount: 2, // il numero di cannoni influenza quante cannonate si possono sparare per turno
+		maxStorage: 70, // il totale di risorse accumulabili nella stiva
+		crew: 3, // equipaggio a bordo della nave, ogni giorno richiede delle risorse per sopravvivere
+		xpNeeded: 0, // xp richiesto per poter sbloccare la nave di livello x
 		xpGiven: 50, // xp dato dalla distruzione della nave di livello x
 		autoStartAttack: false, // per le navi bot, se iniziano ad attaccare il giocatore automaticamente se si trova nel loro raggio di attacco
 		autoFollow: false, // per le navi bot, se continueranno a seguire il giocatore una volta cominciato l'attacco
 		motionRange: 2, // raggio di movimento della nave in celle
 		attackRange: 2, // raggio di attacco della nave in celle
-		speed: 1, // velocità di animizione della nave
+		speed: 1.0, // velocità di animazione della nave
 		sprites: {
 			player: {
 				up: 'Up_playership.png',
@@ -81,18 +81,18 @@ export const shipsTemplate = [
 	},
 	{
 		level: 2,
-		hp: 200,
-		maxHp: 200,
-		cannonPower: 20,
+		hp: 120,
+		maxHp: 120,
+		cannonPower: 18,
 		cannonAmount: 3,
-		maxStorage: 100,
-		crew: 6,
-		xpNeeded: 300,
-		xpGiven: 100,
+		maxStorage: 84,
+		crew: 3,
+		xpNeeded: 250,
+		xpGiven: 60,
 		autoStartAttack: false,
 		autoFollow: false,
-		motionRange: 3,
-		attackRange: 2,
+		motionRange: 2,
+		attackRange: 1,
 		speed: 1.5,
 		sprites: {
 			player: {
@@ -111,19 +111,19 @@ export const shipsTemplate = [
 	},
 	{
 		level: 3,
-		hp: 350,
-		maxHp: 350,
-		cannonPower: 25,
+		hp: 156,
+		maxHp: 156,
+		cannonPower: 21,
 		cannonAmount: 4,
-		maxStorage: 175,
-		crew: 11,
-		xpNeeded: 1100,
-		xpGiven: 100,
+		maxStorage: 109,
+		crew: 4,
+		xpNeeded: 610,
+		xpGiven: 78,
 		autoStartAttack: false,
 		autoFollow: false,
-		motionRange: 4,
-		attackRange: 3,
-		speed: 2,
+		motionRange: 3,
+		attackRange: 2,
+		speed: 2.0,
 		sprites: {
 			player: {
 				up: 'Up_playership.png',
@@ -141,18 +141,18 @@ export const shipsTemplate = [
 	},
 	{
 		level: 4,
-		hp: 600,
-		maxHp: 600,
-		cannonPower: 30,
+		hp: 218,
+		maxHp: 218,
+		cannonPower: 25,
 		cannonAmount: 5,
-		maxStorage: 300,
-		crew: 18,
-		xpNeeded: 2850,
-		xpGiven: 100,
+		maxStorage: 153,
+		crew: 5,
+		xpNeeded: 1156,
+		xpGiven: 109,
 		autoStartAttack: true,
 		autoFollow: false,
-		motionRange: 5,
-		attackRange: 4,
+		motionRange: 4,
+		attackRange: 3,
 		speed: 2.5,
 		sprites: {
 			player: {
@@ -171,19 +171,19 @@ export const shipsTemplate = [
 	},
 	{
 		level: 5,
-		hp: 2000,
-		maxHp: 2000,
-		cannonPower: 40,
-		cannonAmount: 7,
-		maxStorage: 1000,
-		crew: 60,
-		xpNeeded: 6450,
-		xpGiven: 1000,
+		hp: 328,
+		maxHp: 328,
+		cannonPower: 31,
+		cannonAmount: 6,
+		maxStorage: 230,
+		crew: 8,
+		xpNeeded: 2028,
+		xpGiven: 164,
 		autoStartAttack: true,
 		autoFollow: true,
-		motionRange: 6,
-		attackRange: 5,
-		speed: 3,
+		motionRange: 5,
+		attackRange: 4,
+		speed: 3.0,
 		sprites: {
 			player: {
 				up: 'Up_playership.png',
@@ -201,18 +201,18 @@ export const shipsTemplate = [
 	},
 	{
 		level: 6,
-		hp: 3800,
-		maxHp: 3800,
-		cannonPower: 50,
-		cannonAmount: 8,
-		maxStorage: 1900,
-		crew: 114,
-		xpNeeded: 12900,
-		xpGiven: 1900,
+		hp: 524,
+		maxHp: 524,
+		cannonPower: 37,
+		cannonAmount: 7,
+		maxStorage: 367,
+		crew: 13,
+		xpNeeded: 3504,
+		xpGiven: 262,
 		autoStartAttack: true,
 		autoFollow: true,
-		motionRange: 7,
-		attackRange: 6,
+		motionRange: 6,
+		attackRange: 5,
 		speed: 3.5,
 		sprites: {
 			player: {
@@ -231,19 +231,19 @@ export const shipsTemplate = [
 	},
 	{
 		level: 7,
-		hp: 7500,
-		maxHp: 7500,
-		cannonPower: 60,
-		cannonAmount: 7,
-		maxStorage: 3750,
-		crew: 23,
-		xpNeeded: 43300,
-		xpGiven: 3750,
+		hp: 891,
+		maxHp: 891,
+		cannonPower: 44,
+		cannonAmount: 8,
+		maxStorage: 624,
+		crew: 22,
+		xpNeeded: 6124,
+		xpGiven: 446,
 		autoStartAttack: true,
 		autoFollow: true,
-		motionRange: 8,
-		attackRange: 7,
-		speed: 4,
+		motionRange: 7,
+		attackRange: 6,
+		speed: 4.0,
 		sprites: {
 			player: {
 				up: 'Up_playership.png',
@@ -261,18 +261,18 @@ export const shipsTemplate = [
 	},
 	{
 		level: 8,
-		hp: 15000,
-		maxHp: 15000,
-		cannonPower: 70,
-		cannonAmount: 8,
-		maxStorage: 7500,
-		crew: 450,
-		xpNeeded: 110800,
-		xpGiven: 7500,
+		hp: 1604,
+		maxHp: 1604,
+		cannonPower: 53,
+		cannonAmount: 9,
+		maxStorage: 1123,
+		crew: 39,
+		xpNeeded: 11030,
+		xpGiven: 802,
 		autoStartAttack: true,
 		autoFollow: true,
-		motionRange: 9,
-		attackRange: 8,
+		motionRange: 8,
+		attackRange: 7,
 		speed: 4.5,
 		sprites: {
 			player: {
@@ -291,19 +291,19 @@ export const shipsTemplate = [
 	},
 	{
 		level: 9,
-		hp: 30000,
-		maxHp: 30000,
-		cannonPower: 70,
-		cannonAmount: 8,
-		maxStorage: 15000,
-		crew: 900,
-		xpNeeded: 260800,
-		xpGiven: 15000,
+		hp: 3047,
+		maxHp: 3047,
+		cannonPower: 64,
+		cannonAmount: 10,
+		maxStorage: 2133,
+		crew: 75,
+		xpNeeded: 20654,
+		xpGiven: 1524,
 		autoStartAttack: true,
 		autoFollow: true,
 		motionRange: 9,
 		attackRange: 8,
-		speed: 5,
+		speed: 5.0,
 		sprites: {
 			player: {
 				up: 'Up_playership.png',
@@ -321,14 +321,14 @@ export const shipsTemplate = [
 	},
 	{
 		level: 10,
-		hp: 60000,
-		maxHp: 60000,
-		cannonPower: 70,
-		cannonAmount: 8,
-		maxStorage: 300000,
-		crew: 1800,
-		xpNeeded: 590800,
-		xpGiven: 300000,
+		hp: 6095,
+		maxHp: 6095,
+		cannonPower: 77,
+		cannonAmount: 12,
+		maxStorage: 4266,
+		crew: 150,
+		xpNeeded: 40466,
+		xpGiven: 3048,
 		autoStartAttack: true,
 		autoFollow: true,
 		motionRange: 10,
@@ -350,4 +350,5 @@ export const shipsTemplate = [
 		},
 	},
 ]
+
 export const shipsArray = []
