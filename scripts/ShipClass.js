@@ -8,6 +8,13 @@ import {
 import { rowCount, colCount } from './map.js'
 import { player, ports } from './main.js'
 let idCount = 0
+
+const delay = milliseconds => {
+	return new Promise(resolve => {
+		setTimeout(resolve, milliseconds)
+	})
+}
+
 class Ship {
 	static DOMShipWrap
 	static DOMShipImg
@@ -35,8 +42,9 @@ class Ship {
 	direction = 'left'
 	attackRangeCells = []
 	motionRangeCells = []
-	handleCellMotionClickBound
 	inMotion = false
+	attackTarget = null
+	attackedBy = []
 
 	constructor({ type, level = 1, id = 0 }) {
 		if (type !== 'player' && type !== 'bot') return console.log('Wrong Ship type')
@@ -280,9 +288,9 @@ class Ship {
 		// console.log(this.motionRangeCells)
 		this.motionRangeCells.forEach(cell => {
 			const cellDOM = document.querySelector(`.cell[data-col="${cell.x}"][data-row="${cell.y}"]`)
-			console.log(cellDOM)
 			if (this.type === 'player') {
 				cellDOM.classList.remove('mouvable')
+				cellDOM.classList.remove('canattack')
 				// Rimuovi l'event listener 'click' da ogni cella
 				cellDOM.removeEventListener('click', this.handleCellMotionClickBound)
 			}
@@ -303,6 +311,14 @@ class Ship {
 		this.getCellRange('attack')
 	}
 
+	isInAttackRange(target) {
+		return (
+			this.attackRangeCells.findIndex(
+				coordinate => coordinate.x === target.posX && coordinate.y === target.posY
+			) !== -1
+		)
+	}
+
 	getCellRange(rageType) {
 		const range = rageType === 'motion' ? this.motionRange : this.attackRange
 
@@ -319,11 +335,19 @@ class Ship {
 					const cell = document.querySelector(`.cell[data-col="${i}"][data-row="${j}"]`)
 
 					//setting conditions
-					const baseExclusion = !cell || cell.dataset.interactive === 'false'
+					const baseExclusion =
+						!cell ||
+						cell.dataset.interactive === 'false' ||
+						(parseInt(cell.dataset.col) === this.posX && parseInt(cell.dataset.row) === this.posY)
 					const hasShip = cell ? cell.querySelector('.ship') !== null : false
 					const exclusionCondition =
 						rageType === 'attack' ? baseExclusion : baseExclusion || hasShip
-					if (exclusionCondition) continue
+					if (this.type === 'bot') {
+						//prevent bot ships from going to ports owned by player
+						if (exclusionCondition || cell.classList.contains('amico')) continue
+					} else {
+						if (exclusionCondition) continue
+					}
 
 					if (rageType === 'motion') {
 						this.motionRangeCells.push({ x: i, y: j })
@@ -331,9 +355,13 @@ class Ship {
 					if (rageType === 'attack') {
 						this.attackRangeCells.push({ x: i, y: j })
 					}
-					if (this.type === 'player' && rageType === 'motion') {
-						cell.classList.add('mouvable')
-						cell.addEventListener('click', this.handleCellMotionClickBound)
+					if (this.type === 'player') {
+						if (rageType === 'motion') {
+							cell.classList.add('mouvable')
+							cell.addEventListener('click', this.handleCellMotionClickBound)
+						} else {
+							cell.classList.add('canattack')
+						}
 					}
 				}
 			}
@@ -355,20 +383,101 @@ class Ship {
 
 		this.resources.gold = Math.floor(Math.random() * (max - min) + min)
 	}
+
+	async startAttack(target) {
+		console.log('start attack', target)
+		if (this.isInAttackRange(target) && target.hp > 0 && this.hp > 0) {
+			this.attackTarget = target
+		}
+		for (let i = 0; i < this.cannonAmount; i++) {
+			if (this.attackTarget === null) return
+			if (!this.isInAttackRange(target)) return
+			if (target.hp === 0) {
+				target.lose()
+			}
+			const newHp = target.hp - this.cannonPower < 0 ? 0 : target.hp - this.cannonPower
+			target.hp = newHp
+			target.updateHpBar()
+			if (newHp === 0) {
+				target.lose()
+				return
+			}
+
+			await delay(500)
+		}
+		await delay(1000)
+		this.startAttack(target)
+	}
+
+	stopAttack(target) {
+		this.attackTarget = null
+	}
+
+	sumResurces(target = this) {
+		let sum = 0
+		for (const key in target.resources) {
+			if (Object.hasOwnProperty.call(target.resources, key)) {
+				const element = target.resources[key]
+				if (key === 'gold') continue
+				sum += element
+			}
+		}
+		return sum
+	}
 }
 
 class PlayerShip extends Ship {
 	xpNeeded
 	constructor() {
 		super({ type: 'player', level: 1, id: 0 })
+		this.setXpNeeded()
+		this.DOMShipWrap.classList.add('player')
+		this.updateResourcesVisual()
+	}
+
+	setXpNeeded() {
 		const shipTemplate = this.getShipTemplateByLevel(this.level + 1)
 		if (shipTemplate) {
 			this.xpNeeded = shipTemplate.xpNeeded
 		} else {
 			this.xpNeeded = this.getShipTemplateByLevel(this.level).xpNeeded
 		}
-		this.DOMShipWrap.classList.add('player')
-		this.updateResourcesVisual()
+	}
+
+	updateLevel() {
+		if (xp >= this.xpNeeded) {
+			this.level++
+			this.setXpNeeded()
+			const {
+				hp,
+				maxHp,
+				cannonPower,
+				cannonAmount,
+				maxStorage,
+				crew,
+				motionRange,
+				attackRange,
+				speed,
+				sprites,
+			} = this.getShipTemplateByLevel(this.level)
+			this.hp = hp
+			this.maxHp = maxHp
+			this.cannonPower = cannonPower
+			this.cannonAmount = cannonAmount
+			this.maxStorage = maxStorage
+			this.crew = crew
+			this.motionRange = motionRange
+			this.attackRange = attackRange
+			this.speed = speed
+			this.sprites = sprites[this.type]
+			this.updateShipImageDirection()
+			this.updateLevelText()
+			this.updateHpBar()
+			this.resetMotionCells()
+			this.getMotionCellRange()
+			this.getAttackRangeCells()
+			this.updateResourcesVisual()
+		}
 	}
 
 	updateResourcesVisual() {
@@ -378,6 +487,13 @@ class PlayerShip extends Ship {
 		}
 		const element = document.getElementById('xp')
 		element.innerText = this.xp + '/' + this.xpNeeded
+	}
+
+	/**
+	 * Thing to d when the payer loses
+	 */
+	lose() {
+		this.stopAttack()
 	}
 }
 
@@ -394,6 +510,41 @@ class BotShip extends Ship {
 		this.autoStartAttack = autoStartAttack
 		this.autoFollow = autoFollow
 		this.DOMShipWrap.classList.add('bot')
+		this.handleShipTriggerAttackDblclickBound = this.triggerAttack.bind(this)
+		this.handleShipSelectClickBound = this.selectShip.bind(this)
+		this.DOMShipWrap.parentElement.addEventListener(
+			'dblclick',
+			this.handleShipTriggerAttackDblclickBound
+		)
+		this.DOMShipWrap.parentElement.addEventListener('click', this.handleShipSelectClickBound)
+	}
+
+	selectShip(event) {
+		if (event.type === 'dblclick') {
+			this.DOMShipWrap.classList.add('selected')
+			return
+		}
+		if (!event.target.children[0].classList.contains('selected')) {
+			const previusSelectedShips = document.querySelectorAll('.ship.selected.bot')
+			if (previusSelectedShips.length) {
+				previusSelectedShips.forEach(ship => ship.classList.remove('selected'))
+			}
+		}
+		if (
+			player.attackRangeCells.find(
+				coordinate => coordinate.x === this.posX && coordinate.y === this.posY
+			)
+		) {
+			this.DOMShipWrap.classList.toggle('selected')
+		}
+	}
+
+	triggerAttack(event) {
+		this.selectShip(event)
+		player.startAttack(this)
+		if (this.isInAttackRange(player)) {
+			this.startAttack(player)
+		}
 	}
 
 	static extractLevel() {
@@ -407,14 +558,16 @@ class BotShip extends Ship {
 
 	/**
 	 * Da fare:
-	 * aggiungere un obbiettivo di direzione da raggiungere
+	 * aggiungere un obbiettivo di cella da raggiungere (magari oltre al metà della mappa)
+	 * la cella obittivo deve ovviamnte non essere quelle deelle deadzones dei porti
 	 * per calcolare quale cella scegliereper muoversi ordinare in mod ascendente le celle col metodo calculateDistance
 	 * in modo da calcolare la distanza tra la cella in motionRangeCells e quella obiettivo
 	 * muovere la nave nella cella alla prima posizione [0] dell'array ordinato
 	 */
 
 	makeChoice() {
-		const chooseToMove = Math.round(Math.random()) === 1
+		// const chooseToMove = Math.round(Math.random()) === 1
+		const chooseToMove = false
 		if (chooseToMove) {
 			const moveTo = this.motionRangeCells[Math.floor(Math.random() * this.motionRangeCells.length)]
 			const targetCell = document.querySelector(
@@ -422,6 +575,44 @@ class BotShip extends Ship {
 			)
 			this.mouveShip(targetCell)
 		}
+	}
+
+	openBarrelInterface() {}
+
+	spawnBarrel() {
+		const cell = document.querySelector(`.cell[data-col="${this.posX}"][data-row="${this.posY}"]`)
+		const barrelImg = document.createElement('img')
+		barrelImg.src = '../assets/sprites/Barrel.png'
+		barrelImg.classList.add('barrel')
+		cell.appendChild(barrelImg)
+		barrelImg.parentElement.addEventListener('click', this.openBarrelInterface)
+	}
+
+	lose() {
+		this.stopAttack()
+		player.xp += this.xpGiven
+		if (this.sumResurces(this) + this.sumResurces(player) > player.maxStorage) {
+			player.resources.gold += this.resources.gold
+			this.spawnBarrel()
+		} else {
+			for (const key in player.resources) {
+				if (Object.hasOwnProperty.call(player.resources, key)) {
+					player.resources[key] += this.resources[key]
+				}
+			}
+		}
+		player.updateResourcesVisual()
+		player.updateLevel()
+		this.DOMShipWrap.parentElement.removeEventListener(
+			'dblclick',
+			this.handleShipTriggerAttackDblclickBound
+		)
+		this.DOMShipWrap.parentElement.removeEventListener('click', this.handleShipSelectClickBound)
+		this.DOMShipWrap.remove()
+		shipsArray.splice(
+			shipsArray.findIndex(ship => ship.id === this.id),
+			1
+		)
 	}
 }
 

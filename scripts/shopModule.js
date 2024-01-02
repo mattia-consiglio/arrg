@@ -22,6 +22,7 @@ const deltaColorResource = function (startRisorsa, actualRisorsa) {
 
 export const shopMenu = function () {
 	const shopMenuRes = { ...player.resources }
+	const initialResources = player.resources
 
 	const divWrapper = document.createElement('div')
 	divWrapper.classList.add('shop-wrapper')

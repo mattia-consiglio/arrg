@@ -292,7 +292,8 @@ document.addEventListener('mousedown', function (e) {
 					!e.target.closest('.btn')
 				) {
 					const cell = e.target.closest('.cell')
-					//popUpBaloon(cell)
+					// popUpBaloon(cell)
+					console.log({ x: cell.dataset.col, y: cell.dataset.row })
 				}
 			}
 		},
