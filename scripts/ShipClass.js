@@ -6,7 +6,7 @@ import {
 	shipMotionBaseTime,
 } from './shipsModule.js'
 import { rowCount, colCount } from './map.js'
-import { player, ports } from './main.js'
+import { player, ports, getDOMCell } from './main.js'
 let idCount = 0
 
 const delay = milliseconds => {
@@ -178,7 +178,7 @@ class Ship {
 		const yInitial = spawnCell.y
 		this.posX = xInitial
 		this.posY = yInitial
-		const cell = document.querySelector(`.cell[data-row="${yInitial}"][data-col="${xInitial}"]`)
+		const cell = getDOMCell(xInitial, yInitial)
 		return cell
 	}
 
@@ -284,23 +284,26 @@ class Ship {
 		}
 	}
 
-	resetMotionCells() {
+	resetMotionAndAttackCells() {
 		// console.log(this.motionRangeCells)
-		this.motionRangeCells.forEach(cell => {
-			const cellDOM = document.querySelector(`.cell[data-col="${cell.x}"][data-row="${cell.y}"]`)
-			if (this.type === 'player') {
+		if (this.type === 'player') {
+			this.motionRangeCells.forEach(cell => {
+				const cellDOM = getDOMCell(cell.x, cell.y)
 				cellDOM.classList.remove('mouvable')
-				cellDOM.classList.remove('canattack')
 				// Rimuovi l'event listener 'click' da ogni cella
 				cellDOM.removeEventListener('click', this.handleCellMotionClickBound)
-			}
-		})
+			})
+			this.attackRangeCells.forEach(cell => {
+				const cellDOM = getDOMCell(cell.x, cell.y)
+				cellDOM.classList.remove('canattack')
+			})
+		}
 	}
 
 	// Funzione handler che verrà utilizzata per aggiungere e rimuovere l'event listener
 	handleCellMotionClick(event) {
 		this.mouveShip(event.target)
-		this.resetMotionCells()
+		this.resetMotionAndAttackCells()
 	}
 
 	getMotionCellRange() {
@@ -332,7 +335,7 @@ class Ship {
 		for (let i = this.posX - range; i <= this.posX + range; i++) {
 			for (let j = this.posY - range; j <= this.posY + range; j++) {
 				if (Math.abs(this.posX - i) + Math.abs(this.posY - j) <= range) {
-					const cell = document.querySelector(`.cell[data-col="${i}"][data-row="${j}"]`)
+					const cell = getDOMCell(i, j)
 
 					//setting conditions
 					const baseExclusion =
@@ -380,7 +383,7 @@ class Ship {
 			this.resources[extractionPool[Math.floor(Math.random() * extractionPool.length)]]++
 		}
 
-		const min = this.hp / 2
+		const min = this.level === 1 && this.type === 'player' ? this.hp : this.hp / 2
 		const max = this.hp * 2
 
 		this.resources.gold = Math.floor(Math.random() * (max - min) + min)
@@ -431,7 +434,7 @@ class Ship {
 class PlayerShip extends Ship {
 	xpNeeded
 	constructor() {
-		super({ type: 'player', level: 1, id: 0 })
+		super({ type: 'player', level: 10, id: 0 })
 		this.setXpNeeded()
 		this.DOMShipWrap.classList.add('player')
 		this.updateResourcesVisual()
@@ -475,7 +478,7 @@ class PlayerShip extends Ship {
 			this.updateShipImageDirection()
 			this.updateLevelText()
 			this.updateHpBar()
-			this.resetMotionCells()
+			this.resetMotionAndAttackCells()
 			this.getMotionCellRange()
 			this.getAttackRangeCells()
 			this.updateResourcesVisual()
@@ -582,7 +585,7 @@ class BotShip extends Ship {
 	openBarrelInterface() {}
 
 	spawnBarrel() {
-		const cell = document.querySelector(`.cell[data-col="${this.posX}"][data-row="${this.posY}"]`)
+		const cell = getDOMCell(this.posX, this.posY)
 		const barrelImg = document.createElement('img')
 		barrelImg.src = '../assets/sprites/Barrel.png'
 		barrelImg.classList.add('barrel')

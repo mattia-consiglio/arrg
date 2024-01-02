@@ -136,7 +136,12 @@ body {
   text-align: center;
   background: rgba(0, 0, 0, 0.75);
   padding: 0 5px;
-  width: calc(100% + 10px);
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+}
+.ship.selected.bot {
+  z-index: 500;
 }
 .ship.selected.bot .shipImg,
 .ship.selected.bot .level-text,

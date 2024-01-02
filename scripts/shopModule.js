@@ -46,15 +46,24 @@ export const shopMenu = function () {
 	wrapperReparationsRange.id = 'wrapperReparationsRange'
 	wrapperReparationsRange.appendChild(reparationsRange)
 	reparationsRange.type = 'range'
-	reparationsRange.min = player.hp + 1
-	reparationsRange.max = '100'
+	reparationsRange.min = player.hp
+	reparationsRange.max = player.maxHp
 	reparationsRange.value = '1'
 	reparationsRange.style.width = `${100 - (player.hp / player.maxHp) * 100}%`
+	const setRepairButtonText = (inputValue = player.hp) => {
+		console.log(inputValue, player.maxHp, inputValue / player.maxHp)
+		const newValue = Math.floor((inputValue / player.maxHp) * 100)
+		repairButton.innerHTML = `Ripara [ ${Math.floor(
+			(inputValue / player.maxHp) * 100
+		)}% <i class="fas fa-hammer" style="color: #800000;"></i> ]( <span style="color:red">-${
+			inputValue - player.hp
+		}</span><i class="fas fa-coins" style="color: #fac229;"></i> )`
+	}
+	setRepairButtonText()
+
 	reparationsRange.addEventListener('input', function (event) {
 		const newValue = event.target.value
-		repairButton.innerHTML = `Ripara [ ${newValue}% <i class="fas fa-hammer" style="color: #800000;"></i> ]( <span style="color:red">-${
-			newValue - player.hp
-		}</span><i class="fas fa-coins" style="color: #fac229;"></i> )`
+		setRepairButtonText(newValue)
 	})
 
 	acceptButton.innerHTML = `Accetta [<span style="color: ${colorDirezioneDelta(
@@ -62,8 +71,6 @@ export const shopMenu = function () {
 	)}"> ${
 		shopMenuRes.gold - initialResources.gold
 	}</span> <i class="fas fa-coins" style="color: #fac229;"></i> ]`
-
-	repairButton.innerHTML = `Ripara [ ${reparationsRange.value}% <i class="fas fa-hammer" style="color: #800000;"></i> ]( <span style="color:red">-1</span><i class="fas fa-coins" style="color: #fac229;"></i> )`
 
 	const divBottomRight = document.createElement('div')
 	divBottomRight.classList.add('bottom-right')
@@ -194,7 +201,7 @@ export const shopMenu = function () {
 
 	repairButton.addEventListener('click', function () {
 		if (player.resources.gold > reparationsRange.value && player.hp < player.maxHp) {
-			player.hp = (parseInt(reparationsRange.value) / 100) * player.maxHp
+			player.hp = parseInt(reparationsRange.value)
 			player.resources.gold -= parseInt(reparationsRange.value)
 			player.updateHpBar()
 			player.updateResourcesVisual()

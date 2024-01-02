@@ -35,9 +35,13 @@ const popUpScreen = function (messagge) {
 	document.getElementsByTagName('body')[0].appendChild(divMessaggio)
 }
 
+export const getDOMCell = (x, y) => {
+	return document.querySelector(`.cell[data-col="${x}"][data-row="${y}"]`)
+}
+
 const popUpBaloon = function (cell) {
-	let x = cell.getAttribute(`data-col`)
-	let y = cell.getAttribute(`data-row`)
+	let x = cell.dataset.col
+	let y = cell.dataset.row
 	const balloon = document.createElement('div')
 
 	const removeBalloon = function () {
@@ -280,17 +284,7 @@ document.addEventListener('mousedown', function (e) {
 			document.removeEventListener('mousemove', onMouseMove)
 			if (!wasDragged) {
 				// cliccato ma non tracinato
-				if (
-					!e.target.closest('#mouse-balloon') &&
-					!e.target.closest('#playerStats') &&
-					!e.target.closest('#controls') &&
-					!e.target.closest('#table-wrap') &&
-					!e.target.closest('.shop') &&
-					!e.target.closest('.button') &&
-					!e.target.closest('.shopButton') &&
-					!e.target.closest('#reparationsRange') &&
-					!e.target.closest('.btn')
-				) {
+				if (e.target.closest('.cell')) {
 					const cell = e.target.closest('.cell')
 					// popUpBaloon(cell)
 					console.log({ x: cell.dataset.col, y: cell.dataset.row })
