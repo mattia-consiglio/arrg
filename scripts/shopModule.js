@@ -22,6 +22,7 @@ const deltaColorResource = function (startRisorsa, actualRisorsa) {
 
 export const shopMenu = function () {
 	const shopMenuRes = { ...player.resources }
+	const initialResources = player.resources
 
 	const divWrapper = document.createElement('div')
 	divWrapper.classList.add('shop-wrapper')
@@ -196,6 +197,7 @@ export const shopMenu = function () {
 			player.hp = (parseInt(reparationsRange.value) / 100) * player.maxHp
 			player.resources.gold -= parseInt(reparationsRange.value)
 			player.updateHpBar()
+			player.updateResourcesVisual()
 			console.log(player)
 			console.log(player.resources)
 			console.log(player.hp)
