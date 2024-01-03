@@ -244,7 +244,7 @@ setInterval(() => {
 		const botShip = shipsArray[i]
 		botShip.makeChoice()
 	}
-}, 1000)
+}, 5000)
 
 // ------------------ Listeners ------------------
 
