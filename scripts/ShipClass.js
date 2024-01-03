@@ -575,21 +575,14 @@ class BotShip extends Ship {
 					const directionToPlayer = this.getDirectionTo(player.posX, player.posY)
 					const moveTo = this.getMoveTowards(directionToPlayer)
 					if (moveTo) {
-						const targetCell = document.querySelector(
-							`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`
-						)
-						this.mouveShip(targetCell);
+						const targetCell = document.querySelector(`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`)
+						this.mouveShip(targetCell)
 					}
-				} else {
-					//Se autoattack è true e la distanza è minore di attackrange
-					//this.startAttack(player)
 				}
 			} else {
 				// Si muove casualmente
 				const moveTo = this.motionRangeCells[Math.floor(Math.random() * this.motionRangeCells.length)]
-				const targetCell = document.querySelector(
-					`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`
-				);
+				const targetCell = document.querySelector(`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`)
 				this.mouveShip(targetCell);
 			}
 		} else {
