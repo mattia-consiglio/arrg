@@ -580,6 +580,9 @@ class BotShip extends Ship {
 						)
 						this.mouveShip(targetCell);
 					}
+				} else {
+					//Se autoattack è true e la distanza è minore di attackrange
+					this.startAttack(player)
 				}
 			} else {
 				// Si muove casualmente
