@@ -148,6 +148,16 @@ class Ship {
 		this.posX = targetX
 		this.getAttackRangeCells()
 		this.getMotionCellRange()
+		if (this.type !== "player") {
+			this.DOMShipWrap.classList.add('bot')
+			this.handleShipTriggerAttackDblclickBound = this.triggerAttack.bind(this)
+			this.handleShipSelectClickBound = this.selectShip.bind(this)
+			this.DOMShipWrap.parentElement.addEventListener(
+				'dblclick',
+				this.handleShipTriggerAttackDblclickBound
+			)
+			this.DOMShipWrap.parentElement.addEventListener('click', this.handleShipSelectClickBound)
+		}
 	}
 
 	setInitalSpawnCell() {
