@@ -414,13 +414,33 @@ class BotShip extends Ship {
 	 */
 
 	makeChoice() {
-		const chooseToMove = Math.round(Math.random()) === 1
-		if (chooseToMove) {
-			const moveTo = this.motionRangeCells[Math.floor(Math.random() * this.motionRangeCells.length)]
-			const targetCell = document.querySelector(
-				`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`
-			)
-			this.mouveShip(targetCell)
+		if (this.hp > (this.maxHp / 2)) {
+			//Se questa nave ha almeno metà degli hp
+			const chooseToMove = Math.round(Math.random()) === 1
+			if (chooseToMove) {
+				const moveTo = this.motionRangeCells[Math.floor(Math.random() * this.motionRangeCells.length)]
+				const targetCell = document.querySelector(
+					`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`
+				)
+				this.mouveShip(targetCell)
+			}
+		} else {
+			let pointer = -1
+			let maxDistance = 0
+			//cerca il porto più vicino
+			for (let i = 0; i < ports.length; i++) {
+				if (maxDistance < this.calculateDistance(ports[i].posX, ports[i].posY)) {
+					pointer = i
+					maxDistance = this.calculateDistance(ports[i].posX, ports[i].posY)
+				}
+			}
+			if (Math.abs(this.posX - ports[pointer].posX) > Math.abs(this.posY - ports[pointer].posY)) {
+				//Se la distanza del porto dipende più dalla X
+				this.mouveShip()
+			} else {
+				//Se la distanza del porto dipende più dalla Y
+
+			}
 		}
 	}
 }
