@@ -176,7 +176,9 @@ const spawnPort = (x, y, direction, ownedByPlayer) => {
 
 		//addind data-interactive attribute
 		cell.dataset.interactive = false
+		cell.classList.add("deadzone")
 	})
+
 
 	// return
 
