@@ -569,34 +569,99 @@ class BotShip extends Ship {
 
 	makeChoice() {
 		if (this.hp > (this.maxHp / 2)) {
-			//Se questa nave ha almeno metà degli hp
-			const chooseToMove = Math.round(Math.random()) === 1
-			if (chooseToMove) {
+			if (this.autoStartAttack) {
+				// Se autoStartAttack è true, si muove verso il giocatore
+				if (this.calculateDistance(player.posX, player.posY) > this.attackRange) {
+					const directionToPlayer = this.getDirectionTo(player.posX, player.posY)
+					const moveTo = this.getMoveTowards(directionToPlayer)
+					if (moveTo) {
+						const targetCell = document.querySelector(
+							`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`
+						)
+						this.mouveShip(targetCell);
+					}
+				}
+			} else {
+				// Si muove casualmente
 				const moveTo = this.motionRangeCells[Math.floor(Math.random() * this.motionRangeCells.length)]
 				const targetCell = document.querySelector(
 					`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`
-				)
-				this.mouveShip(targetCell)
+				);
+				this.mouveShip(targetCell);
 			}
 		} else {
-			let pointer = -1
-			let maxDistance = 0
-			//cerca il porto più vicino
+			// Cerca il porto più vicino
+			let pointer = -1;
+			let minDistance = 1000//milioni
 			for (let i = 0; i < ports.length; i++) {
-				if (maxDistance < this.calculateDistance(ports[i].posX, ports[i].posY)) {
+				let distance = this.calculateDistance(ports[i].posX, ports[i].posY)
+				if (distance < minDistance) {
 					pointer = i
-					maxDistance = this.calculateDistance(ports[i].posX, ports[i].posY)
+					minDistance = distance
 				}
 			}
-			if (Math.abs(this.posX - ports[pointer].posX) > Math.abs(this.posY - ports[pointer].posY)) {
-				//Se la distanza del porto dipende più dalla X
-				this.mouveShip()
-			} else {
-				//Se la distanza del porto dipende più dalla Y
 
+			// Sposta la nave verso il porto più vicino
+			if (pointer !== -1) {
+				const directionToPort = this.getDirectionTo(ports[pointer].posX, ports[pointer].posY)
+				const moveTo = this.getMoveTowards(directionToPort)
+				if (moveTo) {
+					const targetCell = document.querySelector(
+						`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`
+					)
+					this.mouveShip(targetCell)
+				}
 			}
 		}
 	}
+
+	getDirectionTo(targetX, targetY) {
+		// Restituisce la direzione verso un target specificato
+		const deltaX = targetX - this.posX
+		const deltaY = targetY - this.posY
+		const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+		return { x: deltaX / length, y: deltaY / length }
+	}
+
+	getMoveTowards(direction) {
+		// Calcola la cella verso cui muoversi in base alla direzione
+		let bestMove = null
+		let minDistance = 1000//milioni
+		for (let cell of this.motionRangeCells) {
+			let distance = this.calculateDistance(cell.x, cell.y);
+			if (distance < minDistance && distance <= this.motionRange) {
+				minDistance = distance
+				bestMove = cell
+			}
+		}
+		return bestMove
+	}
+
+
+	getDirectionTo(targetX, targetY) {
+		// Restituisce la direzione verso un target specificato
+		const deltaX = targetX - this.posX;
+		const deltaY = targetY - this.posY;
+		// Normalizza la direzione
+		const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+		return { x: deltaX / length, y: deltaY / length };
+	}
+
+	getMoveTowards(direction) {
+		// Calcola la cella verso cui muoversi in base alla direzione
+		let bestMove = null;
+		let minDistance = Infinity;
+		for (let cell of this.motionRangeCells) {
+			let distance = this.calculateDistance(cell.x, cell.y);
+			if (distance < minDistance && distance <= this.motionRange) {
+				minDistance = distance;
+				bestMove = cell;
+			}
+		}
+		return bestMove;
+	}
+
+
 
 	openBarrelInterface() { }
 

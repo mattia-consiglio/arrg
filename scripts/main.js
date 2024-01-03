@@ -293,7 +293,6 @@ document.addEventListener('mousedown', function (e) {
 				) {
 					const cell = e.target.closest('.cell')
 					// popUpBaloon(cell)
-					console.log({ x: cell.dataset.col, y: cell.dataset.row })
 				}
 			}
 		},
