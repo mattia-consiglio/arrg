@@ -7,6 +7,7 @@ import {
 } from './shipsModule.js'
 import { rowCount, colCount } from './map.js'
 import { player, ports, getDOMCell } from './main.js'
+import Barrel from './Barrel.js'
 let idCount = 0
 
 const delay = milliseconds => {
@@ -162,16 +163,19 @@ class Ship {
 		} else {
 			// mi assiucuro di creare un array di estrazione con le sole celle libere
 			filteredPorts[spawnPortIndex].interactionCells.forEach(portCell => {
+				const DOMPortCell = getDOMCell(portCell.x, portCell.y)
 				if (
 					shipsArray.findIndex(ship => {
 						return ship.posX === portCell.x && ship.posY === portCell.y
-					}) === -1
+					}) === -1 &&
+					DOMPortCell.querySelector('.barrel') === null
 				) {
 					freeCells.push(portCell)
 				}
 			})
 		}
 
+		if (freeCells.length === 0) return
 		const spawnCell = freeCells[Math.floor(Math.random() * freeCells.length)]
 
 		const xInitial = spawnCell.x
@@ -434,7 +438,7 @@ class Ship {
 class PlayerShip extends Ship {
 	xpNeeded
 	constructor() {
-		super({ type: 'player', level: 10, id: 0 })
+		super({ type: 'player', level: 1, id: 0 })
 		this.setXpNeeded()
 		this.DOMShipWrap.classList.add('player')
 		this.updateResourcesVisual()
@@ -582,27 +586,16 @@ class BotShip extends Ship {
 		}
 	}
 
-	openBarrelInterface() {}
-
-	spawnBarrel() {
-		const cell = getDOMCell(this.posX, this.posY)
-		const barrelImg = document.createElement('img')
-		barrelImg.src = '../assets/sprites/Barrel.png'
-		barrelImg.classList.add('barrel')
-		cell.appendChild(barrelImg)
-		barrelImg.parentElement.addEventListener('click', this.openBarrelInterface)
-	}
-
 	lose() {
 		this.stopAttack()
 		player.xp += this.xpGiven
 		if (this.sumResurces(this) + this.sumResurces(player) > player.maxStorage) {
 			player.resources.gold += this.resources.gold
-			this.spawnBarrel()
+			new Barrel(this)
 		} else {
 			for (const key in player.resources) {
 				if (Object.hasOwnProperty.call(player.resources, key)) {
-					player.resources[key] += this.resources[key]
+					player.resources[key] = player.resources[key] + this.resources[key]
 				}
 			}
 		}

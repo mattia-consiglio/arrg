@@ -101,9 +101,8 @@ export const shopMenu = function () {
 	tBody.appendChild(tr1)
 
 	const lastTr = document.createElement('tr')
-	lastTr.appendChild(tdVuoto)
-	lastTr.appendChild(tdVuoto)
 	const tdGoldIn = document.createElement('td')
+	tdGoldIn.colSpan = 4
 	const pGoldIn = document.createElement('p')
 	pGoldIn.innerText = `Gold: [ ${shopMenuRes.gold} ]`
 
@@ -181,7 +180,7 @@ export const shopMenu = function () {
 
 	tdGoldIn.appendChild(pGoldIn)
 	lastTr.appendChild(tdGoldIn)
-	lastTr.appendChild(tdVuoto)
+
 	tBody.appendChild(lastTr)
 	tableCommercio.appendChild(tBody)
 
