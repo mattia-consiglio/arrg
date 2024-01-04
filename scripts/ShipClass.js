@@ -595,7 +595,7 @@ class BotShip extends Ship {
 		} else {
 			for (const key in player.resources) {
 				if (Object.hasOwnProperty.call(player.resources, key)) {
-					player.resources[key] = player.resources[key] + this.resources[key]
+					player.resources[key] += this.resources[key]
 				}
 			}
 		}

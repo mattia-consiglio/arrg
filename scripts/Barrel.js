@@ -10,7 +10,7 @@ class Barell {
 	content
 	isOpened = false
 	barrelInterfaceOpen = false
-	tmpResorces
+	tmpResorces = {}
 	index = 100
 
 	constructor(botShip) {
@@ -35,7 +35,7 @@ class Barell {
 	}
 
 	updateResource(resource, value) {
-		this.resources[resource] = value
+		this.tmpResorces[resource] = value
 		const totalAvailableSpace = player.maxStorage - player.sumResurces()
 		const availableSpace = parseInt(document.getElementById('availableSpace').innerText)
 		console.log(availableSpace)
@@ -44,7 +44,7 @@ class Barell {
 			if (Object.hasOwnProperty.call(this.resources, key)) {
 				const rangeInput = document.getElementById('range-' + key)
 				const rangeValue = parseInt(rangeInput.value)
-				const max = availableSpace + rangeValue
+				const max = rangeValue + availableSpace
 
 				rangeInput.max = max
 				console.log(rangeInput.max)
@@ -194,16 +194,17 @@ class Barell {
 				}
 			}
 
-			// Object.entries(this.resources).forEach(([resourceName, resourceValue]) => {
-			// 	// const resourceValue = this.resources[resourceName]
-
-			// })
-
 			this.content.appendChild(main)
 
 			this.content.insertAdjacentHTML('beforeEnd', footer)
 
 			document.getElementById('confirm').addEventListener('click', () => {
+				for (const key in this.tmpResorces) {
+					if (Object.hasOwnProperty.call(this.tmpResorces, key)) {
+						player.resources[key] += this.tmpResorces[key]
+					}
+				}
+				player.updateResourcesVisual()
 				this.closeInterface()
 			})
 		})

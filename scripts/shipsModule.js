@@ -1,46 +1,30 @@
-// const shipsArray = [
-// 	{
+let timeDayElapsed = 0
+const dayDuration = 1000 * 60 * 10 //10 minuti
+const daytimeDuration = (dayDuration / 5) * 3
+const nighttimeDuration = (dayDuration / 5) * 2
 
-//		id: 0 // 0 always assigned to the player
-// 		x: 100,
-// 		y: 100,
-// 		level: 1,
-// 		attackedBy: [],
-// 		attacking: ''
-// 	},
-// 	{
-// 		type: 'bot',
-// 		id: 1,
-// 		x: 100,
-// 		y: 100,
-// 		level: 1,
-// 		attackedBy: [],
-// 		attacking: ''
-// 	}
-// ]
-export const morningRounds = 3
-export const nightRounds = 2
-export const dayRounds = morningRounds + nightRounds
-export const maxRoundsWithoutWater = Math.floor(1 * dayRounds) // numero massimo di turni in cui l'eqipaggio può sopravvivere senza bere. Se viene superato il giocatore ha perso.
-export const maxRoundsWithoutFood = Math.floor(3 * dayRounds) // numero massimo di turni in cui l'eqipaggio può sopravvivere senza mangiare. Se viene superato il giocatore ha perso.
-export const hpRapairOnPlaceRate = 0.4
-export const shipMotionBaseTime = 950 //in millisecondi
+let daysWithoutWater = 0
+let daysWithoutFood = 0
+const maxDaysWithoutWater = 1 // numero massimo di gionni in cui l'eqipaggio può sopravvivere senza bere. Se viene superato il giocatore ha perso.
+const maxDaysWithoutFood = 3 // numero massimo di turni in cui l'eqipaggio può sopravvivere senza mangiare. Se viene superato il giocatore ha perso.
+const hpRapairOnPlaceRate = 0.4
+const shipMotionBaseTime = 950 //in millisecondi
 
-export const templateResources = {
+const templateResources = {
 	gold: 0, //moneta di scambio del gioco
 	rhum: 0, //oggetto di scambio nei porti amici
 	food: 0, //commericiabile nei porti amici. Richiesta per a sopravvivenza dell'equipaggio
 	water: 0,
 }
 
-export const templateResourcesItaTranstation = {
+const templateResourcesItaTranstation = {
 	gold: 'oro',
 	rhum: 'rum',
 	food: 'cibo',
 	water: 'acqua',
 }
 
-export const shipsExtractionChanches = {
+const shipsExtractionChanches = {
 	1: [19, 17, 16, 13, 11, 9, 7, 4, 3, 1],
 	2: [17, 16, 14, 12, 10, 10, 8, 7, 4, 2],
 	3: [14, 14, 12, 11, 9, 12, 10, 8, 6, 4],
@@ -53,9 +37,9 @@ export const shipsExtractionChanches = {
 	10: [7, 6, 5, 4, 2, 21, 18, 15, 12, 10],
 }
 
-export const maxBotShipsCount = 15
+const maxBotShipsCount = 15
 
-export const shipsTemplate = [
+const shipsTemplate = [
 	{
 		level: 1,
 		hp: 100, // hp decrementabile se si subiscono danni
@@ -358,4 +342,23 @@ export const shipsTemplate = [
 	},
 ]
 
-export const shipsArray = []
+const shipsArray = []
+
+export {
+	timeDayElapsed,
+	dayDuration,
+	daytimeDuration,
+	nighttimeDuration,
+	maxDaysWithoutWater,
+	maxDaysWithoutFood,
+	daysWithoutWater,
+	daysWithoutFood,
+	shipMotionBaseTime,
+	templateResources,
+	templateResourcesItaTranstation,
+	shipsExtractionChanches,
+	maxBotShipsCount,
+	shipsTemplate,
+	shipsArray,
+	hpRapairOnPlaceRate,
+}
