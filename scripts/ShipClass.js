@@ -650,21 +650,24 @@ class BotShip extends Ship {
 
 	makeChoice() {
 		if (this.hp > (this.maxHp / 2)) {
-			if (this.autoStartAttack) {
-				// Se autoStartAttack è true, si muove verso il giocatore
+			if (this.attackTarget) {
+				// Se attackTarget è > 0, si muove verso il giocatore
 				if (this.calculateDistance(player.posX, player.posY) > this.attackRange) {
 					const directionToPlayer = this.getDirectionTo(player.posX, player.posY)
 					const moveTo = this.getMoveTowards(directionToPlayer)
 					if (moveTo) {
 						const targetCell = document.querySelector(`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`)
-						this.mouveShip(targetCell)
+						//Insegue il player solo una volta su due per dare fiato al player che scappa
+						if (Math.random() < 0.5) {
+							this.moveShip(targetCell)
+						}
 					}
 				}
 			} else {
 				// Si muove casualmente
 				const moveTo = this.motionRangeCells[Math.floor(Math.random() * this.motionRangeCells.length)]
 				const targetCell = document.querySelector(`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`)
-				this.mouveShip(targetCell);
+				this.mouveShip(targetCell)
 			}
 		} else {
 			this.runRecovery()
@@ -693,7 +696,6 @@ class BotShip extends Ship {
 		return bestMove
 	}
 
-
 	getDirectionTo(targetX, targetY) {
 		// Restituisce la direzione verso un target specificato
 		const deltaX = targetX - this.posX;
@@ -716,8 +718,6 @@ class BotShip extends Ship {
 		}
 		return bestMove;
 	}
-
-
 
 	openBarrelInterface() { }
 
