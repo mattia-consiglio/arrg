@@ -180,7 +180,9 @@ const spawnPort = (x, y, direction, ownedByPlayer) => {
 
 		//addind data-interactive attribute
 		cell.dataset.interactive = false
+		cell.classList.add("deadzone")
 	})
+
 
 	// return
 
@@ -248,7 +250,7 @@ setInterval(() => {
 		const botShip = shipsArray[i]
 		botShip.makeChoice()
 	}
-}, 1000)
+}, 5000)
 
 // ------------------ Listeners ------------------
 
@@ -287,7 +289,6 @@ document.addEventListener('mousedown', function (e) {
 				if (e.target.closest('.cell')) {
 					const cell = e.target.closest('.cell')
 					// popUpBaloon(cell)
-					console.log({ x: cell.dataset.col, y: cell.dataset.row })
 				}
 			}
 		},

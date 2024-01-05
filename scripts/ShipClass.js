@@ -149,6 +149,16 @@ class Ship {
 		this.posX = targetX
 		this.getAttackRangeCells()
 		this.getMotionCellRange()
+		if (this.type !== "player") {
+			this.DOMShipWrap.classList.add('bot')
+			this.handleShipTriggerAttackDblclickBound = this.triggerAttack.bind(this)
+			this.handleShipSelectClickBound = this.selectShip.bind(this)
+			this.DOMShipWrap.parentElement.addEventListener(
+				'dblclick',
+				this.handleShipTriggerAttackDblclickBound
+			)
+			this.DOMShipWrap.parentElement.addEventListener('click', this.handleShipSelectClickBound)
+		}
 	}
 
 	setInitalSpawnCell() {
@@ -393,9 +403,43 @@ class Ship {
 		this.resources.gold = Math.floor(Math.random() * (max - min) + min)
 	}
 
+	runRecovery() {
+		// Cerca il porto più vicino
+		let pointer = -1;
+		let minDistance = 1000//milioni
+		for (let i = 0; i < ports.length; i++) {
+			let distance = this.calculateDistance(ports[i].posX, ports[i].posY)
+			if (distance < minDistance) {
+				pointer = i
+				minDistance = distance
+			}
+		}
+
+		// Sposta la nave verso il porto più vicino
+		if (pointer !== -1) {
+			const directionToPort = this.getDirectionTo(ports[pointer].posX, ports[pointer].posY)
+			const moveTo = this.getMoveTowards(directionToPort)
+			if (moveTo) {
+				const targetCell = document.querySelector(
+					`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`
+				)
+				if (targetCell.classList[1] !== 'deadzone') {
+					this.mouveShip(targetCell)
+				} else {
+					this.reparationMethod()
+				}
+			}
+		}
+	}
+
 	async startAttack(target) {
-		console.log('start attack', target)
 		if (this.isInAttackRange(target) && target.hp > 0 && this.hp > 0) {
+			if (this.type !== 'player') {
+				if (this.hp < this.maxHp / 100 * 40) {
+					this.stopAttack()
+					this.runRecovery()
+				}
+			}
 			this.attackTarget = target
 		}
 		for (let i = 0; i < this.cannonAmount; i++) {
@@ -571,6 +615,43 @@ class BotShip extends Ship {
 		return expandedChaches[Math.floor(Math.random() * expandedChaches.length)].level
 	}
 
+	reparationMethod() {
+		let initialHp = this.hp
+
+		if (this.hp < this.maxHp) {
+			if ((this.maxHp - this.hp) / 10 <= this.gold) {
+				this.hp += (this.maxHp - this.hp) / 10
+				this.gold -= (this.maxHp - this.hp) / 10
+			} else {
+				this.hp += this.gold
+				this.gold = 0
+			}
+		}
+		if (this.hp > initialHp) {
+			this.greenBlink()
+		}
+	}
+
+	greenBlink() {
+		let startTime = null
+		const blink = (timestamp) => {
+			if (!startTime) startTime = timestamp
+			const elapsed = timestamp - startTime
+
+			// Calcola e applica l'opacità
+			let opacity = Math.abs(Math.sin(elapsed / 200)); // Ciclo di animazione ogni 200 ms
+			this.style.backgroundColor = `rgba(0, 255, 0, ${opacity})`; // Verde con opacità variabile
+
+			if (elapsed < 400) { // Durata totale dell'animazione: 0.4 secondi
+				requestAnimationFrame(blink);
+			} else {
+				this.style.backgroundColor = ''; // Resetta lo stile di background
+			}
+		}
+
+		requestAnimationFrame(blink);
+	}
+
 	/**
 	 * Da fare:
 	 * aggiungere un obbiettivo di cella da raggiungere (magari oltre al metà della mappa)
@@ -581,15 +662,85 @@ class BotShip extends Ship {
 	 */
 
 	makeChoice() {
-		// const chooseToMove = Math.round(Math.random()) === 1
-		const chooseToMove = false
-		if (chooseToMove) {
-			const moveTo = this.motionRangeCells[Math.floor(Math.random() * this.motionRangeCells.length)]
-			const targetCell = document.querySelector(
-				`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`
-			)
-			this.mouveShip(targetCell)
+		if (this.hp > (this.maxHp / 2)) {
+			if (this.attackTarget) {
+				// Se attackTarget è > 0, si muove verso il giocatore
+				if (this.calculateDistance(player.posX, player.posY) > this.attackRange) {
+					const directionToPlayer = this.getDirectionTo(player.posX, player.posY)
+					const moveTo = this.getMoveTowards(directionToPlayer)
+					if (moveTo) {
+						const targetCell = document.querySelector(`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`)
+						//Insegue il player solo una volta su due per dare fiato al player che scappa
+						if (Math.random() < 0.5) {
+							this.moveShip(targetCell)
+						}
+					}
+				}
+			} else {
+				// Si muove casualmente
+				const moveTo = this.motionRangeCells[Math.floor(Math.random() * this.motionRangeCells.length)]
+				const targetCell = document.querySelector(`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`)
+				this.mouveShip(targetCell)
+			}
+		} else {
+			this.runRecovery()
 		}
+	}
+
+	getDirectionTo(targetX, targetY) {
+		// Restituisce la direzione verso un target specificato
+		const deltaX = targetX - this.posX
+		const deltaY = targetY - this.posY
+		const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+		return { x: deltaX / length, y: deltaY / length }
+	}
+
+	getMoveTowards(direction) {
+		// Calcola la cella verso cui muoversi in base alla direzione
+		let bestMove = null
+		let minDistance = 1000//milioni
+		for (let cell of this.motionRangeCells) {
+			let distance = this.calculateDistance(cell.x, cell.y);
+			if (distance < minDistance && distance <= this.motionRange) {
+				minDistance = distance
+				bestMove = cell
+			}
+		}
+		return bestMove
+	}
+
+	getDirectionTo(targetX, targetY) {
+		// Restituisce la direzione verso un target specificato
+		const deltaX = targetX - this.posX;
+		const deltaY = targetY - this.posY;
+		// Normalizza la direzione
+		const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+		return { x: deltaX / length, y: deltaY / length };
+	}
+
+	getMoveTowards(direction) {
+		// Calcola la cella verso cui muoversi in base alla direzione
+		let bestMove = null;
+		let minDistance = Infinity;
+		for (let cell of this.motionRangeCells) {
+			let distance = this.calculateDistance(cell.x, cell.y);
+			if (distance < minDistance && distance <= this.motionRange) {
+				minDistance = distance;
+				bestMove = cell;
+			}
+		}
+		return bestMove;
+	}
+
+	openBarrelInterface() { }
+
+	spawnBarrel() {
+		const cell = document.querySelector(`.cell[data-col="${this.posX}"][data-row="${this.posY}"]`)
+		const barrelImg = document.createElement('img')
+		barrelImg.src = '../assets/sprites/Barrel.png'
+		barrelImg.classList.add('barrel')
+		cell.appendChild(barrelImg)
+		barrelImg.parentElement.addEventListener('click', this.openBarrelInterface)
 	}
 
 	lose() {
