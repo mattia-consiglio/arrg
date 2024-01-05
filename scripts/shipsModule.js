@@ -33,6 +33,13 @@ export const templateResources = {
 	water: 0,
 }
 
+export const templateResourcesItaTranstation = {
+	gold: 'oro',
+	rhum: 'rum',
+	food: 'cibo',
+	water: 'acqua',
+}
+
 export const shipsExtractionChanches = {
 	1: [19, 17, 16, 13, 11, 9, 7, 4, 3, 1],
 	2: [17, 16, 14, 12, 10, 10, 8, 7, 4, 2],

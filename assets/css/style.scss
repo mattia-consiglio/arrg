@@ -18,6 +18,26 @@ body {
 	min-height: 100vh;
 }
 
+h1 {
+	color: #fff;
+	font-size: 3rem;
+	font-family: 'Barletta';
+	width: 100%;
+	text-align: center;
+	margin-bottom: 1rem;
+}
+
+h2 {
+	font-size: 2rem;
+	width: 100%;
+	font-family: 'Courier New', Courier, monospace;
+	text-align: center;
+}
+
+b {
+	font-weight: 600;
+}
+
 #game {
 	width: 100%;
 	height: 100vh;
@@ -41,6 +61,19 @@ body {
 
 	&:hover {
 		background-color: $azzurroScuro;
+	}
+
+	&:has(.barrel) {
+		background-size: 100% 100%;
+		background-position: 0px 0px;
+		background-image: conic-gradient(
+			from 0deg at 50% 50%,
+			#ffffffff 0%,
+			#ffffffff var(--perc, 100%),
+			#ffffff00 var(--perc, 100%),
+			#ffffff00 100%,
+			#ffffff00 100%
+		);
 	}
 }
 
@@ -138,9 +171,10 @@ body {
 		text-align: center;
 		background: rgba(0, 0, 0, 0.75);
 		padding: 0 5px;
-		width: calc(100% + 10px);
+		width: max-content;
 	}
 	&.selected.bot {
+		z-index: 500;
 		.shipImg,
 		.level-text,
 		.hpBar {
@@ -232,7 +266,17 @@ body {
 	border: 1px solid rgb(255, 98, 98);
 }
 
-.shop-wrapper {
+.btn {
+	color: #fff;
+	background-color: #000;
+	font-size: 1.2em;
+	padding: 3px 10px;
+	border: 2px solid #fff;
+	cursor: pointer;
+	text-align: center;
+}
+
+@mixin modal-wrapper() {
 	width: 100%;
 	height: 100%;
 	display: flex;
@@ -243,37 +287,136 @@ body {
 	left: 0;
 	overflow-y: auto;
 
-	.shop {
-		background-image: url('../sprites/Repeatable_wooden_plank.png');
-		position: relative;
-		padding: 3%;
-		z-index: 900;
-		min-width: 60vw;
-		min-height: 60vh;
+	#game:has(~ &) {
+		filter: blur(5px);
+		transition: 500ms;
+	}
+}
 
-		&::before {
-			content: '';
-			display: block;
-			width: 100%;
-			height: 100%;
-			position: absolute;
-			top: 0;
-			left: 0;
-			background-color: rgba(0, 0, 0, 70%);
-			z-index: -1;
+@mixin moadal-content($minwidth: 60vw, $minheight: 60vh) {
+	background-image: url('../sprites/Repeatable_wooden_plank.png');
+	position: relative;
+	padding: 3%;
+	z-index: 900;
+	min-width: $minwidth;
+	min-height: $minheight;
+	max-width: 100vw;
+	color: #fff;
+
+	&::before {
+		content: '';
+		display: block;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		background-color: rgba(0, 0, 0, 70%);
+		z-index: -1;
+	}
+}
+
+.barrel-wrapper {
+	@include modal-wrapper();
+
+	.content {
+		@include moadal-content(60vw, 60vh);
+
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		text-align: center;
+		align-items: center;
+
+		.header {
+			margin-bottom: 15px;
+			h2 {
+				span {
+					@extend b;
+				}
+			}
 		}
+		.main {
+			font-family: 'Courier New', Courier, monospace;
+			font-size: 1.5rem;
+			max-width: 70%;
+			margin-bottom: 15px;
+
+			p {
+				margin-bottom: 0.5em;
+			}
+
+			.row {
+				width: 100%;
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+
+			& > .row {
+				margin-bottom: 10px;
+				.row {
+					&:first-of-type {
+						margin-bottom: 5px;
+
+						div {
+							margin: 0 5px;
+							&:first-child {
+								text-transform: capitalize;
+								margin-left: 0;
+								min-width: 73px;
+							}
+
+							&:nth-child(2),
+							&:last-child {
+								min-width: 15px;
+							}
+
+							&:nth-child(3) {
+								min-width: 70px;
+							}
+
+							&:last-child {
+								margin-right: 0;
+							}
+						}
+					}
+					&:last-of-type {
+						input {
+							min-width: 205px;
+						}
+					}
+				}
+			}
+		}
+
+		.footer {
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+
+			&:has(#confirm) {
+				justify-content: center;
+			}
+
+			.btn {
+				white-space: nowrap;
+				min-width: 220px;
+				min-height: 2rem;
+				line-height: 3rem;
+			}
+		}
+	}
+}
+
+.shop-wrapper {
+	@include modal-wrapper();
+
+	.shop {
+		@include moadal-content(60vw, 60vh);
 
 		.shop-header {
 			display: flex;
 			justify-content: space-between;
-
-			h1 {
-				color: #fff;
-				font-size: 3em;
-				font-family: 'Barletta';
-				width: 100%;
-				text-align: center;
-			}
 
 			.far.fa-times-circle {
 				font-size: 1.5rem;
@@ -357,16 +500,6 @@ body {
 			background-image: url('../svg/hammer-solid.svg');
 			translate: (0, 0);
 			cursor: pointer;
-		}
-
-		.btn {
-			color: #fff;
-			background-color: #000;
-			font-size: 1.2em;
-			padding: 1% 2.5%;
-			border: 2px solid #fff;
-			cursor: pointer;
-			text-align: center;
 		}
 
 		.shop-footer {

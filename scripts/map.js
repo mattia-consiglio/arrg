@@ -8,8 +8,8 @@ const colCount = 40
 let isDragging = false
 let initialMouseX, initialMouseY
 let initialX, initialY
-const maxMapX = cellWidth / 2
-const maxMapY = cellWidth / 2
+const maxMapX = cellWidth
+const maxMapY = cellWidth * 2
 let minMapX, minMapY
 
 const map = document.createElement('div')
