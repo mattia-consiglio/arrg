@@ -25,7 +25,7 @@ const templateResourcesItaTranstation = {
 }
 
 const shipsExtractionChanches = {
-	1: [19, 17, 16, 13, 11, 9, 7, 4, 3, 1],
+	1: [23, 18, 16, 13, 9, 7, 6, 4, 3, 1],
 	2: [17, 16, 14, 12, 10, 10, 8, 7, 4, 2],
 	3: [14, 14, 12, 11, 9, 12, 10, 8, 6, 4],
 	4: [13, 13, 11, 10, 8, 13, 11, 9, 7, 5],
@@ -37,7 +37,7 @@ const shipsExtractionChanches = {
 	10: [7, 6, 5, 4, 2, 21, 18, 15, 12, 10],
 }
 
-const maxBotShipsCount = 15
+const maxBotShipsCount = 10
 
 const shipsTemplate = [
 	{

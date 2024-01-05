@@ -1,5 +1,6 @@
-import { getDOMCell, player } from './main.js'
+import { player } from './main.js'
 import { templateResourcesItaTranstation } from './shipsModule.js'
+import { getDOMCell } from './utlities.js'
 const barrels = []
 
 class Barell {

@@ -2,6 +2,7 @@ import { shipsArray, maxBotShipsCount } from './shipsModule.js'
 import { PlayerShip, BotShip } from './ShipClass.js'
 import { shopMenu } from './shopModule.js'
 import { generateMap, rowCount, colCount, setMapMinXY, moveViewportOverPlayer } from './map.js'
+import { getDOMCell } from './utlities.js'
 
 export const gameEl = document.getElementById('game')
 // la larghezza di una cella
@@ -33,10 +34,6 @@ const popUpScreen = function (messagge) {
 	divMessaggio.transform = `translate(-50%, -50%)`
 
 	document.getElementsByTagName('body')[0].appendChild(divMessaggio)
-}
-
-export const getDOMCell = (x, y) => {
-	return document.querySelector(`.cell[data-col="${x}"][data-row="${y}"]`)
 }
 
 const popUpBaloon = function (cell) {
@@ -91,7 +88,7 @@ const popUpBaloon = function (cell) {
 	const buttonMuoviti = document.createElement('p')
 	buttonMuoviti.innerText = '[VAI QUI]'
 	buttonMuoviti.onclick = function () {
-		player.mouveShip(cell, x, y, balloon)
+		player.moveShip(cell, x, y, balloon)
 	}
 	buttonMuoviti.style.cursor = 'pointer'
 	divFooter.appendChild(buttonMuoviti)
@@ -116,7 +113,7 @@ const spawnPort = (x, y, direction, ownedByPlayer) => {
 		owner: ownedByPlayer ? 'player' : 'bot',
 		interactionCells: [],
 	}
-	const cell = document.querySelector(`.cell[data-col="${x}"][data-row="${y}"]`)
+	const cell = getDOMCell(x, y)
 	const port = document.createElement('div')
 	port.classList.add('Porto')
 	port.classList.add(direction)
@@ -174,21 +171,18 @@ const spawnPort = (x, y, direction, ownedByPlayer) => {
 	}
 	//aggiungo coodinata di spawn del porto
 	deadZones.push({ x, y })
+	portObj.deadZones = deadZones
 
 	deadZones.forEach(deadzone => {
-		const cell = document.querySelector(`.cell[data-col="${deadzone.x}"][data-row="${deadzone.y}"]`)
-
+		const cell = getDOMCell(deadzone.x, deadzone.y)
 		//addind data-interactive attribute
 		cell.dataset.interactive = false
-		cell.classList.add("deadzone")
+		cell.classList.add('deadzone')
 	})
-
-
-	// return
 
 	for (let y = minY; y <= maxY; y++) {
 		for (let x = minX; x <= maxX; x++) {
-			const cell = document.querySelector(`.cell[data-col="${x}"][data-row="${y}"]`)
+			const cell = getDOMCell(x, y)
 			if (cell.dataset.interactive === 'false') {
 				continue
 			}
@@ -250,7 +244,7 @@ setInterval(() => {
 		const botShip = shipsArray[i]
 		botShip.makeChoice()
 	}
-}, 5000)
+}, 1000)
 
 // ------------------ Listeners ------------------
 
@@ -288,6 +282,7 @@ document.addEventListener('mousedown', function (e) {
 				// cliccato ma non tracinato
 				if (e.target.closest('.cell')) {
 					const cell = e.target.closest('.cell')
+					// console.log({ x: cell.dataset.col, y: cell.dataset.row })
 					// popUpBaloon(cell)
 				}
 			}

@@ -5,9 +5,10 @@ import {
 	shipsExtractionChanches,
 	shipMotionBaseTime,
 } from './shipsModule.js'
-import { rowCount, colCount } from './map.js'
-import { player, ports, getDOMCell } from './main.js'
+import { rowCount, colCount, mapArray } from './map.js'
+import { player, ports } from './main.js'
 import Barrel from './Barrel.js'
+import { randomInt, getDOMCell } from './utlities.js'
 let idCount = 0
 
 const delay = milliseconds => {
@@ -149,7 +150,7 @@ class Ship {
 		this.posX = targetX
 		this.getAttackRangeCells()
 		this.getMotionCellRange()
-		if (this.type !== "player") {
+		if (this.type !== 'player') {
 			this.DOMShipWrap.classList.add('bot')
 			this.handleShipTriggerAttackDblclickBound = this.triggerAttack.bind(this)
 			this.handleShipSelectClickBound = this.selectShip.bind(this)
@@ -165,7 +166,7 @@ class Ship {
 		const filteredPorts = ports.filter(port => port.owner === this.type)
 		let spawnPortIndex = 0
 		if (filteredPorts.length > 1) {
-			spawnPortIndex = Math.floor(Math.random() * filteredPorts.length)
+			spawnPortIndex = randomInt(filteredPorts.length)
 		}
 		const freeCells = []
 		if (this.type === 'player') {
@@ -186,7 +187,7 @@ class Ship {
 		}
 
 		if (freeCells.length === 0) return
-		const spawnCell = freeCells[Math.floor(Math.random() * freeCells.length)]
+		const spawnCell = freeCells[randomInt(freeCells.length)]
 
 		const xInitial = spawnCell.x
 		const yInitial = spawnCell.y
@@ -196,15 +197,26 @@ class Ship {
 		return cell
 	}
 
-	mouveShip(cell) {
+	/**
+	 * Muovi la nave con animazione
+	 *
+	 * @param {HTMLElement} cell
+	 */
+	moveShip(cell) {
 		if (this.mouvementPossible() && this.inMotion === false) {
 			this.inMotion = true
 			this.animateMouveShip(cell)
 		}
 	}
 
-	calculateDistance(x, y) {
-		return parseInt(Math.sqrt(Math.pow(x - this.posX, 2) + Math.pow(y - this.posY, 2)))
+	/**
+	 *
+	 * @param {number} toX
+	 * @param {number} toY
+	 * @returns distance betheem this and coordinates passed
+	 */
+	calculateDistance(toX, toY, fromX = this.posX, fromY = this.posY) {
+		return parseInt(Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2)))
 	}
 
 	mouvementPossible() {
@@ -212,10 +224,12 @@ class Ship {
 	}
 
 	animateMouveShip(destinationCell) {
-		if (destinationCell.classList[2] === 'amichevole') {
-			document.getElementById('shopButton').style.visibility = 'visible'
-		} else {
-			document.getElementById('shopButton').style.visibility = 'hidden'
+		if (this.type === 'player') {
+			if (destinationCell.classList.contains('amichevole')) {
+				document.getElementById('shopButton').style.visibility = 'visible'
+			} else {
+				document.getElementById('shopButton').style.visibility = 'hidden'
+			}
 		}
 
 		let currentShipX = this.DOMShipWrap.parentElement.offsetTop
@@ -316,7 +330,7 @@ class Ship {
 
 	// Funzione handler che verrà utilizzata per aggiungere e rimuovere l'event listener
 	handleCellMotionClick(event) {
-		this.mouveShip(event.target)
+		this.moveShip(event.target)
 		this.resetMotionAndAttackCells()
 	}
 
@@ -351,19 +365,19 @@ class Ship {
 				if (Math.abs(this.posX - i) + Math.abs(this.posY - j) <= range) {
 					const cell = getDOMCell(i, j)
 
+					if (!cell) continue
+
 					//setting conditions
 					const baseExclusion =
-						!cell ||
 						cell.dataset.interactive === 'false' ||
 						(parseInt(cell.dataset.col) === this.posX && parseInt(cell.dataset.row) === this.posY)
-					const hasShip = cell
-						? cell.querySelector('.ship') !== null || cell.querySelector('.barrel')
-						: false
+					const hasShip = cell.querySelector('.ship') !== null || cell.querySelector('.barrel')
+
 					const exclusionCondition =
 						rageType === 'attack' ? baseExclusion : baseExclusion || hasShip
 					if (this.type === 'bot') {
 						//prevent bot ships from going to ports owned by player
-						if (exclusionCondition || cell.classList.contains('amico')) continue
+						if (exclusionCondition || cell.classList.contains('amichevole')) continue
 					} else {
 						if (exclusionCondition) continue
 					}
@@ -394,48 +408,20 @@ class Ship {
 			extractionPool.push(key)
 		}
 		for (let i = 0; i < this.maxStorage; i++) {
-			this.resources[extractionPool[Math.floor(Math.random() * extractionPool.length)]]++
+			this.resources[extractionPool[randomInt(extractionPool.length)]]++
 		}
 
 		const min = this.level === 1 && this.type === 'player' ? this.hp : this.hp / 2
 		const max = this.hp * 2
 
-		this.resources.gold = Math.floor(Math.random() * (max - min) + min)
-	}
-
-	runRecovery() {
-		// Cerca il porto più vicino
-		let pointer = -1;
-		let minDistance = 1000//milioni
-		for (let i = 0; i < ports.length; i++) {
-			let distance = this.calculateDistance(ports[i].posX, ports[i].posY)
-			if (distance < minDistance) {
-				pointer = i
-				minDistance = distance
-			}
-		}
-
-		// Sposta la nave verso il porto più vicino
-		if (pointer !== -1) {
-			const directionToPort = this.getDirectionTo(ports[pointer].posX, ports[pointer].posY)
-			const moveTo = this.getMoveTowards(directionToPort)
-			if (moveTo) {
-				const targetCell = document.querySelector(
-					`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`
-				)
-				if (targetCell.classList[1] !== 'deadzone') {
-					this.mouveShip(targetCell)
-				} else {
-					this.reparationMethod()
-				}
-			}
-		}
+		this.resources.gold = randomInt(max, min)
 	}
 
 	async startAttack(target) {
+		console.log('start attack', target)
 		if (this.isInAttackRange(target) && target.hp > 0 && this.hp > 0) {
 			if (this.type !== 'player') {
-				if (this.hp < this.maxHp / 100 * 40) {
+				if (this.hp < (this.maxHp / 100) * 40) {
 					this.stopAttack()
 					this.runRecovery()
 				}
@@ -488,7 +474,7 @@ class Ship {
 class PlayerShip extends Ship {
 	xpNeeded
 	constructor() {
-		super({ type: 'player', level: 1, id: 0 })
+		super({ type: 'player', level: 10, id: 0 })
 		this.setXpNeeded()
 		this.DOMShipWrap.classList.add('player')
 		this.updateResourcesVisual()
@@ -560,6 +546,25 @@ class BotShip extends Ship {
 	xpGiven
 	autoFollow
 	autoStartAttack
+	mainHeading
+	timeLastMove = new Date()
+	isRepairing = false
+	needsRepairing = false
+
+	/**
+	 * Estari un livello random all'iniziliazzatione della bot ship
+	 *
+	 * @returns rendom level
+	 */
+	static extractLevel() {
+		const playerLevel = shipsArray[0].level
+		const chaches = shipsExtractionChanches[playerLevel]
+		const expandedChaches = shipsTemplate.flatMap((shipTemplate, index) =>
+			Array(chaches[index]).fill(shipTemplate)
+		)
+		return expandedChaches[randomInt(expandedChaches.length)].level
+	}
+
 	constructor() {
 		super({ type: 'bot', level: BotShip.extractLevel(), id: idCount + 1 })
 
@@ -576,8 +581,98 @@ class BotShip extends Ship {
 			this.handleShipTriggerAttackDblclickBound
 		)
 		this.DOMShipWrap.parentElement.addEventListener('click', this.handleShipSelectClickBound)
+		this.setMainHeading('map')
 	}
 
+	setMainHeading(type, targtPort = null) {
+		const botPorts = ports.filter(port => port.owner === this.type)
+		const flatMapPortInteractionCells = botPorts
+			.map(port => {
+				return port.interactionCells.map(coordinate => ({
+					...coordinate,
+					distance: this.calculateDistance(coordinate.x, coordinate.y),
+				}))
+			})
+			.flat() // creo un array con le sole coordinate delle celle interattive di tutti i porti
+		// const flatMapPortsDeadZonesCells = botPorts.map(port => port.deadZones.flat()).flat() // creo un array con le sole coordinate delle celle morte di tutti i porti
+		// const flatMapPortCells = flatMapPortInteractionCells.concat(flatMapPortsDeadZonesCells) // creo un array con le sole coordinate delle celle di tutti i porti
+		switch (type) {
+			case 'map':
+				const minDistance = Math.round((rowCount + colCount) / 2 / 2) // media / 2 del numero di colonne e righe per calcolare la distanza minima
+
+				const possibileHeadings = mapArray.filter(coordinate => {
+					const DOMcell = getDOMCell(coordinate.x, coordinate.y)
+					return (
+						this.calculateDistance(coordinate.x, coordinate.y) >= minDistance && // escudo le celle troppo vicine
+						DOMcell.classList.contains('amichevole') === false &&
+						DOMcell.dataset.interactive !== 'false'
+					) // escudo le celle dei porti amici e
+				})
+				this.mainHeading = possibileHeadings[randomInt(possibileHeadings.length)]
+				this.mainHeading.type = 'map'
+				break
+			case 'port':
+				if (!targtPort) {
+					flatMapPortInteractionCells.sort((a, b) => a.distance - b.distance)
+					this.mainHeading = flatMapPortInteractionCells[0]
+				}
+				this.mainHeading.type = 'port'
+				break
+			case 'follow':
+				this.attackRangeCells.sort((a, b) => {
+					player.calculateDistance(b.x, b.y) - player.calculateDistance(a.x, a.y)
+				})
+				this.mainHeading = this.attackRangeCells[0]
+				this.mainHeading.type = 'follow'
+
+				break
+		}
+	}
+
+	followMainHeading() {
+		if (this.mainHeading.type === 'map' && new Date() - this.timeLastMove < 1500) {
+			return //non muove la nave se se esce 1
+		}
+		const motionRangeCells = this.motionRangeCells.map(cell => {
+			return {
+				...cell,
+				distance: this.calculateDistance(this.mainHeading.x, this.mainHeading.y, cell.x, cell.y),
+			}
+		})
+		motionRangeCells.sort((a, b) => {
+			return a.distance - b.distance
+		})
+		const botDistance = this.calculateDistance(this.mainHeading.x, this.mainHeading.y)
+		const cellsClosestToMainHeadng = motionRangeCells.filter(cell => {
+			return cell.distance < botDistance
+		})
+
+		let cell
+		if (this.mainHeading.type === 'follow') {
+			cell = this.mainHeading
+		} else {
+			if (!cellsClosestToMainHeadng.length) {
+				cell = motionRangeCells[0]
+			} else {
+				cell = cellsClosestToMainHeadng[randomInt(cellsClosestToMainHeadng.length)]
+			}
+		}
+		this.DOMShipWrap.parentElement.removeEventListener(
+			'dblclick',
+			this.handleShipTriggerAttackDblclickBound
+		)
+		this.DOMShipWrap.parentElement.removeEventListener('click', this.handleShipSelectClickBound)
+
+		this.moveShip(getDOMCell(cell.x, cell.y))
+		this.timeLastMove = new Date()
+	}
+
+	/**
+	 * Crea un bordo attorno alla nave bot selezionata
+	 *
+	 * @param {Event} event
+	 * @returns
+	 */
 	selectShip(event) {
 		if (event.type === 'dblclick') {
 			this.DOMShipWrap.classList.add('selected')
@@ -598,6 +693,11 @@ class BotShip extends Ship {
 		}
 	}
 
+	/**
+	 * Inizia l'attacco del player e del bot
+	 *
+	 * @param {Event} event
+	 */
 	triggerAttack(event) {
 		this.selectShip(event)
 		player.startAttack(this)
@@ -606,85 +706,109 @@ class BotShip extends Ship {
 		}
 	}
 
-	static extractLevel() {
-		const playerLevel = shipsArray[0].level
-		const chaches = shipsExtractionChanches[playerLevel]
-		const expandedChaches = shipsTemplate.flatMap((shipTemplate, index) =>
-			Array(chaches[index]).fill(shipTemplate)
-		)
-		return expandedChaches[Math.floor(Math.random() * expandedChaches.length)].level
-	}
+	/**
+	 * Ripara del 10% alla volta ongi 400ms la nave bot se ha oro diponibile
+	 */
+	async repair(animationStarted = false) {
+		const initialHp = this.hp
+		if (this.hp < this.maxHp && this.hp > 0) {
+			const repairAmount =
+				this.maxHp / 10 <= this.resources.gold ? (this.maxHp - this.hp) / 10 : this.resources.gold
 
-	reparationMethod() {
-		let initialHp = this.hp
-
-		if (this.hp < this.maxHp) {
-			if ((this.maxHp - this.hp) / 10 <= this.gold) {
-				this.hp += (this.maxHp - this.hp) / 10
-				this.gold -= (this.maxHp - this.hp) / 10
-			} else {
-				this.hp += this.gold
-				this.gold = 0
-			}
+			this.hp += repairAmount
+			this.resources.gold -= repairAmount
+			this.updateHpBar()
+		} else {
+			this.needsRepairing = false
+			this.isRepairing = false
 		}
 		if (this.hp > initialHp) {
-			this.greenBlink()
+			if (!animationStarted) {
+				this.greenBlink()
+			}
+			await delay(400)
+			this.repair()
 		}
 	}
 
+	/**
+	 * Lampegga lo sfondo della bot ship di verde
+	 */
 	greenBlink() {
 		let startTime = null
-		const blink = (timestamp) => {
+		const blink = timestamp => {
 			if (!startTime) startTime = timestamp
 			const elapsed = timestamp - startTime
 
 			// Calcola e applica l'opacità
-			let opacity = Math.abs(Math.sin(elapsed / 200)); // Ciclo di animazione ogni 200 ms
-			this.style.backgroundColor = `rgba(0, 255, 0, ${opacity})`; // Verde con opacità variabile
+			let opacity = Math.abs(Math.sin(elapsed / 200)) // Ciclo di animazione ogni 200 ms
+			this.DOMShipWrap.style.backgroundColor = `rgba(0, 255, 0, ${opacity})` // Verde con opacità variabile
 
-			if (elapsed < 400) { // Durata totale dell'animazione: 0.4 secondi
-				requestAnimationFrame(blink);
+			if (elapsed < 400) {
+				// Durata totale dell'animazione: 0.4 secondi
+				requestAnimationFrame(blink)
 			} else {
-				this.style.backgroundColor = ''; // Resetta lo stile di background
+				this.DOMShipWrap.style.backgroundColor = '' // Resetta lo stile di background
 			}
 		}
 
-		requestAnimationFrame(blink);
+		requestAnimationFrame(blink)
 	}
 
-	/**
-	 * Da fare:
-	 * aggiungere un obbiettivo di cella da raggiungere (magari oltre al metà della mappa)
-	 * la cella obittivo deve ovviamnte non essere quelle deelle deadzones dei porti
-	 * per calcolare quale cella scegliereper muoversi ordinare in mod ascendente le celle col metodo calculateDistance
-	 * in modo da calcolare la distanza tra la cella in motionRangeCells e quella obiettivo
-	 * muovere la nave nella cella alla prima posizione [0] dell'array ordinato
-	 */
-
 	makeChoice() {
-		if (this.hp > (this.maxHp / 2)) {
-			if (this.attackTarget) {
-				// Se attackTarget è > 0, si muove verso il giocatore
-				if (this.calculateDistance(player.posX, player.posY) > this.attackRange) {
-					const directionToPlayer = this.getDirectionTo(player.posX, player.posY)
-					const moveTo = this.getMoveTowards(directionToPlayer)
-					if (moveTo) {
-						const targetCell = document.querySelector(`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`)
-						//Insegue il player solo una volta su due per dare fiato al player che scappa
-						if (Math.random() < 0.5) {
-							this.moveShip(targetCell)
-						}
-					}
-				}
-			} else {
-				// Si muove casualmente
-				const moveTo = this.motionRangeCells[Math.floor(Math.random() * this.motionRangeCells.length)]
-				const targetCell = document.querySelector(`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`)
-				this.mouveShip(targetCell)
+		const reachedMainHeading = this.mainHeading.x === this.posX && this.mainHeading.y === this.posY
+
+		if (reachedMainHeading && this.mainHeading.type === 'port') {
+			if (!this.isRepairing) {
+				this.isRepairing = true
+				this.repair()
+			}
+			return
+		}
+
+		if (this.hp <= this.maxHp * 0.4) {
+			if (this.mainHeading.type !== 'port') {
+				//se la vita è critica vai al porto più vicino
+				this.setMainHeading('port')
+				this.needsRepairing = true
 			}
 		} else {
-			this.runRecovery()
+			if (reachedMainHeading) {
+				this.setMainHeading('map')
+			}
 		}
+		this.followMainHeading()
+
+		// if (this.hp > this.maxHp / 2) {
+		// 	if (this.attackTarget) {
+		// 		this.setMainHeading('follow')
+		// 		this.followMainHeading()
+		// 		// Se attackTarget è > 0, si muove verso il giocatore
+		// 		if (this.calculateDistance(player.posX, player.posY) > this.attackRange) {
+		// 			const directionToPlayer = this.getDirectionTo(player.posX, player.posY)
+		// 			const moveTo = this.getMoveTowards(directionToPlayer)
+		// 			if (moveTo) {
+		// 				const targetCell = document.querySelector(
+		// 					`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`
+		// 				)
+		// 				//Insegue il player solo una volta su due per dare fiato al player che scappa
+		// 				if (Math.random() < 0.5) {
+		// 					this.moveShip(targetCell)
+		// 				}
+		// 			}
+		// 		}
+		// 	} else {
+		// 		// Si muove casualmente
+		// 		const moveTo =
+		// 			this.motionRangeCells[Math.floor(Math.random() * this.motionRangeCells.length)]
+		// 		const targetCell = document.querySelector(
+		// 			`.cell[data-col="${moveTo.x}"][data-row="${moveTo.y}"]`
+		// 		)
+		// 		this.mouveShip(targetCell)
+		// 	}
+		// } else {
+		// 	this.runRecovery()
+		// }
 	}
 
 	getDirectionTo(targetX, targetY) {
@@ -698,9 +822,9 @@ class BotShip extends Ship {
 	getMoveTowards(direction) {
 		// Calcola la cella verso cui muoversi in base alla direzione
 		let bestMove = null
-		let minDistance = 1000//milioni
+		let minDistance = 1000 //milioni
 		for (let cell of this.motionRangeCells) {
-			let distance = this.calculateDistance(cell.x, cell.y);
+			let distance = this.calculateDistance(cell.x, cell.y)
 			if (distance < minDistance && distance <= this.motionRange) {
 				minDistance = distance
 				bestMove = cell
@@ -711,28 +835,28 @@ class BotShip extends Ship {
 
 	getDirectionTo(targetX, targetY) {
 		// Restituisce la direzione verso un target specificato
-		const deltaX = targetX - this.posX;
-		const deltaY = targetY - this.posY;
+		const deltaX = targetX - this.posX
+		const deltaY = targetY - this.posY
 		// Normalizza la direzione
-		const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-		return { x: deltaX / length, y: deltaY / length };
+		const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+		return { x: deltaX / length, y: deltaY / length }
 	}
 
 	getMoveTowards(direction) {
 		// Calcola la cella verso cui muoversi in base alla direzione
-		let bestMove = null;
-		let minDistance = Infinity;
+		let bestMove = null
+		let minDistance = Infinity
 		for (let cell of this.motionRangeCells) {
-			let distance = this.calculateDistance(cell.x, cell.y);
+			let distance = this.calculateDistance(cell.x, cell.y)
 			if (distance < minDistance && distance <= this.motionRange) {
-				minDistance = distance;
-				bestMove = cell;
+				minDistance = distance
+				bestMove = cell
 			}
 		}
-		return bestMove;
+		return bestMove
 	}
 
-	openBarrelInterface() { }
+	openBarrelInterface() {}
 
 	spawnBarrel() {
 		const cell = document.querySelector(`.cell[data-col="${this.posX}"][data-row="${this.posY}"]`)

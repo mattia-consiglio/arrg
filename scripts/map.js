@@ -11,6 +11,7 @@ let initialX, initialY
 const maxMapX = cellWidth
 const maxMapY = cellWidth * 2
 let minMapX, minMapY
+const mapArray = []
 
 const map = document.createElement('div')
 
@@ -25,8 +26,10 @@ const generateMap = (rows, cols) => {
 		for (let j = 0; j < cols; j++) {
 			const cell = document.createElement('div')
 			cell.classList.add('cell')
-			cell.setAttribute('data-row', i)
-			cell.setAttribute('data-col', j)
+			cell.dataset.row = i
+			cell.dataset.col = j
+
+			mapArray.push({ x: j, y: i })
 
 			row.appendChild(cell)
 		}
@@ -192,4 +195,13 @@ map.addEventListener('touchstart', startDrag)
 
 map.addEventListener('mousedown', startDrag)
 
-export { cellWidth, rowCount, colCount, map, setMapMinXY, generateMap, moveViewportOverPlayer }
+export {
+	cellWidth,
+	rowCount,
+	colCount,
+	map,
+	setMapMinXY,
+	generateMap,
+	moveViewportOverPlayer,
+	mapArray,
+}
