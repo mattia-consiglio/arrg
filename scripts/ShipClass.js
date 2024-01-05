@@ -400,7 +400,10 @@ class Ship {
 		}
 		for (let i = 0; i < this.cannonAmount; i++) {
 			if (this.attackTarget === null) return
-			if (!this.isInAttackRange(target)) return
+			if (!this.isInAttackRange(target)) {
+				this.stopAttack(target)
+				return
+			}
 			if (target.hp === 0) {
 				target.lose()
 			}
@@ -412,8 +415,11 @@ class Ship {
 				return
 			}
 
+			//ritardo tra una cannonoata e l'altra
 			await delay(500)
 		}
+
+		//tempo di ricarica della batteri di cannoni
 		await delay(1000)
 		this.startAttack(target)
 	}

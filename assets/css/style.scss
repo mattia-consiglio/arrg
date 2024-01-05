@@ -247,11 +247,11 @@ b {
 	position: fixed;
 	z-index: 3;
 	right: 25px;
-	top: 25px;
+	top: 100px;
 	color: white;
 	background-color: black;
 	border: 3px solid red;
-	font-size: 3rem;
+	font-size: 2rem;
 	font-family: 'Barletta', sans-serif;
 	padding: 15px;
 	visibility: visible;
@@ -313,98 +313,6 @@ b {
 		left: 0;
 		background-color: rgba(0, 0, 0, 70%);
 		z-index: -1;
-	}
-}
-
-.barrel-wrapper {
-	@include modal-wrapper();
-
-	.content {
-		@include moadal-content(60vw, 60vh);
-
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		text-align: center;
-		align-items: center;
-
-		.header {
-			margin-bottom: 15px;
-			h2 {
-				span {
-					@extend b;
-				}
-			}
-		}
-		.main {
-			font-family: 'Courier New', Courier, monospace;
-			font-size: 1.5rem;
-			max-width: 70%;
-			margin-bottom: 15px;
-
-			p {
-				margin-bottom: 0.5em;
-			}
-
-			.row {
-				width: 100%;
-				flex-wrap: wrap;
-				justify-content: center;
-			}
-
-			& > .row {
-				margin-bottom: 10px;
-				.row {
-					&:first-of-type {
-						margin-bottom: 5px;
-
-						div {
-							margin: 0 5px;
-							&:first-child {
-								text-transform: capitalize;
-								margin-left: 0;
-								min-width: 73px;
-							}
-
-							&:nth-child(2),
-							&:last-child {
-								min-width: 15px;
-							}
-
-							&:nth-child(3) {
-								min-width: 70px;
-							}
-
-							&:last-child {
-								margin-right: 0;
-							}
-						}
-					}
-					&:last-of-type {
-						input {
-							min-width: 205px;
-						}
-					}
-				}
-			}
-		}
-
-		.footer {
-			display: flex;
-			justify-content: space-between;
-			width: 100%;
-
-			&:has(#confirm) {
-				justify-content: center;
-			}
-
-			.btn {
-				white-space: nowrap;
-				min-width: 220px;
-				min-height: 2rem;
-				line-height: 3rem;
-			}
-		}
 	}
 }
 
@@ -532,6 +440,98 @@ b {
 	transform: translateY(-50%);
 }
 
+.barrel-wrapper {
+	@include modal-wrapper();
+
+	.content {
+		@include moadal-content(60vw, 60vh);
+
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		text-align: center;
+		align-items: center;
+
+		.header {
+			margin-bottom: 15px;
+			h2 {
+				span {
+					@extend b;
+				}
+			}
+		}
+		.main {
+			font-family: 'Courier New', Courier, monospace;
+			font-size: 1.5rem;
+			max-width: 70%;
+			margin-bottom: 15px;
+
+			p {
+				margin-bottom: 0.5em;
+			}
+
+			.row {
+				width: 100%;
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+
+			& > .row {
+				margin-bottom: 10px;
+				.row {
+					&:first-of-type {
+						margin-bottom: 5px;
+
+						div {
+							margin: 0 5px;
+							&:first-child {
+								text-transform: capitalize;
+								margin-left: 0;
+								min-width: 73px;
+							}
+
+							&:nth-child(2),
+							&:last-child {
+								min-width: 15px;
+							}
+
+							&:nth-child(3) {
+								min-width: 70px;
+							}
+
+							&:last-child {
+								margin-right: 0;
+							}
+						}
+					}
+					&:last-of-type {
+						input {
+							min-width: 205px;
+						}
+					}
+				}
+			}
+		}
+
+		.footer {
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+
+			&:has(#confirm) {
+				justify-content: center;
+			}
+
+			.btn {
+				white-space: nowrap;
+				min-width: 220px;
+				min-height: 2rem;
+				line-height: 3rem;
+			}
+		}
+	}
+}
+
 #playerStats {
 	display: flex;
 	position: fixed;
@@ -634,22 +634,52 @@ b {
 							}
 						}
 					}
-
-					.button {
-					}
-				}
-			}
-
-			.btn {
-			}
-
-			.shop-footer {
-				.bottom-right {
-				}
-
-				.btn {
 				}
 			}
 		}
+	}
+}
+
+.daycicle {
+	position: fixed;
+	right: 25px;
+	top: 25px;
+	z-index: 900;
+
+	$border: 5px;
+	$widthSemicircle: 100px;
+	$imageSize: 20px;
+
+	#semicicle {
+		width: $widthSemicircle; /* Larghezza del semicerchio */
+		height: calc($widthSemicircle / 2); /* Altezza del semicerchio */
+		border: $border solid #fff; /* Bordo del semicerchio */
+		border-bottom: none;
+		border-radius: calc($widthSemicircle / 2) calc($widthSemicircle / 2) 0 0; /* Arrotondamento per semicerchio */
+		position: relative;
+		margin-bottom: 20px;
+		transform-origin: bottom center;
+		display: flex;
+		justify-content: center;
+		overflow: visible;
+	}
+
+	.imgwrap {
+		// position: relative;
+		min-width: calc(100% + $border * 2 + $imageSize / 2);
+		height: 100%;
+		// bottom: 0;
+		// left: 50%;
+		transform: rotate(calc(1deg * (164 / 100) * var(--perc)));
+		display: flex;
+		justify-content: flex-start;
+		align-items: flex-end;
+		transform-origin: bottom center;
+	}
+
+	img {
+		// position: absolute;
+		width: $imageSize;
+		height: $imageSize;
 	}
 }
