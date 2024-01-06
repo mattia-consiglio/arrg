@@ -473,7 +473,7 @@ class Ship {
 class PlayerShip extends Ship {
 	xpNeeded
 	constructor() {
-		super({ type: 'player', level: 10, id: 0 })
+		super({ type: 'player', level: 1, id: 0 })
 		this.setXpNeeded()
 		this.DOMShipWrap.classList.add('player')
 		this.updateResourcesVisual()
