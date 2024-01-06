@@ -423,7 +423,6 @@ class Ship {
 			if (this.type !== 'player') {
 				if (this.hp < (this.maxHp / 100) * 40) {
 					this.stopAttack()
-					this.runRecovery()
 				}
 			}
 			this.attackTarget = target
@@ -431,7 +430,7 @@ class Ship {
 		for (let i = 0; i < this.cannonAmount; i++) {
 			if (this.attackTarget === null) return
 			if (!this.isInAttackRange(target)) {
-				this.stopAttack(target)
+				// this.stopAttack(target)
 				return
 			}
 			if (target.hp === 0) {
@@ -712,8 +711,20 @@ class BotShip extends Ship {
 	async repair(animationStarted = false) {
 		const initialHp = this.hp
 		if (this.hp < this.maxHp && this.hp > 0) {
-			const repairAmount =
-				this.maxHp / 10 <= this.resources.gold ? (this.maxHp - this.hp) / 10 : this.resources.gold
+			if (this.resources.gold === 0) {
+				this.needsRepairing = false
+				this.isRepairing = false
+				return
+			}
+			const baseRepairAmount = this.maxHp / 10
+			let repairAmount = baseRepairAmount
+
+			if (this.hp + baseRepairAmount > this.maxHp) {
+				repairAmount = this.maxHp - this.hp
+			}
+			if (repairAmount > this.resources.gold) {
+				repairAmount = this.resources.gold
+			}
 
 			this.hp += repairAmount
 			this.resources.gold -= repairAmount
@@ -721,6 +732,7 @@ class BotShip extends Ship {
 		} else {
 			this.needsRepairing = false
 			this.isRepairing = false
+			return
 		}
 		if (this.hp > initialHp) {
 			if (!animationStarted) {
@@ -773,6 +785,12 @@ class BotShip extends Ship {
 				this.needsRepairing = true
 			}
 		} else {
+			if (player.attackTarget && player.attackTarget.id === this.id) {
+				if (this.autoFollow) {
+					this.setMainHeading('follow')
+				}
+				return
+			}
 			if (reachedMainHeading) {
 				this.setMainHeading('map')
 			}
