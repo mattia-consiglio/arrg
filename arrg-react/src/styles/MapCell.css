@@ -1,0 +1,103 @@
+.cell {
+	width: 100px;
+	height: 100px;
+	background-color: #1e90ff;
+	position: relative;
+	box-sizing: border-box;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	transition: all 0.2s ease;
+}
+
+.cell.Molo {
+	background-color: #8b4513;
+}
+
+.cell.Molo.amichevole {
+	background-color: #228b22;
+}
+
+.cell.Molo.nemico {
+	background-color: #b22222;
+}
+
+.cell.deadzone {
+	background-color: #000;
+	position: relative;
+}
+
+/* Evidenzia le celle raggiungibili e la cella corrente */
+.cell.reachable {
+	border: 2px dashed rgba(255, 255, 255, 0.7);
+	cursor: pointer;
+}
+
+.cell.reachable:hover {
+	background-color: rgba(50, 205, 50, 0.3);
+	transform: scale(1.02);
+}
+
+.cell.current {
+	border: 3px solid gold;
+}
+
+.Porto {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/* Nuova classe per l'immagine che si espande su 4 celle */
+.Porto.espanso {
+	width: 200px;
+	height: 200px;
+	position: absolute;
+	z-index: 5;
+}
+
+.Porto.espanso.nord {
+	top: 0;
+	left: 0;
+	transform: rotate(180deg);
+}
+
+.Porto.espanso.sud {
+	top: -100px;
+	left: 0;
+}
+
+.Porto.espanso.est {
+	top: 0;
+	left: -100px;
+	transform: rotate(270deg);
+}
+
+.Porto.espanso.ovest {
+	top: 0;
+	left: 0;
+	transform: rotate(90deg);
+}
+
+.Porto img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* Stile per le celle disabilitate durante il movimento della nave */
+.cell.disabled {
+	cursor: not-allowed;
+	pointer-events: none;
+	opacity: 0.7;
+}
+
+/* Evita l'effetto di hover durante il movimento della nave */
+.cell.disabled.reachable:hover::before {
+	display: none;
+}
+
+/* Balloon che appare quando passi sopra una cella */

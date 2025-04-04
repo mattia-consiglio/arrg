@@ -1,0 +1,26 @@
+#playerStats {
+	position: fixed;
+	top: 10px;
+	left: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	z-index: 10;
+	background-color: rgba(0, 0, 0, 0.5);
+	padding: 10px;
+	border-radius: 5px;
+}
+
+.stat {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: white;
+	font-size: 16px;
+}
+
+.stat img {
+	width: 24px;
+	height: 24px;
+	object-fit: contain;
+}

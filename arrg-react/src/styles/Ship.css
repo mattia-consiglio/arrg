@@ -1,0 +1,132 @@
+.ship {
+	position: absolute;
+	width: 100px;
+	height: 100px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	z-index: 10;
+	transition: none;
+	will-change: transform, left, top;
+}
+
+.ship.bot {
+	filter: hue-rotate(180deg);
+}
+
+.ship.moving {
+	z-index: 15;
+}
+
+.shipImg {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	transition: none;
+	will-change: transform;
+}
+
+/* Ruota leggermente l'immagine della nave in base alla direzione durante il movimento */
+.ship.moving[style*='animation: none'] .shipImg {
+	transform: scale(1.1);
+}
+
+.ship.moving[style*='left'] .shipImg {
+	transform: rotate(-5deg) scale(1.1);
+}
+
+.ship.moving[style*='right'] .shipImg {
+	transform: rotate(5deg) scale(1.1);
+}
+
+.level-text {
+	position: absolute;
+	top: -25px;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: rgba(0, 0, 0, 0.7);
+	color: white;
+	padding: 2px 5px;
+	border-radius: 3px;
+	font-size: 0.8em;
+	z-index: 6;
+}
+
+.hpBar {
+	position: absolute;
+	top: -10px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 50px;
+	height: 5px;
+	background-color: #444;
+	border-radius: 3px;
+	overflow: hidden;
+	z-index: 6;
+}
+
+.hpBar::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: var(--hp, 100%);
+	height: 100%;
+	transition: width 0.3s;
+}
+
+.hpBar.green::before {
+	background-color: #2ecc71;
+}
+
+.hpBar.yellow::before {
+	background-color: #f1c40f;
+}
+
+.hpBar.red::before {
+	background-color: #e74c3c;
+}
+
+/* Animazione durante il movimento della nave - velocizzata */
+@keyframes ship-motion {
+	0%,
+	100% {
+		transform: translate(0, 0);
+	}
+	25% {
+		transform: translate(-2px, -2px);
+	}
+	50% {
+		transform: translate(2px, -1px);
+	}
+	75% {
+		transform: translate(-1px, 2px);
+	}
+}
+
+/* Ombra che segue la nave durante il movimento */
+.ship.moving::after {
+	content: '';
+	position: absolute;
+	bottom: -5px;
+	left: 20px;
+	right: 20px;
+	height: 10px;
+	background-color: rgba(0, 0, 0, 0.3);
+	border-radius: 50%;
+	filter: blur(5px);
+	animation: shadow-pulse 0.3s infinite alternate;
+	z-index: 5;
+}
+
+@keyframes shadow-pulse {
+	from {
+		opacity: 0.4;
+		transform: scaleX(0.9);
+	}
+	to {
+		opacity: 0.7;
+		transform: scaleX(1.1);
+	}
+}
