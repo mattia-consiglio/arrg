@@ -7,7 +7,7 @@ import Ship from "./Ship";
 import "../styles/Map.css";
 
 const GameMap = () => {
-	const { isDragging, setIsDragging, playerPosition } = useGameContext();
+	const { isDragging, setIsDragging, playerPosition, enemyShips } = useGameContext();
 	const mapRef = useRef<HTMLDivElement>(null);
 	const [mapTransform, setMapTransform] = useState({ x: 0, y: 0 });
 	const [dragState, setDragState] = useState({
@@ -238,6 +238,18 @@ const GameMap = () => {
 				))}
 
 				<Ship type="player" x={playerPosition.x} y={playerPosition.y} />
+				
+				{enemyShips.map((ship) => (
+					<Ship 
+						key={`enemy-ship-${ship.id}`}
+						type="bot"
+						x={ship.position.x}
+						y={ship.position.y}
+						level={ship.level}
+						hp={ship.hp}
+						maxHp={ship.maxHp}
+					/>
+				))}
 			</div>
 
 			<div id="controls">

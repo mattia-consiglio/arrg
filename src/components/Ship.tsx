@@ -23,8 +23,10 @@ const Ship: React.FC<ShipProps> = ({ type, x, y, level = 1, hp, maxHp }) => {
 	// Per l'animazione di transizione
 	const [displayPosition, setDisplayPosition] = useState({ x, y });
 	
-	// Per ora iniziamo con direzione fissa, ma poi calcola in base al movimento
-	const [direction, setDirection] = useState<ShipDirection>("left");
+	// For bot ships we'll randomize the direction
+	const [direction, setDirection] = useState<ShipDirection>(
+		type === "bot" ? ["left", "right", "up", "down"][Math.floor(Math.random() * 4)] as ShipDirection : "left"
+	);
 	const [inMotion, setInMotion] = useState(false);
 
 	// Get actual level, hp and maxHp based on ship type
@@ -66,75 +68,101 @@ const Ship: React.FC<ShipProps> = ({ type, x, y, level = 1, hp, maxHp }) => {
 		}
 	};
 
+	// Effetto casuale di oscillazione per le navi nemiche
+	useEffect(() => {
+		if (type === "bot") {
+			// Cambia direzione casuale ogni 5-10 secondi per le navi nemiche
+			const interval = Math.random() * 5000 + 5000;
+			const directionTimer = setInterval(() => {
+				const directions: ShipDirection[] = ["left", "right", "up", "down"];
+				const newDirection = directions[Math.floor(Math.random() * directions.length)];
+				setDirection(newDirection);
+				
+				// Aggiungi un piccolo effetto di movimento
+				setInMotion(true);
+				setTimeout(() => setInMotion(false), 600);
+			}, interval);
+			
+			return () => clearInterval(directionTimer);
+		}
+	}, [type]);
+
 	// Determina la direzione in base al movimento
 	useEffect(() => {
 		if (x !== prevPosition.x || y !== prevPosition.y) {
-			// Avvia immediatamente lo stato di movimento
-			setIsShipMoving(true);
-			setAnimating(true);
-			setInMotion(true);
-			
-			// Determina la direzione in base a dove sta andando la nave
-			if (x > prevPosition.x) {
-				setDirection("right");
-			} else if (x < prevPosition.x) {
-				setDirection("left");
-			} else if (y > prevPosition.y) {
-				setDirection("down");
-			} else if (y < prevPosition.y) {
-				setDirection("up");
-			}
+			// Solo per la nave del giocatore
+			if (type === "player") {
+				// Avvia immediatamente lo stato di movimento
+				setIsShipMoving(true);
+				setAnimating(true);
+				setInMotion(true);
+				
+				// Determina la direzione in base a dove sta andando la nave
+				if (x > prevPosition.x) {
+					setDirection("right");
+				} else if (x < prevPosition.x) {
+					setDirection("left");
+				} else if (y > prevPosition.y) {
+					setDirection("down");
+				} else if (y < prevPosition.y) {
+					setDirection("up");
+				}
 
-			// Animazione di movimento tra celle - ridotta durata per maggiore reattività
-			const animationDuration = 300; // ms - ridotto da 500ms per maggiore reattività
-			const steps = 15; // ridotto da 20 per maggiore performance
-			const interval = animationDuration / steps;
-			
-			// Avvio immediato dell'animazione con primo frame
-			setDisplayPosition({
-				x: prevPosition.x + (x - prevPosition.x) * 0.1, // avvio immediato con 10% di movimento
-				y: prevPosition.y + (y - prevPosition.y) * 0.1
-			});
-			
-			let step = 1; // iniziamo da 1 perché abbiamo già fatto il primo step
-			const animate = setInterval(() => {
-				step++;
-				const progress = step / steps;
+				// Animazione di movimento tra celle - ridotta durata per maggiore reattività
+				const animationDuration = 300; // ms - ridotto da 500ms per maggiore reattività
+				const steps = 15; // ridotto da 20 per maggiore performance
+				const interval = animationDuration / steps;
 				
-				// Animazione con piccolo effetto ease-out per rallentare alla fine
-				const easeOutProgress = 1 - Math.pow(1 - progress, 2);
-				
+				// Avvio immediato dell'animazione con primo frame
 				setDisplayPosition({
-					x: prevPosition.x + (x - prevPosition.x) * easeOutProgress,
-					y: prevPosition.y + (y - prevPosition.y) * easeOutProgress
+					x: prevPosition.x + (x - prevPosition.x) * 0.1, // avvio immediato con 10% di movimento
+					y: prevPosition.y + (y - prevPosition.y) * 0.1
 				});
 				
-				if (step >= steps) {
-					clearInterval(animate);
-					// Assicuriamoci che la posizione finale sia esattamente quella desiderata
-					setDisplayPosition({ x, y });
-					setAnimating(false);
-					setPrevPosition({ x, y });
-					// Dopo che il movimento è terminato, riabilita l'interazione
-					setTimeout(() => {
-						setIsShipMoving(false);
-					}, 50); // piccolo ritardo per assicurarsi che l'UI sia aggiornata
-				}
-			}, interval);
-			
-			// Dopo che il movimento è completo, mantieni l'effetto di oscillazione per un po'
-			const timer = setTimeout(() => {
-				setInMotion(false);
-			}, animationDuration + 100);
+				let step = 1; // iniziamo da 1 perché abbiamo già fatto il primo step
+				const animate = setInterval(() => {
+					step++;
+					const progress = step / steps;
+					
+					// Animazione con piccolo effetto ease-out per rallentare alla fine
+					const easeOutProgress = 1 - Math.pow(1 - progress, 2);
+					
+					setDisplayPosition({
+						x: prevPosition.x + (x - prevPosition.x) * easeOutProgress,
+						y: prevPosition.y + (y - prevPosition.y) * easeOutProgress
+					});
+					
+					if (step >= steps) {
+						clearInterval(animate);
+						// Assicuriamoci che la posizione finale sia esattamente quella desiderata
+						setDisplayPosition({ x, y });
+						setAnimating(false);
+						setPrevPosition({ x, y });
+						// Dopo che il movimento è terminato, riabilita l'interazione
+						setTimeout(() => {
+							setIsShipMoving(false);
+						}, 50); // piccolo ritardo per assicurarsi che l'UI sia aggiornata
+					}
+				}, interval);
+				
+				// Dopo che il movimento è completo, mantieni l'effetto di oscillazione per un po'
+				const timer = setTimeout(() => {
+					setInMotion(false);
+				}, animationDuration + 100);
 
-			return () => {
-				clearInterval(animate);
-				clearTimeout(timer);
-				// Assicurati che isShipMoving sia impostato a false se il componente viene smontato
-				setIsShipMoving(false);
-			};
+				return () => {
+					clearInterval(animate);
+					clearTimeout(timer);
+					// Assicurati che isShipMoving sia impostato a false se il componente viene smontato
+					setIsShipMoving(false);
+				};
+			} else {
+				// Per le navi nemiche, semplicemente aggiorna la posizione senza animazioni complesse
+				setDisplayPosition({ x, y });
+				setPrevPosition({ x, y });
+			}
 		}
-	}, [x, y, prevPosition, setIsShipMoving]);
+	}, [x, y, prevPosition, setIsShipMoving, type]);
 
 	// Al primo render, inizializza la posizione precedente
 	useEffect(() => {

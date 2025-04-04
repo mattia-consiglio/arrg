@@ -5,8 +5,8 @@ import {
 	ReactNode,
 	useEffect,
 } from "react";
-import { MapCell, Port, Position, Resources } from "../types";
-import { COL_COUNT, ROW_COUNT, TEMPLATE_RESOURCES } from "../config/gameConfig";
+import { MapCell, Port, Position, Resources, EnemyShip } from "../types";
+import { COL_COUNT, ROW_COUNT, TEMPLATE_RESOURCES, SHIPS_TEMPLATE } from "../config/gameConfig";
 import { randomInt } from "../utils/gameUtils";
 
 interface GameContextType {
@@ -17,6 +17,7 @@ interface GameContextType {
 	playerLevel: number;
 	playerHp: number;
 	playerMaxHp: number;
+	enemyShips: EnemyShip[];
 	isDragging: boolean;
 	isShipMoving: boolean;
 	setIsDragging: (isDragging: boolean) => void;
@@ -61,6 +62,63 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 	const [playerMaxHp, setPlayerMaxHp] = useState(100);
 	const [isDragging, setIsDragging] = useState(false);
 	const [isShipMoving, setIsShipMoving] = useState(false);
+	const [enemyShips, setEnemyShips] = useState<EnemyShip[]>([]);
+
+	// Funzione per generare una posizione casuale valida (non in deadzone o occupata)
+	const generateRandomPosition = (): Position => {
+		// Massimi tentativi per evitare loop infiniti
+		const maxAttempts = 100;
+		let attempts = 0;
+		
+		while (attempts < maxAttempts) {
+			const x = randomInt(COL_COUNT);
+			const y = randomInt(ROW_COUNT);
+			
+			// Verifica che la posizione non sia una deadzone
+			const cell = mapCells.find(cell => cell.x === x && cell.y === y);
+			if (cell && !cell.isDeadZone) {
+				// Verifica che la posizione non sia occupata dalla nave del giocatore
+				if (x !== playerPosition.x || y !== playerPosition.y) {
+					// Verifica che la posizione non sia occupata da altre navi nemiche
+					const isOccupied = enemyShips.some(ship => 
+						ship.position.x === x && ship.position.y === y
+					);
+					
+					if (!isOccupied) {
+						return { x, y };
+					}
+				}
+			}
+			
+			attempts++;
+		}
+		
+		// Fallback in caso di troppi tentativi falliti
+		return { x: 10, y: 10 };
+	};
+
+	// Funzione per generare navi nemiche
+	const spawnEnemyShips = (count: number) => {
+		const newEnemyShips: EnemyShip[] = [];
+		
+		for (let i = 0; i < count; i++) {
+			const position = generateRandomPosition();
+			// Genera un livello casuale per le navi nemiche (1, 2 o 3)
+			const level = Math.floor(Math.random() * 3) + 1;
+			const shipTemplate = SHIPS_TEMPLATE.find(ship => ship.level === level) || SHIPS_TEMPLATE[0];
+			
+			newEnemyShips.push({
+				id: i + 1,
+				position,
+				level,
+				hp: shipTemplate.hp,
+				maxHp: shipTemplate.maxHp,
+				type: 'bot'
+			});
+		}
+		
+		setEnemyShips(newEnemyShips);
+	};
 
 	// Funzione per posizionare il giocatore in un porto amico
 	const placePlayerInFriendlyPort = () => {
@@ -293,6 +351,14 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 		initGame();
 	}, []);
 
+	// Quando la mappa è inizializzata, genera le navi nemiche
+	useEffect(() => {
+		if (mapCells.length > 0 && ports.length > 0) {
+			// Genera 8 navi nemiche
+			spawnEnemyShips(8);
+		}
+	}, [mapCells, ports]);
+
 	return (
 		<GameContext.Provider
 			value={{
@@ -303,6 +369,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 				playerLevel,
 				playerHp,
 				playerMaxHp,
+				enemyShips,
 				isDragging,
 				isShipMoving,
 				setIsDragging,

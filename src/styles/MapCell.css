@@ -95,6 +95,10 @@
 	opacity: 0.7;
 }
 
+.cell.disabled.deadzone {
+	opacity: 1;
+}
+
 /* Evita l'effetto di hover durante il movimento della nave */
 .cell.disabled.reachable:hover::before {
 	display: none;

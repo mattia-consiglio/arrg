@@ -52,6 +52,15 @@ export interface Position {
 export type ShipType = 'player' | 'bot'
 export type Direction = 'up' | 'down' | 'left' | 'right'
 
+export interface EnemyShip {
+	id: number
+	position: Position
+	level: number
+	hp: number
+	maxHp: number
+	type: 'bot'
+}
+
 export interface GameContextType {
 	mapCells: MapCell[]
 	ports: Port[]
@@ -60,8 +69,11 @@ export interface GameContextType {
 	playerLevel: number
 	playerHp: number
 	playerMaxHp: number
+	enemyShips: EnemyShip[]
 	isDragging: boolean
+	isShipMoving: boolean
 	setIsDragging: (isDragging: boolean) => void
+	setIsShipMoving: (isMoving: boolean) => void
 	movePlayer: (x: number, y: number) => void
 	updatePlayerResources: (resources: Partial<Resources>) => void
 	spawnPort: (x: number, y: number, direction: Port['direction'], ownedByPlayer: boolean) => void
