@@ -1,49 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-	<title>Divpirates - the pirates game</title>
-	<link rel="icon" href="./assets/favicon/favIcon.png">
-	<link rel="stylesheet" href="assets/css/reset.css">
-	<link rel="stylesheet" href="assets/css/style.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-</head>
-
-<body>
-	<div class="daycicle">
-		<div id="semicicle">
-			<div class="imgwrap" style="--perc:0"><img src="assets/sprites/Sun.png"></div>
-		</div>
-	</div>
-	<div id="playerStats">
-		<div class="stat"><img src="assets/sprites/XP_icon.png" alt="XP"><span id="xp">0/0</span></div>
-		<div class="stat"><img src="assets/sprites/Gold_icon.png" alt="Gold"><span id="gold">0</span></div>
-		<div class="stat"><img src="assets/sprites/Rhum_icon.png" alt="Rhum"><span id="rhum">0</span></div>
-		<div class="stat"><img src="assets/sprites/Water_icon.png" alt="Water"><span id="water">0</span></div>
-		<div class="stat"><img src="assets/sprites/Fish_icon.png" alt="Food"><span id="food">0</span></div>
-	</div>
-	<div id="shopButton">
-		Shop
-	</div>
-	<div id="game"></div>
-	<div id="controls">
-		<div id="up">
-			<i class="fas fa-caret-square-up"></i>
-		</div>
-		<div id="down"><i class="fas fa-caret-square-down"></i></div>
-		<div id="left">
-			<i class="fas fa-caret-square-left"></i>
-		</div>
-		<div id="right"><i class="fas fa-caret-square-right"></i></div>
-	</div>
-	<script type="module" src="scripts/main.js"></script>
-	<script type="module" src="scripts/shopModule.js"></script>
-	<script type="module" src="scripts/ShipClass.js"></script>
-	<script type="module" src="scripts/shipsModule.js"></script>
-	<script type="module" src="scripts/map.js"></script>
-	<script type="module" src="scripts/Barrel.js"></script>
-</body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

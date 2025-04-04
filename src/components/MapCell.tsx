@@ -104,6 +104,11 @@ const MapCell: React.FC<MapCellProps> = ({ x, y }) => {
 	);
 
 	const isMovementPossible = () => {
+		// Non consentire il movimento nelle celle deadzone
+		if (cellData?.isDeadZone) {
+			return false;
+		}
+		
 		// In a real implementation, check motionRange from player level
 		// For now, use a simple distance check (assuming motion range of 3)
 		return distance <= 3;
